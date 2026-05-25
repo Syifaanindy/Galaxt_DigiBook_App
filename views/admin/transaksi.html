@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Transaksi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../../assets/css/admin/panel.css">
+</head>
+<body>
+  <div class="admin-layout">
+        <div id="admin-sidebar"></div>
+    <main class="main-content">
+      <header class="topbar"><h2>Transaksi</h2><p>Monitor status pembayaran dan order buku.</p></header>
+      <section class="panel">
+        <h3>Filter Transaksi</h3>
+        <form class="form-grid">
+          <div class="field"><label>Dari Tanggal</label><input type="date" value="2026-05-01"></div>
+          <div class="field"><label>Sampai Tanggal</label><input type="date" value="2026-05-23"></div>
+          <div class="field" style="justify-content:end;"><label>&nbsp;</label><button class="btn btn-primary" type="button">Terapkan Filter</button></div>
+        </form>
+      </section>
+      <section class="panel table-wrap">
+        <table>
+          <thead><tr><th>Invoice</th><th>User</th><th>Buku</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>INV-260501</td><td>Rina Putri</td><td>Makrifat Daun</td><td>Rp 50.000</td></tr>
+            <tr><td>INV-260507</td><td>Bayu Aji</td><td>Dilarang Mencintai Bunga-Bunga</td><td>Rp 135.000</td></tr>
+            <tr><td>INV-260520</td><td>Salsa Nabila</td><td>Perubahan Sosial</td><td>Rp 200.000</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+  <script src="../../assets/script/admin/shared-layout.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,40 @@
+.my-books-page-container {
+    background: transparent;
+}
+
+.my-books-title {
+    color: var(--dark-text);
+    font-size: 2rem;
+    letter-spacing: -0.3px;
+}
+
+.my-books-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 20px;
+}
+
+.my-books-card .book-grid {
+    margin-bottom: 0;
+}
+
+.my-books-card .book-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.my-books-card .book-footer {
+    margin-top: auto !important;
+}
+
+.btn-read-book {
+    background: linear-gradient(135deg, #2e245b, #5640a0) !important;
+    color: #fff !important;
+    border: none !important;
+}
+
+.btn-read-book:hover {
+    background: linear-gradient(135deg, #3d2b87, #6a52b9) !important;
+    color: #fff !important;
+}

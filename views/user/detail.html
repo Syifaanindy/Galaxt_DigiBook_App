@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Buku - BookStore</title>
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../../assets/css/user/d.css">
+    <link rel="stylesheet" href="../../assets/css/user/layout-shared.css">
+</head>
+
+<body>
+    <div id="site-navbar"></div>
+
+    <main class="detail-page-container py-5">
+        <div class="container">
+
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb custom-breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="index.html#koleksi">Koleksi Buku</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Detail Produk</li>
+                </ol>
+            </nav>
+
+            <div class="row g-5">
+
+                <!-- KOLOM KIRI: COVER BUKU -->
+                <div class="col-lg-4 text-center text-lg-start">
+                    <div class="detail-cover-wrapper position-sticky">
+                        <img src="../../assets/pic/b-1.png" alt="Cover Buku Premium" class="img-fluid main-book-img">
+                        <div class="cover-shadow-effect"></div>
+                    </div>
+                </div>
+
+                <!-- KOLOM KANAN: DETAIL, DETAIL HARGA, SPEKS, TOMBOL BELI & SINOPSIS -->
+                <div class="col-lg-8">
+                    <div class="detail-info-header">
+                        <span class="badge badge-category mb-2"><i
+                                class="fa-solid fa-circle-check text-success me-1"></i> Terverifikasi Original</span>
+                        <h1 class="detail-title fw-extrabold mb-1">Makrifat Daun: Daun Makrifat</h1>
+                        <p class="detail-author fs-5 text-muted mb-3">Karya Penulis: <span
+                                class="fw-semibold text-primary-theme">Kuntowijoyo</span></p>
+
+                        <div class="detail-rating-box d-flex align-items-center gap-2 mb-4">
+                            <div class="stars text-warning">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <span class="fw-bold fs-6 mt-1">5.0</span>
+                            <span class="text-muted fs-7 mt-1">(42 Ulasan Pembaca)</span>
+                        </div>
+
+                        <div class="detail-price-box p-4 rounded-4 mb-4">
+                            <small class="text-muted d-block text-uppercase letter-spacing-1">Harga Akses
+                                Digital</small>
+                            <h2 class="display-6 fw-bold text-gradient-price m-0">Rp 50.000</h2>
+                        </div>
+                    </div>
+
+                    <!-- Spesifikasi Box -->
+                    <div class="detail-specs-card p-4 rounded-4 mb-4">
+                        <h4 class="fs-6 fw-bold mb-3 text-uppercase letter-spacing-1">Spesifikasi Dokumen</h4>
+                        <div class="row g-3 row-cols-2 row-cols-sm-3">
+                            <div class="col">
+                                <div class="spec-item">
+                                    <i class="fa-regular fa-file-pdf text-danger fs-4 mb-2"></i>
+                                    <small class="text-muted d-block">Format File</small>
+                                    <span class="fw-bold">PDF Premium</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="spec-item">
+                                    <i class="fa-solid fa-database text-info fs-4 mb-2"></i>
+                                    <small class="text-muted d-block">Ukuran Data</small>
+                                    <span class="fw-bold">14.8 MB</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="spec-item">
+                                    <i class="fa-solid fa-building-columns text-warning fs-4 mb-2"></i>
+                                    <small class="text-muted d-block">Penerbit</small>
+                                    <span class="fw-bold">Lini Bangsa</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="spec-item">
+                                    <i class="fa-solid fa-language text-success fs-4 mb-2"></i>
+                                    <small class="text-muted d-block">Bahasa</small>
+                                    <span class="fw-bold">Indonesia</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="spec-item">
+                                    <i class="fa-solid fa-fingerprint text-purple fs-4 mb-2"></i>
+                                    <small class="text-muted d-block">Proteksi DRM</small>
+                                    <span class="fw-bold">Watermark</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="spec-item">
+                                    <i class="fa-solid fa-cloud-arrow-down text-primary fs-4 mb-2"></i>
+                                    <small class="text-muted d-block">Akses Unduh</small>
+                                    <span class="fw-bold">Selamanya</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TOMBOL AKSI DENGAN BUTTON BAYAR / BELI LANGSUNG -->
+                    <div class="detail-action-buttons row g-3 mb-5">
+                        <div class="col-sm-5">
+                            <a href="transaction.html"
+                                class="btn btn-primary-buy w-100 py-3 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
+                                <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
+                            </a>
+                        </div>
+                        <div class="col-sm-4">
+                            <a href="#"
+                                class="btn btn-outline-cart w-100 py-3 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fa-solid fa-basket-shopping"></i> + Keranjang
+                            </a>
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="#"
+                                class="btn btn-outline-wishlist w-100 py-3 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fa-regular fa-bookmark"></i> Simpan
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- SINOPSIS (SEKARANG BERADA DI SEBELAH COVER PADA DESKTOP) -->
+                    <div class="synopsis-card p-4 p-md-5 rounded-4">
+                        <h3 class="fw-bold mb-4 position-relative section-title-line">Sinopsis Lengkap</h3>
+                        <div class="synopsis-content text-secondary fs-6">
+                            <p>Buku <strong>"Makrifat Daun: Daun Makrifat"</strong> menguraikan esensi pemikiran
+                                mendalam mengenai realitas sosial, spiritual, dan eksistensi manusia dalam balutan
+                                bahasa yang puitis namun sarat analisis kritis khas Kuntowijoyo. Karya ini mengajak
+                                pembaca menelaah fenomena kehidupan sehari-hari melalui kacamata yang lebih jernih,
+                                mengaitkan perilaku kultural masyarakat dengan struktur sosial makro yang membentuknya.
+                            </p>
+                            <p class="mt-3">Sangat direkomendasikan untuk akademisi, mahasiswa sosiologi, peneliti
+                                kebudayaan, maupun pembaca umum yang mendambakan bacaan reflektif berbobot tinggi.
+                                Dengan format e-book premium ini, Anda mendapatkan teks orisinal utuh yang telah melalui
+                                proses digitalisasi resolusi tinggi, memastikan kenyamanan maksimal saat dibaca di layar
+                                perangkat mobile ataupun desktop Anda kapan saja.</p>
+                        </div>
+                    </div>
+
+                    <!-- REVIEW PENGGUNA -->
+                    <div class="review-card synopsis-card p-4 p-md-5 rounded-4 mt-4">
+                        <h3 class="fw-bold mb-4 position-relative section-title-line">Review Pembaca</h3>
+
+                        <form id="reviewForm" class="mb-4">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="reviewerName" class="form-label fw-semibold">Nama</label>
+                                    <input type="text" class="form-control" id="reviewerName"
+                                        placeholder="Tulis nama Anda" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="reviewRating" class="form-label fw-semibold">Rating</label>
+                                    <select class="form-select" id="reviewRating" required>
+                                        <option value="">Pilih rating</option>
+                                        <option value="5">5 - Sangat bagus</option>
+                                        <option value="4">4 - Bagus</option>
+                                        <option value="3">3 - Cukup</option>
+                                        <option value="2">2 - Kurang</option>
+                                        <option value="1">1 - Tidak rekomendasi</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="reviewText" class="form-label fw-semibold">Ulasan</label>
+                                    <textarea class="form-control" id="reviewText" rows="4"
+                                        placeholder="Bagikan pendapat Anda tentang buku ini..." required></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3 px-4">Kirim Review</button>
+                        </form>
+
+                        <div class="review-list-wrapper">
+                            <h5 class="fw-bold mb-3">Daftar Review</h5>
+                            <div id="reviewList" class="d-flex flex-column gap-3">
+                                <div class="border rounded-3 p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <strong>Rahma</strong>
+                                        <span class="text-warning"><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                                    </div>
+                                    <p class="mb-0 text-secondary">Bahasanya indah dan bikin saya merenung. Sangat
+                                        layak dibaca!</p>
+                                </div>
+                                <div class="border rounded-3 p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <strong>Bima</strong>
+                                        <span class="text-warning"><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span>
+                                    </div>
+                                    <p class="mb-0 text-secondary">Kontennya berbobot, cocok untuk yang suka kajian
+                                        sosial dan budaya.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/script/user/shared-layout.js"></script>
+    <script>
+        const reviewForm = document.getElementById('reviewForm');
+        const reviewList = document.getElementById('reviewList');
+
+        function renderStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += i <= rating ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star"></i>';
+            }
+            return stars;
+        }
+
+        reviewForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const nameInput = document.getElementById('reviewerName');
+            const ratingInput = document.getElementById('reviewRating');
+            const textInput = document.getElementById('reviewText');
+
+            const name = nameInput.value.trim();
+            const rating = parseInt(ratingInput.value, 10);
+            const reviewText = textInput.value.trim();
+
+            if (!name || !rating || !reviewText) {
+                return;
+            }
+
+            const reviewItem = document.createElement('div');
+            reviewItem.className = 'border rounded-3 p-3';
+            reviewItem.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <strong></strong>
+                    <span class="text-warning">${renderStars(rating)}</span>
+                </div>
+                <p class="mb-0 text-secondary"></p>
+            `;
+
+            reviewItem.querySelector('strong').textContent = name;
+            reviewItem.querySelector('p').textContent = reviewText;
+
+            reviewList.prepend(reviewItem);
+            reviewForm.reset();
+        });
+    </script>
+</body>
+
+</html>

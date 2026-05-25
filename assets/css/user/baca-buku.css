@@ -1,0 +1,56 @@
+.read-book-page-container {
+    background: transparent;
+}
+
+.read-book-title {
+    color: var(--dark-text);
+    font-size: 2rem;
+    letter-spacing: -0.3px;
+}
+
+.read-book-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(46, 36, 91, 0.08);
+    box-shadow: var(--card-shadow);
+    border-radius: 20px;
+}
+
+.pdf-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.pdf-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(224, 195, 252, 0.26);
+    color: var(--primary-color);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.pdf-viewer-wrap {
+    border: 1px solid rgba(46, 36, 91, 0.12);
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.pdf-viewer {
+    width: 100%;
+    min-height: 78vh;
+    border: none;
+}
+
+@media (max-width: 991px) {
+    .pdf-viewer {
+        min-height: 68vh;
+    }
+}

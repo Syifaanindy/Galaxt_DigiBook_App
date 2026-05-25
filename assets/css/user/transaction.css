@@ -1,0 +1,106 @@
+.transaction-page-container {
+    background: transparent;
+}
+
+.transaction-title {
+    color: var(--dark-text);
+    font-size: 2rem;
+    letter-spacing: -0.4px;
+}
+
+.checkout-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(46, 36, 91, 0.07);
+    box-shadow: var(--card-shadow);
+    border-radius: 22px;
+}
+
+.checkout-card h5 {
+    color: var(--primary-color);
+}
+
+.checkout-form-control,
+.checkout-form-select {
+    border: 1px solid rgba(46, 36, 91, 0.12);
+    border-radius: 12px;
+    padding: 11px 14px;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.checkout-form-control:focus,
+.checkout-form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(224, 195, 252, 0.4);
+}
+
+.payment-option {
+    border: 1px solid rgba(46, 36, 91, 0.13);
+    border-radius: 14px;
+    padding: 14px 16px;
+    transition: var(--transition-smooth);
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.payment-option:hover {
+    transform: translateY(-2px);
+    border-color: rgba(46, 36, 91, 0.3);
+}
+
+.payment-option.active {
+    border-color: var(--primary-color);
+    background: rgba(224, 195, 252, 0.28);
+    box-shadow: 0 10px 24px rgba(46, 36, 91, 0.08);
+}
+
+.payment-option input[type="radio"] {
+    accent-color: var(--primary-color);
+}
+
+.summary-sticky {
+    position: sticky;
+    top: 116px;
+}
+
+.summary-cover {
+    width: 62px;
+    height: 88px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 6px 16px rgba(46, 36, 91, 0.2);
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    color: #4a4175;
+}
+
+.price-row.total {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(46, 36, 91, 0.2);
+    color: var(--dark-text);
+    font-weight: 800;
+    font-size: 1.05rem;
+}
+
+.secure-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(224, 195, 252, 0.3);
+    color: var(--primary-color);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+@media (max-width: 991px) {
+    .summary-sticky {
+        position: static;
+    }
+}

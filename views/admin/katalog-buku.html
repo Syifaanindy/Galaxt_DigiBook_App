@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Katalog Buku</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../assets/css/admin/panel.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <div id="admin-sidebar"></div>
+    <main class="main-content">
+      <header class="topbar">
+        <h2>Katalog Buku</h2>
+        <p>Tambah, edit, dan hapus data katalog buku.</p>
+      </header>
+
+      <section class="panel table-wrap">
+        <div class="actions" style="justify-content:space-between; margin-bottom:14px;">
+          <h3 style="margin:0;">List Buku Katalog</h3>
+          <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#createKatalogModal">Tambah Data</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Judul</th>
+              <th>Penulis</th>
+              <th>Kategori</th>
+              <th>Harga</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="katalogTableBody">
+            
+            <tr><td>BK-005</td><td>Pengantar Filsafat Modern</td><td>Franz Magnis</td><td>Filsafat</td><td>150000</td><td><div class="actions"><button class="btn btn-soft" type="button" data-bs-toggle="modal" data-bs-target="#editKatalogModal">Edit</button><button class="btn btn-danger btn-delete" type="button">Hapus</button></div></td></tr>
+            <tr><td>BK-006</td><td>Laut Bercerita</td><td>Leila S. Chudori</td><td>Sastra Indonesia</td><td>118000</td><td><div class="actions"><button class="btn btn-soft" type="button" data-bs-toggle="modal" data-bs-target="#editKatalogModal">Edit</button><button class="btn btn-danger btn-delete" type="button">Hapus</button></div></td></tr>
+            <tr><td>BK-007</td><td>Bumi Manusia</td><td>Pramoedya</td><td>Sastra Indonesia</td><td>95000</td><td><div class="actions"><button class="btn btn-soft" type="button" data-bs-toggle="modal" data-bs-target="#editKatalogModal">Edit</button><button class="btn btn-danger btn-delete" type="button">Hapus</button></div></td></tr>
+            <tr><td>BK-008</td><td>Madilog</td><td>Tan Malaka</td><td>Filsafat</td><td>125000</td><td><div class="actions"><button class="btn btn-soft" type="button" data-bs-toggle="modal" data-bs-target="#editKatalogModal">Edit</button><button class="btn btn-danger btn-delete" type="button">Hapus</button></div></td></tr>
+            <tr><td>BK-009</td><td>Sapiens</td><td>Yuval Harari</td><td>Sejarah</td><td>185000</td><td><div class="actions"><button class="btn btn-soft" type="button" data-bs-toggle="modal" data-bs-target="#editKatalogModal">Edit</button><button class="btn btn-danger btn-delete" type="button">Hapus</button></div></td></tr>
+            <tr><td>BK-010</td><td>Atomic Habits</td><td>James Clear</td><td>Psikologi</td><td>145000</td><td><div class="actions"><button class="btn btn-soft" type="button" data-bs-toggle="modal" data-bs-target="#editKatalogModal">Edit</button><button class="btn btn-danger btn-delete" type="button">Hapus</button></div></td></tr>
+            <tr><td>BK-011</td><td>Filosofi Teras</td><td>Henry Manampiring</td><td>Filsafat</td><td>102000</td><td><div class="actions"><button class="btn btn-soft" type="button" data-bs-toggle="modal" data-bs-target="#editKatalogModal">Edit</button><button class="btn btn-danger btn-delete" type="button">Hapus</button></div></td></tr>
+            <tr><td>BK-012</td><td>Negeri 5 Menara</td><td>A. Fuadi</td><td>Sastra Indonesia</td><td>88000</td><td><td><div class="actions"><button class="btn btn-soft" type="button" data-bs-toggle="modal" data-bs-target="#editKatalogModal">Edit</button><button class="btn btn-danger btn-delete" type="button">Hapus</button></div></td></tr>
+            <tr><td>BK-013</td><td>Hujan</td><td>Tere Liye</td><td>Sastra Indonesia</td><td>97000</td><td><div class="actions"><button class="btn btn-soft" type="button" data-bs-toggle="modal" data-bs-target="#editKatalogModal">Edit</button><button class="btn btn-danger btn-delete" type="button">Hapus</button></div></td></tr>
+            <tr><td>BK-014</td><td>Thinking Fast and Slow</td><td>Daniel Kahneman</td><td>Psikologi</td><td>175000</td><td><div class="actions"><button class="btn btn-soft" type="button" data-bs-toggle="modal" data-bs-target="#editKatalogModal">Edit</button><button class="btn btn-danger btn-delete" type="button">Hapus</button></div></td></tr>
+            <tr><td>BK-015</td><td>The Art of War</td><td>Sun Tzu</td><td>Sejarah</td><td>76000</td><td><div class="actions"><button class="btn btn-soft" type="button" data-bs-toggle="modal" data-bs-target="#editKatalogModal">Edit</button><button class="btn btn-danger btn-delete" type="button">Hapus</button></div></td></tr>
+          </tbody>
+        </table>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+          <p id="katalogPaginationInfo" style="margin:0;color:var(--text-muted);"></p>
+          <nav aria-label="Katalog pagination">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" id="katalogPrevItem"><button class="page-link" id="katalogPrevBtn" type="button">Previous</button></li>
+              <li class="page-item disabled"><span class="page-link" id="katalogPageLabel">1</span></li>
+              <li class="page-item" id="katalogNextItem"><button class="page-link" id="katalogNextBtn" type="button">Next</button></li>
+            </ul>
+          </nav>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal fade" id="createKatalogModal" tabindex="-1" aria-labelledby="createKatalogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createKatalogModalLabel">Tambah Buku</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="form-grid">
+            <div class="field"><label>ID Buku</label><input type="text"></div>
+            <div class="field"><label>Judul Buku</label><input type="text"></div>
+            <div class="field"><label>Penulis</label><input type="text"></div>
+            <div class="field"><label>Kategori</label><select><option>Sastra Indonesia</option><option>Sosiologi</option><option>Filsafat</option></select></div>
+            <div class="field"><label>Harga</label><input type="number"></div>
+            <div class="field"><label>Stok</label><input type="number"></div>
+           
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editKatalogModal" tabindex="-1" aria-labelledby="editKatalogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editKatalogModalLabel">Edit Buku</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="form-grid">
+            <div class="field"><label>ID Buku</label><input type="text"></div>
+            <div class="field"><label>Judul Buku</label><input type="text"></div>
+            <div class="field"><label>Penulis</label><input type="text"></div>
+            <div class="field"><label>Kategori</label><select><option>Sastra Indonesia</option><option>Sosiologi</option><option>Filsafat</option></select></div>
+            <div class="field"><label>Harga</label><input type="number"></div>
+            <div class="field"><label>Stok</label><input type="number"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../assets/script/admin/shared-layout.js"></script>
+  <script>
+    (function () {
+      const pageSize = 5;
+      let currentPage = 1;
+      const body = document.getElementById("katalogTableBody");
+      const info = document.getElementById("katalogPaginationInfo");
+      const label = document.getElementById("katalogPageLabel");
+      const prevBtn = document.getElementById("katalogPrevBtn");
+      const nextBtn = document.getElementById("katalogNextBtn");
+      const prevItem = document.getElementById("katalogPrevItem");
+      const nextItem = document.getElementById("katalogNextItem");
+
+      function rows() {
+        return Array.from(body.querySelectorAll("tr"));
+      }
+
+      function pageCount() {
+        return Math.max(1, Math.ceil(rows().length / pageSize));
+      }
+
+      function render() {
+        const allRows = rows();
+        const totalPages = pageCount();
+        if (currentPage > totalPages) currentPage = totalPages;
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+
+        allRows.forEach(function (row, index) {
+          row.style.display = index >= start && index < end ? "" : "none";
+        });
+
+        info.textContent = "Halaman " + currentPage + " dari " + totalPages + " (Total " + allRows.length + " data)";
+        label.textContent = currentPage + " / " + totalPages;
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+        prevItem.classList.toggle("disabled", currentPage === 1);
+        nextItem.classList.toggle("disabled", currentPage === totalPages);
+      }
+
+      body.addEventListener("click", function (event) {
+        const deleteBtn = event.target.closest(".btn-delete");
+        if (!deleteBtn) return;
+        const row = deleteBtn.closest("tr");
+        if (!row) return;
+        row.remove();
+        render();
+      });
+
+      prevBtn.addEventListener("click", function () {
+        if (currentPage > 1) {
+          currentPage -= 1;
+          render();
+        }
+      });
+
+      nextBtn.addEventListener("click", function () {
+        if (currentPage < pageCount()) {
+          currentPage += 1;
+          render();
+        }
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

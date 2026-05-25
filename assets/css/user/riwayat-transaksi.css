@@ -1,0 +1,115 @@
+.history-page-container {
+    background: transparent;
+}
+
+.history-title {
+    color: var(--dark-text);
+    font-size: 2rem;
+    letter-spacing: -0.3px;
+}
+
+.history-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(46, 36, 91, 0.08);
+    box-shadow: var(--card-shadow);
+    border-radius: 20px;
+}
+
+.history-filter .btn {
+    border-radius: 999px;
+    font-weight: 700;
+    border-width: 1px;
+}
+
+.history-filter .btn.active {
+    background: linear-gradient(135deg, #2e245b, #423482);
+    color: #fff;
+    border-color: #2e245b;
+}
+
+.history-card .form-control {
+    border: 1px solid rgba(46, 36, 91, 0.12);
+    border-radius: 12px;
+    padding: 10px 14px;
+}
+
+.history-card .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(224, 195, 252, 0.35);
+}
+
+.transaction-row {
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(46, 36, 91, 0.09);
+}
+
+.transaction-row + .transaction-row {
+    margin-top: 12px;
+}
+
+.transaction-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.invoice-id {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+.book-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(224, 195, 252, 0.22);
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.transaction-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 6px 11px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.status-success {
+    background: rgba(39, 174, 96, 0.17);
+    color: #1f8a4d;
+}
+
+.status-process {
+    background: rgba(241, 196, 15, 0.18);
+    color: #916200;
+}
+
+.status-failed {
+    background: rgba(231, 76, 60, 0.16);
+    color: #b03c2f;
+}
+
+@media (max-width: 767px) {
+    .transaction-head,
+    .transaction-foot {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}

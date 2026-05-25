@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran - BookStore</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/css/user/d.css">
+    <link rel="stylesheet" href="../../assets/css/user/layout-shared.css">
+    <link rel="stylesheet" href="../../assets/css/user/transaction.css">
+</head>
+
+<body>
+    <div id="site-navbar"></div>
+
+    <main class="transaction-page-container py-5">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb custom-breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="index.html#koleksi">Koleksi Buku</a></li>
+                    <li class="breadcrumb-item"><a href="detail.html">Detail Produk</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Pembayaran</li>
+                </ol>
+            </nav>
+
+            <div class="mb-4">
+                <span class="section-subtitle">Checkout Aman</span>
+                <h1 class="transaction-title fw-extrabold">Selesaikan Pembayaran</h1>
+                <p class="text-muted mb-0">Lengkapi data pembayaran Anda dan konfirmasi transaksi dalam satu langkah.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <section class="checkout-card p-4 p-md-5 mb-4">
+                        <h5 class="fw-bold mb-3">Informasi Pembeli</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Nama Lengkap</label>
+                                <input type="text" class="form-control checkout-form-control"
+                                    placeholder="Masukkan nama lengkap">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control checkout-form-control"
+                                    placeholder="nama@email.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">No. WhatsApp</label>
+                                <input type="text" class="form-control checkout-form-control"
+                                    placeholder="+62 8xx xxxx xxxx">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Catatan (Opsional)</label>
+                                <input type="text" class="form-control checkout-form-control"
+                                    placeholder="Contoh: butuh invoice">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="checkout-card p-4 p-md-5">
+                        <h5 class="fw-bold mb-3">Kode Promo</h5>
+                        <div class="row g-2">
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control checkout-form-control"
+                                    placeholder="Contoh: GDBHEMAT10">
+                            </div>
+                            <div class="col-sm-4">
+                                <button type="button" class="btn btn-outline-cart w-100 py-2 fw-bold">Gunakan</button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-lg-4">
+                    <aside class="checkout-card p-4 summary-sticky">
+                        <h5 class="fw-bold mb-3">Ringkasan Pesanan</h5>
+
+                        <div class="d-flex gap-3 align-items-start mb-3">
+                            <img src="../../assets/pic/b-1.png" alt="Makrifat Daun" class="summary-cover">
+                            <div>
+                                <h6 class="fw-bold mb-1">Makrifat Daun: Daun Makrifat</h6>
+                                <small class="text-muted d-block">Kuntowijoyo</small>
+                                <small class="text-muted">PDF Premium • Akses Selamanya</small>
+                            </div>
+                        </div>
+
+                        <div class="price-row">
+                            <span>Harga Buku</span>
+                            <strong>Rp 50.000</strong>
+                        </div>
+                        <div class="price-row">
+                            <span>Biaya Layanan</span>
+                            <strong id="feeAmount">Rp 2.500</strong>
+                        </div>
+                        <div class="price-row">
+                            <span>Diskon</span>
+                            <strong class="text-success">- Rp 0</strong>
+                        </div>
+                        <div class="price-row total">
+                            <span>Total Pembayaran</span>
+                            <span id="totalAmount">Rp 52.500</span>
+                        </div>
+
+                        <button type="button"
+                            class="btn btn-primary-buy w-100 py-3 fw-bold rounded-3 mt-3 d-flex align-items-center justify-content-center gap-2">
+                            <i class="fa-solid fa-lock"></i> Bayar Sekarang
+                        </button>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/script/user/shared-layout.js"></script>
+    <script>
+        (function () {
+            const bookPrice = 50000;
+            const serviceFee = 2500;
+            const feeAmount = document.getElementById('feeAmount');
+            const totalAmount = document.getElementById('totalAmount');
+            feeAmount.textContent = 'Rp ' + serviceFee.toLocaleString('id-ID');
+            totalAmount.textContent = 'Rp ' + (bookPrice + serviceFee).toLocaleString('id-ID');
+        })();
+    </script>
+</body>
+
+</html>
