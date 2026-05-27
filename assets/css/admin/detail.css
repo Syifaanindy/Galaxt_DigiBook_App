@@ -1,0 +1,247 @@
+.admin-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+    align-items: stretch;
+    background: linear-gradient(135deg, #a1caff 0%, #d0bfff 100%) !important;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 28px;
+    box-sizing: border-box;
+    background: transparent !important;
+}
+
+.panel {
+    flex-grow: 1;
+    background: rgba(255, 255, 255, 0.78) !important;
+    border-radius: 20px;
+    padding: 35px;
+    box-sizing: border-box;
+    margin-bottom: 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05) !important;
+    border: none !important;
+}
+
+.main-title {
+    color: #2b2d42;
+    font-weight: 700;
+    font-size: 26px;
+    margin-bottom: 25px;
+}
+
+.book-detail-container {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.book-left-side {
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+.book-cover-wrapper {
+    width: 100%;
+}
+
+.book-cover-detail {
+    width: 100%;
+    height: 340px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(81, 45, 168, 0.15);
+}
+
+.no-cover-box {
+    width: 100%;
+    height: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border-radius: 16px;
+    border: 2px dashed #dee2e6;
+}
+
+.pdf-card-download {
+    display: flex;
+    align-items: center;
+    background: #f8fafd;
+    padding: 12px 14px;
+    border-radius: 12px;
+    text-decoration: none !important;
+    gap: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.pdf-card-download:hover {
+    background: #edf2f9;
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+}
+
+.pdf-card-download.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.pdf-icon-box {
+    background: #e0e7ff;
+    color: #512da8;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.pdf-info-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.pdf-filename {
+    color: #2b2d42;
+    font-weight: 700;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pdf-sub {
+    color: #64748b;
+    font-size: 11px;
+}
+
+.book-right-side {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group-detail label {
+    color: #495057;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.form-control-static {
+    background: #f8fafd;
+    color: #2b2d42;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    border: 1px solid #e2e8f0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.row-inputs {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.select-style {
+    position: relative;
+    padding-right: 35px;
+}
+
+.select-style::after {
+    content: "\f107";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+}
+
+.rating-style {
+    color: #e67e22;
+    font-weight: 700;
+}
+
+.textarea-style {
+    min-height: 120px;
+    white-space: pre-line;
+    line-height: 1.6;
+    color: #4a4a68;
+}
+
+.action-buttons-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.btn-custom {
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.btn-back {
+    background: #2e245b;;
+    color: #ffffff;
+    border: 1px solid #2b2a4a;
+}
+
+.btn-back:hover {
+ background: #1a1933;
+    border-color: #1a1933;
+    box-shadow: 0 4px 12px rgba(43, 42, 74, 0.2);}
+
+@media (max-width: 992px) {
+    .book-detail-container {
+        flex-direction: column;
+        gap: 30px;
+    }
+    .book-left-side {
+        width: 100%;
+        align-items: center;
+    }
+    .book-cover-wrapper, .pdf-card-download {
+        width: 240px;
+    }
+    .row-inputs {
+        flex-direction: column;
+        gap: 20px;
+    }
+}

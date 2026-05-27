@@ -68,8 +68,13 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <td><?= htmlspecialchars($buku['category_name'] ?? 'Tanpa Kategori'); ?></td>
                     <td>Rp <?= number_format($buku['price'], 0, ',', '.'); ?></td>
                     <td>
-                        <div class="actions">
-                            <button class="btn btn-soft btn-edit" type="button" 
+                        <div class="actions" style="gap: 5px;">
+                            <a href="<?= base_url('views/admin/detail-buku.php?id=' . $buku['id']); ?>" 
+                               class="btn btn-info btn-sm text-white" title="Detail Buku">
+                               <i class="fa-solid fa-eye"></i>
+                            </a>
+
+                            <button class="btn btn-warning btn-sm text-white btn-edit" type="button" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#editKatalogModal"
                                     data-id="<?= $buku['id']; ?>"
@@ -77,12 +82,14 @@ unset($_SESSION['success'], $_SESSION['error']);
                                     data-author="<?= htmlspecialchars($buku['author'], ENT_QUOTES); ?>"
                                     data-category="<?= $buku['category_id']; ?>"
                                     data-price="<?= $buku['price']; ?>"
-                                    data-synopsis="<?= htmlspecialchars($buku['synopsis'], ENT_QUOTES); ?>">
-                                Edit
+                                    data-synopsis="<?= htmlspecialchars($buku['synopsis'], ENT_QUOTES); ?>"
+                                    title="Edit Buku">
+                               <i class="fa-solid fa-pen-to-square"></i>
                             </button>
+
                             <a href="<?= base_url('controllers/buku-controller.php?action=delete&id=' . $buku['id']); ?>" 
-                               class="btn btn-danger btn-delete">
-                               Hapus
+                               class="btn btn-danger btn-sm btn-delete" title="Hapus Buku">
+                               <i class="fa-solid fa-trash"></i>
                             </a>
                         </div>
                     </td>
@@ -158,7 +165,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                 
                 <div class="field"><label class="form-label">Harga</label><input type="number" name="price" id="edit-price" class="form-control" required></div>
                 <div class="field" style="grid-column: span 2;"><label class="form-label">Sinopsis</label><textarea name="synopsis" id="edit-synopsis" class="form-control" rows="3"></textarea></div>
-                <div class="field"><label class="form-label">File Buku baru (Kosongkan jika tidak diganti)</label><input type="file" name="file_buku" id="file_buku"class="form-control"></div>
+                <div class="field"><label class="form-label">File Buku baru (Kosongkan jika tidak diganti)</label><input type="file" name="file_buku" id="file_buku" class="form-control"></div>
                 <div class="field"><label class="form-label">Cover Buku baru (Kosongkan jika tidak diganti)</label><input type="file" name="cover_buku" id="cover_buku" class="form-control"></div>
               </div>
             </div>
@@ -201,8 +208,6 @@ unset($_SESSION['success'], $_SESSION['error']);
                 document.getElementById('edit-category').value = this.getAttribute('data-category');
                 document.getElementById('edit-price').value = this.getAttribute('data-price');
                 document.getElementById('edit-synopsis').value = this.getAttribute('data-synopsis');
-                document.getElementById('edit-file_buku').value = this.getAttribute('data-file_buku');
-                document.getElementById('edit-cover_buku').value = this.getAttribute('data-cover_buku');
             });
         });
 
