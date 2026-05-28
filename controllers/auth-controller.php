@@ -1,5 +1,4 @@
 <?php
-// Mencegah error duplikasi session_start
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -68,10 +67,12 @@ function prosesRegister() {
     }
 
     $username = trim($_POST['username'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
     $password = trim($_POST['password'] ?? '');
+    $role     = $_POST['role'] ?? 'user';
 
-    if (empty($username) || empty($password)) {
-        $_SESSION['error'] = "Username dan password wajib diisi.";
+    if (empty($username) || empty($email) || empty($password)) {
+        $_SESSION['error'] = "Username, Email, dan Password wajib diisi.";
         $_SESSION['auth_mode'] = 'register';
         redirectAuth();
         exit;
@@ -98,7 +99,7 @@ function prosesRegister() {
         exit;
     }
 
-    if (!buatUser($conn, $username, $password, 'user')) {
+    if (!buatUser($conn, $username, $email, $password, $role)) {
         $_SESSION['error'] = "Registrasi gagal. Silakan coba lagi.";
         $_SESSION['auth_mode'] = 'register';
         redirectAuth();

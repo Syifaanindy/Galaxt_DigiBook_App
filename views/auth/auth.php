@@ -39,11 +39,15 @@ unset($_SESSION['error'], $_SESSION['success'], $_SESSION['auth_mode']);
                 <div class="social-icons">
                     <a href="#" class="icon"><i class="fa-regular fa-envelope"></i></a>
                 </div>
-                <span>or use your username password</span>
+                <span>or use your email for registration</span>
 
                 <input type="text" name="username" placeholder="Username" required>
                 
+                <input type="email" name="email" placeholder="Email" required>
+                
                 <input type="password" name="password" placeholder="Password" required>
+                
+                <input type="hidden" name="role" value="user">
                 
                 <button type="submit">Sign Up</button>
             </form>

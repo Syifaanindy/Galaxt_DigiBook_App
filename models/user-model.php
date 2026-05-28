@@ -46,29 +46,19 @@ function ambilSemuaUser($conn) {
     return $hasil->fetch_all(MYSQLI_ASSOC);
 }
 
-function buatUser($conn, $username, $password, $role = 'user') {
+function buatUser($conn, $username, $email, $password, $role = 'user') {
     $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 
-    $cekEmail = $conn->query("SHOW COLUMNS FROM users LIKE 'email'");
-    $adaEmail = $cekEmail && $cekEmail->num_rows > 0;
-
-    if ($adaEmail) {
-        $email = strpos($username, '@') !== false ? $username : $username . '@local.test';
-        $query = "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssss", $username, $email, $passwordHash, $role);
-        $berhasil = $stmt->execute();
-
-        $stmt->close();
-        return $berhasil;
+    $query = "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)";
+    
+    $stmt = $conn->prepare($query);
+    if (!$stmt) {
+        return false;
     }
 
-    $query = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("sss", $username, $passwordHash, $role);
+    $stmt->bind_param("ssss", $username, $email, $passwordHash, $role);
     $berhasil = $stmt->execute();
-    
     $stmt->close();
+
     return $berhasil;
 }
-?>
