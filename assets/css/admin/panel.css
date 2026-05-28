@@ -286,6 +286,11 @@ th {
     font-weight: 700;
 }
 
+.badge.danger {
+    background: #f8d7da;
+    color: #842029;
+}
+
 .badge.success {
     background: #daf5e7;
     color: #1b7b4f;

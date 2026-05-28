@@ -46,6 +46,13 @@ function ambilSemuaUser($conn) {
     return $hasil->fetch_all(MYSQLI_ASSOC);
 }
 
+function ambilPengunjung($conn) {
+    $query = "SELECT username, email FROM users WHERE role = 'user' ORDER BY username ASC";
+    
+    $hasil = $conn->query($query);
+    return $hasil->fetch_all(MYSQLI_ASSOC);
+}
+
 function buatUser($conn, $username, $password, $role = 'user') {
     $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 
