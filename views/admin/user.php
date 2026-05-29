@@ -25,7 +25,7 @@ $daftarUser = ambilPengunjung($conn);
 </head>
 <body>
   <div class="admin-layout">
-    <div id="admin-sidebar"></div>
+    <?php include 'partials/sidebar.php'; ?>
     <main class="main-content">
       <header class="topbar">
         <h2>User</h2>

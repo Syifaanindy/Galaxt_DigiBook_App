@@ -44,7 +44,7 @@ foreach ($list_kategori as $kat) {
 </head>
 <body>
   <div class="admin-layout">
-    <div id="admin-sidebar"></div>
+    <?php include 'partials/sidebar.php'; ?>
     
     <main class="main-content">
       <section class="panel">

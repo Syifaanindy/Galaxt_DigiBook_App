@@ -8,7 +8,7 @@
   </div>
   <nav class="menu">
     <a href="dashboard.php" class="menu-item"><i class="fa-solid fa-layer-group"></i> Dashboard </a>
-    <a href="kategori-buku.html" class="menu-item"><i class="fa-solid fa-layer-group"></i> Kategori Buku</a>
+    <a href="kategori-buku.php" class="menu-item"><i class="fa-solid fa-layer-group"></i> Kategori Buku</a>
     <a href="katalog-buku.php" class="menu-item"><i class="fa-solid fa-book-open"></i> Katalog Buku</a>
     <a href="transaksi.php" class="menu-item"><i class="fa-solid fa-money-bill-transfer"></i> Data Transaksi</a>
     <a href="report.php" class="menu-item"><i class="fa-solid fa-chart-line"></i> Laporan Penjualan</a>
