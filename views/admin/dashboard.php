@@ -8,22 +8,22 @@ require_once __DIR__ . '/../../config/url-helper.php';
 require_once __DIR__ . '/../../config/auth-helper.php';
 require_once __DIR__ . '/../../models/dashboard-admin-models.php';
 
+// 2. Proteksi halaman, pastikan hanya admin yang bisa masuk
 requireRole('admin');
 
-// 3. INIDIALISASI MODEL DAN AMBIL DATA (Tambahkan Bagian Ini)
-global $pdo; // Sesuaikan dengan variabel koneksi di file database.php kamu ($conn atau $pdo)
+// 3. INISIALISASI MODEL DENGAN VARIABEL KONEKSI YANG BENAR
+global $conn; // Menggunakan $conn sesuai konfigurasi database.php kamu
 
-// Membuat objek dari class yang ada di dashboard-admin-models.php
-$model = new DashboardAdminModel($pdo); 
+// Membuat objek model dengan mengoper koneksi $conn
+$model = new DashboardAdminModel($conn); 
 
-// Mengisi variabel data untuk digunakan oleh HTML & Chart di bawah
+// Mengambil data untuk kartu KPI dan Chart
 $totalPenjualan = $model->getTotalPenjualan();
 $totalOrder     = $model->getTotalOrder();
 $rataRata       = $totalOrder > 0 ? ($totalPenjualan / $totalOrder) : 0;
 
 $kategoriData   = $model->getBukuPerKategori();
 $bulananData    = $model->getPenjualanBulanan();
-
 ?>
 <!DOCTYPE html>
 <html lang="id">
