@@ -2,13 +2,28 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-// Load semua helper & database
+// 1. Load semua helper & database
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/url-helper.php';
 require_once __DIR__ . '/../../config/auth-helper.php';
+require_once __DIR__ . '/../../models/dashboard-admin-models.php';
 
-// Proteksi halaman, pastikan hanya admin yang bisa masuk
 requireRole('admin');
+
+// 3. INIDIALISASI MODEL DAN AMBIL DATA (Tambahkan Bagian Ini)
+global $pdo; // Sesuaikan dengan variabel koneksi di file database.php kamu ($conn atau $pdo)
+
+// Membuat objek dari class yang ada di dashboard-admin-models.php
+$model = new DashboardAdminModel($pdo); 
+
+// Mengisi variabel data untuk digunakan oleh HTML & Chart di bawah
+$totalPenjualan = $model->getTotalPenjualan();
+$totalOrder     = $model->getTotalOrder();
+$rataRata       = $totalOrder > 0 ? ($totalPenjualan / $totalOrder) : 0;
+
+$kategoriData   = $model->getBukuPerKategori();
+$bulananData    = $model->getPenjualanBulanan();
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
