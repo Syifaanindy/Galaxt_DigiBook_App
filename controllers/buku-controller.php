@@ -117,10 +117,39 @@ function prosesHapusBuku() {
     global $conn;
     $id = intval($_GET['id'] ?? 0);
     
-    if ($id > 0 && hapusBuku($conn, $id)) {
-        $_SESSION['success'] = "Buku berhasil dihapus.";
+    if ($id > 0) {
+        // 1. Ambil data buku untuk mendapatkan path file & cover sebelum baris data di database dihapus
+        $buku = ambilBukuById($conn, $id);
+        
+        if ($buku) {
+            // 2. Jalankan fungsi hapus data di database terlebih dahulu
+            if (hapusBuku($conn, $id)) {
+                
+                // 3. Jika database berhasil terhapus, bersihkan berkas PDF dari folder assets/book/
+                if (!empty($buku['file_path'])) {
+                    $physical_file_path = __DIR__ . "/../" . $buku['file_path'];
+                    if (file_exists($physical_file_path)) {
+                        unlink($physical_file_path);
+                    }
+                }
+                
+                // 4. Bersihkan juga berkas gambar cover dari folder assets/cover/
+                if (!empty($buku['cover_image'])) {
+                    $physical_cover_path = __DIR__ . "/../" . $buku['cover_image'];
+                    if (file_exists($physical_cover_path)) {
+                        unlink($physical_cover_path);
+                    }
+                }
+                
+                $_SESSION['success'] = "Buku beserta berkas filenya berhasil dihapus.";
+            } else {
+                $_SESSION['error'] = "Gagal menghapus data buku dari database.";
+            }
+        } else {
+            $_SESSION['error'] = "Data buku tidak ditemukan.";
+        }
     } else {
-        $_SESSION['error'] = "Gagal menghapus data buku.";
+        $_SESSION['error'] = "ID Buku tidak valid.";
     }
     
     header("Location: " . base_url('views/admin/katalog-buku.php'));

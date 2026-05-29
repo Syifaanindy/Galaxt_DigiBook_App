@@ -33,7 +33,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 </head>
 <body>
   <div class="admin-layout">
-    <div id="admin-sidebar"></div>
+    <?php include 'partials/sidebar.php'; ?>
     <main class="main-content">
       <header class="topbar">
         <h2>Katalog Buku</h2>

@@ -62,3 +62,11 @@ function buatUser($conn, $username, $email, $password, $role = 'user') {
 
     return $berhasil;
 }
+
+function ambilPengunjung($conn) {
+    // Cek username dan email saja, karena cuma itu yang ada di DB
+    $query = "SELECT username, email FROM users WHERE role = 'user' ORDER BY username ASC";
+    
+    $hasil = $conn->query($query);
+    return $hasil->fetch_all(MYSQLI_ASSOC);
+}

@@ -32,4 +32,3 @@ function setActiveMenu() {
   await loadPartial("admin-sidebar", "./partials/sidebar.html");
   setActiveMenu();
 })();
-

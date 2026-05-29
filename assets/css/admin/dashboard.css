@@ -1,0 +1,123 @@
+/* --- Pembungkus Layout Bawah (2 Kolom) --- */
+.dashboard-bottom-layout {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr; /* Kolom kiri lebih luas dari kolom kanan */
+    gap: 25px;
+    width: 100%;
+    align-items: stretch; /* Memastikan tinggi kedua kolom sama rata */
+}
+
+/* --- Pengaturan Box Putih (Universal) --- */
+.info-box {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(160, 175, 210, 0.2);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+/* --- Kunci Pengaturan Kolom Grafik --- */
+.chart-column {
+    min-width: 0; /* KRUSIAL: Mencegah grafik Chart.js merusak lebar grid */
+}
+
+.chart-wrapper {
+    position: relative;
+    height: 300px; /* Mengunci tinggi grafik agar rapi */
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* --- Pengaturan Kolom Tren --- */
+.trend-column {
+    justify-content: flex-start;
+}
+
+.trend-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* --- Komponen List Item Buku --- */
+.trend-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(248, 250, 252, 0.6);
+    padding: 12px 15px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+}
+
+.rank-badge {
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 14px;
+}
+
+/* Variasi Warna Badge Juara */
+.rank-1 { background: #ffbc00; } /* Emas */
+.rank-2 { background: #a8a8a8; } /* Perak */
+.rank-3 { background: #b0723a; } /* Perunggu */
+
+.book-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    color: #2b244d;
+    font-weight: 700;
+}
+
+.book-info p {
+    margin: 0;
+    font-size: 12px;
+    color: #8c89a0;
+}
+
+/* --- Utilitas Teks --- */
+.box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.box-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2b244d;
+    margin: 0;
+}
+
+.box-subtitle {
+    font-size: 13px;
+    color: #8c89a0;
+    margin: 4px 0 0 0;
+}
+
+.badge-active {
+    background-color: #4a3f75;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.text-orange { color: #f97316; }
+
+/* --- Responsive Layout untuk Tablet / HP --- */
+@media (max-width: 992px) {
+    .dashboard-bottom-layout {
+        grid-template-columns: 1fr; /* Berubah jadi tumpuk vertikal jika layar kekecilan */
+    }
+}
