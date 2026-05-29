@@ -47,7 +47,7 @@ $bulananData    = $model->getPenjualanBulanan();
         
         <main class="main-content">
             <header class="topbar">
-                <h2>Dashboard Admin</h2>
+                <h2>Selamat Datang, Dashboard Admin</h2>
                 <p>Kelola data buku, transaksi, laporan, dan pengguna.</p>
             </header>
 
@@ -66,7 +66,7 @@ $bulananData    = $model->getPenjualanBulanan();
                 </article>
             </section>
 
-            <div class="dashboard-bottom-layout" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 24px;">
+            <div class="dashboard-bottom-layout"  style="gap:10px;" >
                 
                 <section class="info-box chart-column" style="background: #fff; padding: 24px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
                     <div class="box-header" style="margin-bottom: 16px;">
@@ -97,7 +97,7 @@ $bulananData    = $model->getPenjualanBulanan();
         const dataPenjualan = phpBulananData.map(item => item.total);
 
         const phpKategoriData = <?= json_encode($kategoriData); ?>;
-        const labelsKategori = phpKategoriData.map(item => item.kategori); // maps to category_name
+        const labelsKategori = phpKategoriData.map(item => item.kategori); 
         const dataJumlahBuku = phpKategoriData.map(item => item.jumlah);
 
         // Rendering Line Chart (Monthly Sales)
