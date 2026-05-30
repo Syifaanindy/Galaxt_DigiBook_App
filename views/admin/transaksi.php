@@ -10,7 +10,17 @@ requireRole('admin');
 $tgl_mulai = $_GET['tgl_mulai'] ?? null;
 $tgl_akhir = $_GET['tgl_akhir'] ?? null;
 
-$daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir);
+$halaman = $_GET['halaman'] ?? 1;
+$limit = 5;
+$offset = ($halaman - 1) * $limit;
+
+// Ambil total data untuk menghitung total halaman
+$totalData = hitungTotalTransaksi($conn, $tgl_mulai, $tgl_akhir);
+$totalPages = ceil($totalData / $limit);
+
+// Panggil fungsi yang sudah di-update
+$daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir, $limit, $offset);
+
 ?>
 
 <!DOCTYPE html>
@@ -34,7 +44,7 @@ $daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir);
       <header class="topbar"><h2>Transaksi</h2><p>Monitor status pembayaran dan order buku.</p></header>
       <section class="panel">
         <h3>Filter Transaksi</h3>
-        <form class="form-grid" method="GET" action="">
+        <form class="form-grid" style="grid-template-columns: repeat(3, auto); gap: 25px; ...">
           <input type="hidden" name="action" value="transaksi"> 
           
           <div class="field">
@@ -45,11 +55,14 @@ $daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir);
             <label>Sampai Tanggal</label>
             <input type="date" name="tgl_akhir" value="<?= $tgl_akhir ?? date('Y-m-d') ?>">
           </div>
-          <div class="field" style="grid-column: span 3; display: flex; flex-direction: column; justify-content: flex-end;">
-              <label>&nbsp;</label>
-              <div style="display: flex; gap: 10px; width: 100%;">
-                  <button class="btn btn-primary" type="submit" style="flex: 1;">Terapkan Filter</button>
-                  <a href="transaksi.php" class="btn btn-secondary" style="flex: 1;">Reset</a>
+          <div class="field" style="display: flex; align-items: flex-end; gap: 10px;">
+              <div style="display: flex; gap: 10px; padding-bottom: 2px;"> 
+                  <button class="btn btn-primary" type="submit" style="white-space: nowrap; padding: 8px 20px;">
+                      Terapkan Filter
+                  </button>
+                  <a href="transaksi.php" class="btn btn-secondary" style="white-space: nowrap; padding: 8px 20px; text-decoration: none; display: flex; align-items: center;">
+                      Reset
+                  </a>
               </div>
           </div>
         </form>
@@ -68,7 +81,7 @@ $daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir);
           </thead>
           <tbody>
               <?php 
-                $daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir);
+                $daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir, $limit, $offset);
                 foreach ($daftarTransaksi as $row) : 
                     $tanggal = date('d-m-Y H:i', strtotime($row['transaction_date']));
                 ?>
@@ -98,6 +111,36 @@ $daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir);
               <?php endforeach; ?>
           </tbody>
         </table>
+        <div class="pagination">
+            <?php 
+            $prev = $halaman - 1; 
+            $next = $halaman + 1; 
+            
+            // Query string agar filter tanggal tidak hilang
+            $filter = "";
+            if ($tgl_mulai && $tgl_akhir) {
+                $filter = "&tgl_mulai=$tgl_mulai&tgl_akhir=$tgl_akhir";
+            }
+            ?>
+
+            <a 
+                class="page-btn <?= $halaman <= 1 ? 'disabled' : '' ?>"
+                href="?halaman=<?= $prev . $filter ?>"
+            >
+                ‹
+            </a>
+
+            <span class="page-btn active">
+                <?= $halaman ?> / <?= $totalPages ?>
+            </span>
+
+            <a 
+                class="page-btn <?= $halaman >= $totalPages ? 'disabled' : '' ?>"
+                href="?halaman=<?= $next . $filter ?>"
+            >
+                ›
+            </a>
+        </div>
       </section>
     </main>
   </div>
