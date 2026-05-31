@@ -18,32 +18,18 @@ $kategori = ambilSemuaKategoriLengkap($conn);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../../assets/css/admin/panel.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .swal2-styled.swal2-confirm {
+            background-color: #dc3545 !important;
+        }
+        .swal2-styled.swal2-cancel {
+            background-color: #6c757d !important;
+        }
+    </style>
 </head>
 <body>
-
-<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100; margin-top: 60px;">
-    <?php if (isset($_SESSION['success'])): ?>
-        <div id="liveToast" class="toast align-items-center text-white bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="fa-solid fa-circle-check me-2"></i> <?= $_SESSION['success']; unset($_SESSION['success']); ?>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    <?php endif; ?>
-
-    <?php if (isset($_SESSION['error'])): ?>
-        <div id="liveToast" class="toast align-items-center text-white bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="fa-solid fa-circle-exclamation me-2"></i> <?= $_SESSION['error']; unset($_SESSION['error']); ?>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    <?php endif; ?>
-</div>
 
 <div class="admin-layout">
     <?php include 'partials/sidebar.php'; ?>
@@ -86,10 +72,11 @@ $kategori = ambilSemuaKategoriLengkap($conn);
                                                 data-name="<?= htmlspecialchars($item['category_name']); ?>">
                                             Edit
                                         </button>
-                                        <a href="<?= base_url('controllers/kategori-controller.php?action=delete&id=' . $item['id']); ?>"
-                                           class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">
+                                        <button type="button" class="btn btn-danger btn-hapus-swal" 
+                                                data-id="<?= $item['id']; ?>" 
+                                                data-name="<?= htmlspecialchars($item['category_name']); ?>">
                                             Hapus
-                                        </a>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -153,7 +140,7 @@ $kategori = ambilSemuaKategoriLengkap($conn);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../assets/script/admin/shared-layout.js"></script>
 <script>
-    setActiveMenu(); // Memastikan sidebar aktif menyala
+    setActiveMenu();
 
     document.querySelectorAll('.btn-edit').forEach(button => {
         button.addEventListener('click', function () {
@@ -162,14 +149,59 @@ $kategori = ambilSemuaKategoriLengkap($conn);
         });
     });
 
-    // Otomatis menghilangkan notifikasi melayang setelah 4 detik agar bersih kembali
-    setTimeout(() => {
-        const toastElement = document.getElementById('liveToast');
-        if (toastElement) {
-            const toast = new bootstrap.Toast(toastElement);
-            toast.hide();
-        }
-    }, 4000);
+    document.querySelectorAll('.btn-hapus-swal').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const name = this.dataset.name;
+            
+            Swal.fire({
+                title: 'Hapus kategori?',
+                text: `Kategori "${name}" yang dihapus tidak bisa dikembalikan.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `../../controllers/kategori-controller.php?action=delete&id=${id}`;
+                }
+            });
+        });
+    });
 </script>
+
+<?php if (isset($_SESSION['success'])): ?>
+    <script>
+        Swal.fire({
+            title: 'Berhasil',
+            text: "<?= $_SESSION['success']; ?>",
+            icon: 'success',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true, // Garis waktu berjalan aktif
+            toast: true
+        });
+    </script>
+    <?php unset($_SESSION['success']); ?>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['error'])): ?>
+    <script>
+        Swal.fire({
+            title: 'Gagal',
+            text: "<?= $_SESSION['error']; ?>",
+            icon: 'error',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true, // Garis waktu berjalan aktif
+            toast: true
+        });
+    </script>
+    <?php unset($_SESSION['error']); ?>
+<?php endif; ?>
+
 </body>
 </html>
