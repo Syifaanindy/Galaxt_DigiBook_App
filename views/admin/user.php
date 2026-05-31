@@ -77,7 +77,7 @@ $daftarUser = ambilPengunjungPaging($conn, $limit, $offset);
 
         <?php 
           $total_data = $totalData; 
-          $target_url = 'user.php'; // Sesuaikan jika nama file kamu berbeda, misal 'users.php'
+          $target_url = 'user.php'; 
           include 'partials/pagination.php'; 
         ?>
 
