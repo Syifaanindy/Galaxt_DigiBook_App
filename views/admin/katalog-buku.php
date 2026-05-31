@@ -26,7 +26,6 @@ $offset = ($page - 1) * $limit;
 $total_buku = hitungTotalBuku($conn); 
 $total_pages = ceil($total_buku / $limit);
 
-// Ambil data spesifik per halaman
 $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset); 
 ?>
 <!DOCTYPE html>
@@ -42,8 +41,10 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../../assets/css/admin/panel.css">
   <link rel="stylesheet" href="../../assets/css/admin/sidebar.css">
+  <link rel="stylesheet" href="../../assets/css/admin/pagination.css">
 </head>
 <body>
+
   <div class="admin-layout">
     <?php include 'partials/sidebar.php'; ?>
     <main class="main-content">
@@ -52,91 +53,74 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
         <p>Tambah, edit, dan hapus data buku.</p>
       </header>
 
-      <section class="panel table-wrap">
+      <section class="panel">
         <div class="actions" style="justify-content:space-between; margin-bottom:14px;">
           <h3 style="margin:0;">List Buku Katalog</h3>
           <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#createKatalogModal">Tambah Data</button>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Judul</th>
-              <th>Penulis</th>
-              <th>Kategori</th>
-              <th>Harga</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="katalogTableBody">
-            <?php if (empty($list_buku)): ?>
-                <tr><td colspan="6" style="text-align:center;">Belum ada data buku.</td></tr>
-            <?php else: ?>
-                <?php foreach ($list_buku as $buku): ?>
-                <tr>
-                    <td>BK-<?= str_pad($buku['id'], 3, '0', STR_PAD_LEFT); ?></td>
-                    <td><?= htmlspecialchars($buku['title']); ?></td>
-                    <td><?= htmlspecialchars($buku['author']); ?></td>
-                    <td><?= htmlspecialchars($buku['category_name'] ?? 'Tanpa Kategori'); ?></td>
-                    <td>Rp <?= number_format($buku['price'], 0, ',', '.'); ?></td>
-                    <td>
-                        <div class="actions" style="gap: 5px;">
-                            <a href="<?= base_url('views/admin/detail-buku.php?id=' . $buku['id']); ?>" 
-                               class="btn btn-info btn-sm text-white" title="Detail Buku">
-                               <i class="fa-solid fa-eye"></i>
-                            </a>
+        
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Judul</th>
+                <th>Penulis</th>
+                <th>Kategori</th>
+                <th>Harga</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="katalogTableBody">
+              <?php if (empty($list_buku)): ?>
+                  <tr><td colspan="6" style="text-align:center;">Belum ada data buku.</td></tr>
+              <?php else: ?>
+                  <?php foreach ($list_buku as $buku): ?>
+                  <tr>
+                      <td>BK-<?= str_pad($buku['id'], 3, '0', STR_PAD_LEFT); ?></td>
+                      <td><?= htmlspecialchars($buku['title']); ?></td>
+                      <td><?= htmlspecialchars($buku['author']); ?></td>
+                      <td><?= htmlspecialchars($buku['category_name'] ?? 'Tanpa Kategori'); ?></td>
+                      <td>Rp <?= number_format($buku['price'], 0, ',', '.'); ?></td>
+                      <td>
+                          <div class="actions" style="gap: 5px;">
+                              <a href="<?= base_url('views/admin/detail-buku.php?id=' . $buku['id']); ?>" 
+                                 class="btn btn-info btn-sm text-white" title="Detail Buku">
+                                 <i class="fa-solid fa-eye"></i>
+                              </a>
 
-                            <button class="btn btn-warning btn-sm text-white btn-edit" type="button" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#editKatalogModal"
-                                    data-id="<?= $buku['id']; ?>"
-                                    data-title="<?= htmlspecialchars($buku['title'], ENT_QUOTES); ?>"
-                                    data-author="<?= htmlspecialchars($buku['author'], ENT_QUOTES); ?>"
-                                    data-category="<?= $buku['category_id']; ?>"
-                                    data-price="<?= $buku['price']; ?>"
-                                    data-synopsis="<?= htmlspecialchars($buku['synopsis'], ENT_QUOTES); ?>"
-                                    title="Edit Buku">
-                               <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
+                              <button class="btn btn-warning btn-sm text-white btn-edit" type="button" 
+                                      data-bs-toggle="modal" 
+                                      data-bs-target="#editKatalogModal"
+                                      data-id="<?= $buku['id']; ?>"
+                                      data-title="<?= htmlspecialchars($buku['title'], ENT_QUOTES); ?>"
+                                      data-author="<?= htmlspecialchars($buku['author'], ENT_QUOTES); ?>"
+                                      data-publisher="<?= htmlspecialchars($buku['publisher'] ?? '', ENT_QUOTES); ?>"
+                                      data-category="<?= $buku['category_id']; ?>"
+                                      data-price="<?= $buku['price']; ?>"
+                                      data-synopsis="<?= htmlspecialchars($buku['synopsis'] ?? '', ENT_QUOTES); ?>"
+                                      title="Edit Buku">
+                                 <i class="fa-solid fa-pen-to-square"></i>
+                              </button>
 
-                            <a href="<?= base_url('controllers/buku-controller.php?action=delete&id=' . $buku['id']); ?>" 
-                               class="btn btn-danger btn-sm btn-delete" title="Hapus Buku">
-                               <i class="fa-solid fa-trash"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
-          </tbody>
-        </table>
-
-        <?php if ($total_pages > 1): ?>
-        <div class="d-flex justify-content-between align-items-center mt-4">
-            <div class="text-muted" style="font-size: 14px;">
-                Halaman <strong><?= $page; ?></strong> dari <strong><?= $total_pages; ?></strong> (Total <?= $total_buku; ?> data)
-            </div>
-            <nav aria-label="Page navigation">
-              <ul class="pagination mb-0">
-                <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
-                  <a class="page-link" href="<?= base_url('views/admin/katalog-buku.php?page=' . ($page - 1)); ?>" aria-label="Previous">
-                    <span aria-hidden="true">&laquo; Prev</span>
-                  </a>
-                </li>
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                  <li class="page-item <?= ($page == $i) ? 'active' : ''; ?>">
-                    <a class="page-link" href="<?= base_url('views/admin/katalog-buku.php?page=' . $i); ?>"><?= $i; ?></a>
-                  </li>
-                <?php endfor; ?>
-                <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : ''; ?>">
-                  <a class="page-link" href="<?= base_url('views/admin/katalog-buku.php?page=' . ($page + 1)); ?>" aria-label="Next">
-                    <span aria-hidden="true">Next &raquo;</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
+                              <a href="<?= base_url('controllers/buku-controller.php?action=delete&id=' . $buku['id']); ?>" 
+                                 class="btn btn-danger btn-sm btn-delete" title="Hapus Buku">
+                                 <i class="fa-solid fa-trash"></i>
+                              </a>
+                          </div>
+                      </td>
+                  </tr>
+                  <?php endforeach; ?>
+              <?php endif; ?>
+            </tbody>
+          </table>
         </div>
-        <?php endif; ?>
+
+        <?php 
+          $total_data = $total_buku; 
+          $target_url = 'katalog-buku.php'; 
+          include 'partials/pagination.php'; 
+        ?>
 
       </section>
     </main>
@@ -224,6 +208,14 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
   
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Script Hamburger Menu Responsif
+        const toggleBtn = document.getElementById('toggleSidebarBtn');
+        if(toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                document.getElementById('admin-sidebar').classList.toggle('show');
+            });
+        }
+
         <?php if ($flashSuccess || $flashError): ?>
             Swal.fire({
                 toast: true,
@@ -258,7 +250,6 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
             });
         });
 
-        
         coverBukuInputs.forEach(input => {
             input.addEventListener('change', function() {
                 const file = this.files[0];

@@ -10,17 +10,17 @@ requireRole('admin');
 $tgl_mulai = $_GET['tgl_mulai'] ?? null;
 $tgl_akhir = $_GET['tgl_akhir'] ?? null;
 
-$halaman = $_GET['halaman'] ?? 1;
+// Mengubah penamaan variabel ke '$page' agar sinkron dengan partials/pagination.php
+$page = $_GET['page'] ?? 1;
 $limit = 5;
-$offset = ($halaman - 1) * $limit;
+$offset = ($page - 1) * $limit;
 
 // Ambil total data untuk menghitung total halaman
 $totalData = hitungTotalTransaksi($conn, $tgl_mulai, $tgl_akhir);
-$totalPages = ceil($totalData / $limit);
+$total_pages = ceil($totalData / $limit);
 
-// Panggil fungsi yang sudah di-update
+// Ambil data transaksi spesifik per halaman
 $daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir, $limit, $offset);
-
 ?>
 
 <!DOCTYPE html>
@@ -36,6 +36,7 @@ $daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir, $limit, $o
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../../assets/css/admin/panel.css">
   <link rel="stylesheet" href="../../assets/css/admin/sidebar.css">
+  <link rel="stylesheet" href="../../assets/css/admin/pagination.css">
 </head>
 <body>
   <div class="admin-layout">
@@ -44,7 +45,7 @@ $daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir, $limit, $o
       <header class="topbar"><h2>Transaksi</h2><p>Monitor status pembayaran dan order buku.</p></header>
       <section class="panel">
         <h3>Filter Transaksi</h3>
-        <form class="form-grid" style="grid-template-columns: repeat(3, auto); gap: 25px; ...">
+        <form class="form-grid" style="grid-template-columns: repeat(3, auto); gap: 25px;">
           <input type="hidden" name="action" value="transaksi"> 
           
           <div class="field">
@@ -67,84 +68,63 @@ $daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir, $limit, $o
           </div>
         </form>
       </section>
-      <section class="panel table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Invoice</th>
-              <th>User</th>
-              <th>Buku</th>
-              <th>Total</th>   
-              <th>Tanggal</th> 
-              <th>Status</th> 
-            </tr>
-          </thead>
-          <tbody>
-              <?php 
-                $daftarTransaksi = ambilSemuaTransaksi($conn, $tgl_mulai, $tgl_akhir, $limit, $offset);
-                foreach ($daftarTransaksi as $row) : 
-                    $tanggal = date('d-m-Y H:i', strtotime($row['transaction_date']));
-                ?>
-                <tr>
-                    <td><?= $row['transaction_code']; ?></td>
-                    <td><?= $row['username']; ?></td>
-                    <td><?= $row['title']; ?></td>
-                    
-                    <td>Rp <?= number_format($row['total_price'], 0, ',', '.'); ?></td>
-                    
-                    <td><?= $tanggal; ?> WIB</td>
-                    <td>
-                        <?php 
-                        // Paksa semua jadi huruf kecil dulu buat pengecekan
-                        $statusReal = strtolower(trim($row['status'])); 
-                        ?>
 
-                        <?php if ($statusReal === 'success'): ?>
-                            <span class="badge success">
-                                <?= ucfirst($statusReal); ?> </span>
-                        <?php elseif ($statusReal === 'failed'): ?>
-                            <span class="badge danger">
-                                <?= ucfirst($statusReal); ?> </span>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-              <?php endforeach; ?>
-          </tbody>
-        </table>
-        <div class="pagination">
-            <?php 
-            $prev = $halaman - 1; 
-            $next = $halaman + 1; 
-            
-            // Query string agar filter tanggal tidak hilang
-            $filter = "";
-            if ($tgl_mulai && $tgl_akhir) {
-                $filter = "&tgl_mulai=$tgl_mulai&tgl_akhir=$tgl_akhir";
-            }
-            ?>
-
-            <a 
-                class="page-btn <?= $halaman <= 1 ? 'disabled' : '' ?>"
-                href="?halaman=<?= $prev . $filter ?>"
-            >
-                ‹
-            </a>
-
-            <span class="page-btn active">
-                <?= $halaman ?> / <?= $totalPages ?>
-            </span>
-
-            <a 
-                class="page-btn <?= $halaman >= $totalPages ? 'disabled' : '' ?>"
-                href="?halaman=<?= $next . $filter ?>"
-            >
-                ›
-            </a>
+      <section class="panel">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Invoice</th>
+                <th>User</th>
+                <th>Buku</th>
+                <th>Total</th>   
+                <th>Tanggal</th> 
+                <th>Status</th> 
+              </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($daftarTransaksi)): ?>
+                  <?php foreach ($daftarTransaksi as $row) : 
+                      $tanggal = date('d-m-Y H:i', strtotime($row['transaction_date']));
+                  ?>
+                  <tr>
+                      <td><?= htmlspecialchars($row['transaction_code']); ?></td>
+                      <td><?= htmlspecialchars($row['username']); ?></td>
+                      <td><?= htmlspecialchars($row['title']); ?></td>
+                      <td>Rp <?= number_format($row['total_price'], 0, ',', '.'); ?></td>
+                      <td><?= $tanggal; ?> WIB</td>
+                      <td>
+                          <?php $statusReal = strtolower(trim($row['status'])); ?>
+                          <?php if ($statusReal === 'success'): ?>
+                              <span class="badge success"><?= ucfirst($statusReal); ?></span>
+                          <?php elseif ($statusReal === 'failed'): ?>
+                              <span class="badge danger"><?= ucfirst($statusReal); ?></span>
+                          <?php else: ?>
+                              <span class="badge warning"><?= ucfirst($statusReal); ?></span>
+                          <?php endif; ?>
+                      </td>
+                  </tr>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <tr><td colspan="6" class="text-center">Data transaksi tidak ditemukan</td></tr>
+                <?php endif; ?>
+            </tbody>
+          </table>
         </div>
+
+        <?php 
+          $total_data = $totalData; 
+          $url_params = [];
+          if ($tgl_mulai) $url_params['tgl_mulai'] = $tgl_mulai;
+          if ($tgl_akhir) $url_params['tgl_akhir'] = $tgl_akhir;
+          
+          $target_url = 'transaksi.php' . (!empty($url_params) ? '?' . http_build_query($url_params) : ''); 
+          include 'partials/pagination.php'; 
+        ?>
       </section>
     </main>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../../assets/script/admin/shared-layout.js"></script>
 </body>
 </html>
-

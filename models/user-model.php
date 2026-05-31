@@ -69,3 +69,29 @@ function buatUser($conn, $username, $email, $password, $role = 'user') {
 
     return $berhasil;
 }
+
+
+function hitungTotalPengunjung($conn) {
+    $query = "SELECT COUNT(*) as total FROM users WHERE role = 'user'";
+    $result = mysqli_query($conn, $query);
+    if ($result) {
+        $data = mysqli_fetch_assoc($result);
+        return (int)$data['total'];
+    }
+    return 0;
+}
+
+
+function ambilPengunjungPaging($conn, $limit, $offset) {
+    $limit = (int)$limit;
+    $offset = (int)$offset;
+    
+    $query = "SELECT username, email FROM users WHERE role = 'user' ORDER BY id DESC LIMIT $limit OFFSET $offset";
+    $result = mysqli_query($conn, $query);
+    
+    if (!$result) {
+        return [];
+    }
+    
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}

@@ -7,7 +7,18 @@ require_once __DIR__ . '/../../models/user-model.php';
 
 requireRole('admin');
 
-$daftarUser = ambilPengunjung($conn);
+// --- LOGIKA PAGINATION ---
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) { $page = 1; }
+$limit = 5;
+$offset = ($page - 1) * $limit;
+
+// Menghitung total pengunjung untuk pagination
+$totalData = hitungTotalPengunjung($conn);
+$total_pages = ceil($totalData / $limit);
+
+// Mengambil data pengunjung khusus halaman ini
+$daftarUser = ambilPengunjungPaging($conn, $limit, $offset);
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +34,7 @@ $daftarUser = ambilPengunjung($conn);
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../../assets/css/admin/panel.css">
   <link rel="stylesheet" href="../../assets/css/admin/sidebar.css">
+  <link rel="stylesheet" href="../../assets/css/admin/pagination.css">
 </head>
 <body>
   <div class="admin-layout">
@@ -33,105 +45,47 @@ $daftarUser = ambilPengunjung($conn);
         <p>Memantau akun pengguna.</p>
       </header>
 
-      <section class="panel table-wrap">
-        <div class="actions" style="justify-content:space-between; margin-bottom:14px;">
+      <section class="panel">
+        <div class="actions mb-3">
           <h3 style="margin:0;">Data User</h3>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Nama</th>
-              <th>Email</th>
-            </tr>
-          </thead>
-            <tbody id="userTableBody"> <?php foreach ($daftarUser as $user): ?>
+        
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody"> 
+              <?php if (!empty($daftarUser)): ?>
+                <?php foreach ($daftarUser as $user): ?>
+                  <tr>
+                    <td><?= htmlspecialchars($user['username']) ?></td>
+                    <td><?= htmlspecialchars($user['email']) ?></td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php else: ?>
                 <tr>
-                  <td><?= htmlspecialchars($user['username']) ?></td>
-                  <td><?= htmlspecialchars($user['email']) ?></td>
+                  <td colspan="2" class="text-center">Belum ada data user.</td>
                 </tr>
-              <?php endforeach; ?>
+              <?php endif; ?>
             </tbody>
-        </table>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
-          <p id="userPaginationInfo" style="margin:0;color:var(--text-muted);"></p>
-          <nav aria-label="User pagination">
-            <ul class="pagination pagination-sm mb-0">
-              <li class="page-item" id="userPrevItem"><button class="page-link" id="userPrevBtn" type="button">Previous</button></li>
-              <li class="page-item disabled"><span class="page-link" id="userPageLabel">1</span></li>
-              <li class="page-item" id="userNextItem"><button class="page-link" id="userNextBtn" type="button">Next</button></li>
-            </ul>
-          </nav>
+          </table>
         </div>
+
+        <?php 
+          $total_data = $totalData; 
+          $target_url = 'user.php'; // Sesuaikan jika nama file kamu berbeda, misal 'users.php'
+          include 'partials/pagination.php'; 
+        ?>
+
       </section>
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../../assets/script/admin/shared-layout.js"></script>
-  <script>
-    (function () {
-      const pageSize = 8;
-      let currentPage = 1;
-      const body = document.getElementById("userTableBody");
-      const info = document.getElementById("userPaginationInfo");
-      const label = document.getElementById("userPageLabel");
-      const prevBtn = document.getElementById("userPrevBtn");
-      const nextBtn = document.getElementById("userNextBtn");
-      const prevItem = document.getElementById("userPrevItem");
-      const nextItem = document.getElementById("userNextItem");
-
-      function rows() {
-        return Array.from(body.querySelectorAll("tr"));
-      }
-
-      function pageCount() {
-        return Math.max(1, Math.ceil(rows().length / pageSize));
-      }
-
-      function render() {
-        const allRows = rows();
-        const totalPages = pageCount();
-        if (currentPage > totalPages) currentPage = totalPages;
-        const start = (currentPage - 1) * pageSize;
-        const end = start + pageSize;
-
-        allRows.forEach(function (row, index) {
-          row.style.display = index >= start && index < end ? "" : "none";
-        });
-
-        info.textContent = "Halaman " + currentPage + " dari " + totalPages + " (Total " + allRows.length + " data)";
-        label.textContent = currentPage + " / " + totalPages;
-        prevBtn.disabled = currentPage === 1;
-        nextBtn.disabled = currentPage === totalPages;
-        prevItem.classList.toggle("disabled", currentPage === 1);
-        nextItem.classList.toggle("disabled", currentPage === totalPages);
-      }
-
-      body.addEventListener("click", function (event) {
-        const deleteBtn = event.target.closest(".btn-delete");
-        if (!deleteBtn) return;
-        const row = deleteBtn.closest("tr");
-        if (!row) return;
-        row.remove();
-        render();
-      });
-
-      prevBtn.addEventListener("click", function () {
-        if (currentPage > 1) {
-          currentPage -= 1;
-          render();
-        }
-      });
-
-      nextBtn.addEventListener("click", function () {
-        if (currentPage < pageCount()) {
-          currentPage += 1;
-          render();
-        }
-      });
-
-      render();
-    })();
-  </script>
 </body>
 </html>

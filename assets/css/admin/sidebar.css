@@ -118,7 +118,7 @@ body {
 }
 
 .main-content {
-    padding: 28px;
+    padding: 18px;
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -128,7 +128,7 @@ body {
     background: var(--surface-top);
     border: 1px solid var(--border);
     border-radius: 18px;
-    padding: 20px;
+    padding: 15px;
 }
 
 .topbar h2 {
@@ -143,7 +143,7 @@ body {
 .cards {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
+    gap: 10px;
 }
 
 .card,

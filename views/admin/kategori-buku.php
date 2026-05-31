@@ -1,13 +1,30 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once '../../config/database.php';
 require_once '../../config/url-helper.php';
 require_once '../../models/kategori-model.php';
 
-$kategori = ambilSemuaKategoriLengkap($conn);
+// --- LOGIKA PAGINATION ---
+$limit = 5; 
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) { $page = 1; }
+$offset = ($page - 1) * $limit;
+
+// Menghitung total baris kategori untuk menentukan jumlah halaman
+$total_kategori = hitungTotalKategori($conn); 
+$total_pages = ceil($total_kategori / $limit);
+
+// Mengambil data kategori terbatas (sesuai halaman saat ini)
+$kategori = ambilSemuaKategoriLengkapPaging($conn, $limit, $offset);
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Kategori Buku</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
@@ -15,6 +32,7 @@ $kategori = ambilSemuaKategoriLengkap($conn);
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../../assets/css/admin/panel.css">
   <link rel="stylesheet" href="../../assets/css/admin/sidebar.css">
+  <link rel="stylesheet" href="../../assets/css/admin/pagination.css">
 </head>
 <body>
 
@@ -39,7 +57,7 @@ $kategori = ambilSemuaKategoriLengkap($conn);
             </div>
         <?php endif; ?>
 
-        <section class="panel table-wrap">
+        <section class="panel">
             <div class="actions d-flex justify-content-between mb-3">
                 <h3 class="m-0">Data Kategori</h3>
                 <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#createKategoriModal">
@@ -47,43 +65,52 @@ $kategori = ambilSemuaKategoriLengkap($conn);
                 </button>
             </div>
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nama Kategori</th>
-                        <th>Jumlah Buku</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="kategoriTableBody">
-                    <?php if (!empty($kategori)): ?>
-                        <?php foreach ($kategori as $item): ?>
-                            <tr>
-                                <td>KT-<?= str_pad($item['id'], 3, '0', STR_PAD_LEFT); ?></td>
-                                <td><?= htmlspecialchars($item['category_name']); ?></td>
-                                <td><?= $item['total_buku']; ?></td>
-                                <td>
-                                    <div class="actions">
-                                        <button class="btn btn-soft btn-edit" type="button" 
-                                                data-bs-toggle="modal" data-bs-target="#editKategoriModal"
-                                                data-id="<?= $item['id']; ?>" 
-                                                data-name="<?= htmlspecialchars($item['category_name']); ?>">
-                                            Edit
-                                        </button>
-                                        <a href="<?= base_url('controllers/kategori-controller.php?action=delete&id=' . $item['id']); ?>" 
-                                           class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">
-                                            Hapus
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr><td colspan="4" class="text-center">Data kategori belum ada</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama Kategori</th>
+                            <th>Jumlah Buku</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kategoriTableBody">
+                        <?php if (!empty($kategori)): ?>
+                            <?php foreach ($kategori as $item): ?>
+                                <tr>
+                                    <td>KT-<?= str_pad($item['id'], 3, '0', STR_PAD_LEFT); ?></td>
+                                    <td><?= htmlspecialchars($item['category_name']); ?></td>
+                                    <td><?= $item['total_buku']; ?></td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="btn btn-soft btn-edit" type="button" 
+                                                    data-bs-toggle="modal" data-bs-target="#editKategoriModal"
+                                                    data-id="<?= $item['id']; ?>" 
+                                                    data-name="<?= htmlspecialchars($item['category_name']); ?>">
+                                                Edit
+                                            </button>
+                                            <a href="<?= base_url('controllers/kategori-controller.php?action=delete&id=' . $item['id']); ?>" 
+                                               class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">
+                                                Hapus
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr><td colspan="4" class="text-center">Data kategori belum ada</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <?php 
+              $total_data = $total_kategori; 
+              $target_url = 'kategori-buku.php'; 
+              include 'partials/pagination.php'; 
+            ?>
+
         </section>
     </main>
 </div>
@@ -138,76 +165,14 @@ $kategori = ambilSemuaKategoriLengkap($conn);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../assets/script/admin/shared-layout.js"></script>
 <script>
-    document.querySelectorAll('.btn-edit').forEach(button => {
-        button.addEventListener('click', function () {
-            document.getElementById('edit_id').value = this.dataset.id;
-            document.getElementById('edit_category_name').value = this.dataset.name;
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-edit').forEach(button => {
+            button.addEventListener('click', function () {
+                document.getElementById('edit_id').value = this.dataset.id;
+                document.getElementById('edit_category_name').value = this.dataset.name;
+            });
         });
     });
-
-        (function () {
-      const pageSize = 5;
-      let currentPage = 1;
-      const body = document.getElementById("userTableBody");
-      const info = document.getElementById("userPaginationInfo");
-      const label = document.getElementById("userPageLabel");
-      const prevBtn = document.getElementById("userPrevBtn");
-      const nextBtn = document.getElementById("userNextBtn");
-      const prevItem = document.getElementById("userPrevItem");
-      const nextItem = document.getElementById("userNextItem");
-
-      function rows() {
-        return Array.from(body.querySelectorAll("tr"));
-      }
-
-      function pageCount() {
-        return Math.max(1, Math.ceil(rows().length / pageSize));
-      }
-
-      function render() {
-        const allRows = rows();
-        const totalPages = pageCount();
-        if (currentPage > totalPages) currentPage = totalPages;
-        const start = (currentPage - 1) * pageSize;
-        const end = start + pageSize;
-
-        allRows.forEach(function (row, index) {
-          row.style.display = index >= start && index < end ? "" : "none";
-        });
-
-        info.textContent = "Halaman " + currentPage + " dari " + totalPages + " (Total " + allRows.length + " data)";
-        label.textContent = currentPage + " / " + totalPages;
-        prevBtn.disabled = currentPage === 1;
-        nextBtn.disabled = currentPage === totalPages;
-        prevItem.classList.toggle("disabled", currentPage === 1);
-        nextItem.classList.toggle("disabled", currentPage === totalPages);
-      }
-
-      body.addEventListener("click", function (event) {
-        const deleteBtn = event.target.closest(".btn-delete");
-        if (!deleteBtn) return;
-        const row = deleteBtn.closest("tr");
-        if (!row) return;
-        row.remove();
-        render();
-      });
-
-      prevBtn.addEventListener("click", function () {
-        if (currentPage > 1) {
-          currentPage -= 1;
-          render();
-        }
-      });
-
-      nextBtn.addEventListener("click", function () {
-        if (currentPage < pageCount()) {
-          currentPage += 1;
-          render();
-        }
-      });
-
-      render();
-    })();
 </script>
 </body>
 </html>

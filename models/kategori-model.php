@@ -76,4 +76,44 @@ function hapusKategori($conn, $id) {
     return $berhasil;
 }
 
+
+
+
+function hitungTotalKategori($conn) {
+    $query = "SELECT COUNT(*) AS total FROM category";
+    $hasil = $conn->query($query);
+    
+    if ($hasil) {
+        $data = $hasil->fetch_assoc();
+        return (int)$data['total'];
+    }
+    
+    return 0;
+}
+
+function ambilSemuaKategoriLengkapPaging($conn, $limit, $offset) {
+    $query = "
+        SELECT 
+            c.id,
+            c.category_name,
+            COUNT(b.id) AS total_buku
+        FROM category c
+        LEFT JOIN books b ON b.category_id = c.id
+        GROUP BY c.id
+        ORDER BY c.id DESC
+        LIMIT ? OFFSET ?
+    ";
+
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->execute();
+    
+    $hasil = $stmt->get_result();
+    $data = $hasil->fetch_all(MYSQLI_ASSOC);
+    
+    $stmt->close();
+    return $data;
+}
+
 ?>
+
