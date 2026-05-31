@@ -44,8 +44,7 @@ $daftarUser = ambilPengunjung($conn);
               <th>Email</th>
             </tr>
           </thead>
-            <tbody>
-              <?php foreach ($daftarUser as $user): ?>
+            <tbody id="userTableBody"> <?php foreach ($daftarUser as $user): ?>
                 <tr>
                   <td><?= htmlspecialchars($user['username']) ?></td>
                   <td><?= htmlspecialchars($user['email']) ?></td>
@@ -71,7 +70,7 @@ $daftarUser = ambilPengunjung($conn);
   <script src="../../assets/script/admin/shared-layout.js"></script>
   <script>
     (function () {
-      const pageSize = 5;
+      const pageSize = 8;
       let currentPage = 1;
       const body = document.getElementById("userTableBody");
       const info = document.getElementById("userPaginationInfo");
