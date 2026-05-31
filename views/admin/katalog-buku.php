@@ -11,12 +11,23 @@ require_once __DIR__ . '/../../models/buku-model.php';
 // Proteksi halaman, pastikan hanya admin yang bisa masuk
 requireRole('admin');
 
-// Ambil data dinamis
-$list_buku = ambilSemuaBuku($conn);
+// Ambil data dinamis awal (Kategori)
 $list_kategori = ambilSemuaKategori($conn);
 $flashSuccess = $_SESSION['success'] ?? null;
 $flashError = $_SESSION['error'] ?? null;
 unset($_SESSION['success'], $_SESSION['error']);
+
+// --- LOGIKA PAGINATION ---
+$limit = 5; 
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) { $page = 1; }
+$offset = ($page - 1) * $limit;
+
+$total_buku = hitungTotalBuku($conn); 
+$total_pages = ceil($total_buku / $limit);
+
+// Ambil data spesifik per halaman
+$list_buku = ambilSemuaBukuPaging($conn, $limit, $offset); 
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -99,6 +110,34 @@ unset($_SESSION['success'], $_SESSION['error']);
             <?php endif; ?>
           </tbody>
         </table>
+
+        <?php if ($total_pages > 1): ?>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="text-muted" style="font-size: 14px;">
+                Halaman <strong><?= $page; ?></strong> dari <strong><?= $total_pages; ?></strong> (Total <?= $total_buku; ?> data)
+            </div>
+            <nav aria-label="Page navigation">
+              <ul class="pagination mb-0">
+                <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
+                  <a class="page-link" href="<?= base_url('views/admin/katalog-buku.php?page=' . ($page - 1)); ?>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo; Prev</span>
+                  </a>
+                </li>
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                  <li class="page-item <?= ($page == $i) ? 'active' : ''; ?>">
+                    <a class="page-link" href="<?= base_url('views/admin/katalog-buku.php?page=' . $i); ?>"><?= $i; ?></a>
+                  </li>
+                <?php endfor; ?>
+                <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : ''; ?>">
+                  <a class="page-link" href="<?= base_url('views/admin/katalog-buku.php?page=' . ($page + 1)); ?>" aria-label="Next">
+                    <span aria-hidden="true">Next &raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+        </div>
+        <?php endif; ?>
+
       </section>
     </main>
   </div>
@@ -128,8 +167,8 @@ unset($_SESSION['success'], $_SESSION['error']);
                 
                 <div class="field"><label class="form-label">Harga</label><input type="number" name="price" class="form-control" required></div>
                 <div class="field" style="grid-column: span 2;"><label class="form-label">Sinopsis</label><textarea name="synopsis" class="form-control" rows="3"></textarea></div>
-                <div class="field"><label class="form-label">File Buku (PDF)</label><input type="file" name="file_buku" class="form-control"></div>
-                <div class="field"><label class="form-label">Cover Buku (Image)</label><input type="file" name="cover_buku" class="form-control"></div>
+                <div class="field"><label class="form-label">File Buku (PDF)</label><input type="file" name="file_buku" id="create-file-buku" accept=".pdf" class="form-control"></div>
+                <div class="field"><label class="form-label">Cover Buku (Image)</label><input type="file" name="cover_buku" id="create-cover-buku" accept=".png, .jpg, .jpeg" class="form-control"></div>
               </div>
             </div>
             <div class="modal-footer">
@@ -166,8 +205,8 @@ unset($_SESSION['success'], $_SESSION['error']);
                 
                 <div class="field"><label class="form-label">Harga</label><input type="number" name="price" id="edit-price" class="form-control" required></div>
                 <div class="field" style="grid-column: span 2;"><label class="form-label">Sinopsis</label><textarea name="synopsis" id="edit-synopsis" class="form-control" rows="3"></textarea></div>
-                <div class="field"><label class="form-label">File Buku baru (Kosongkan jika tidak diganti)</label><input type="file" name="file_buku" id="file_buku" class="form-control"></div>
-                <div class="field"><label class="form-label">Cover Buku baru (Kosongkan jika tidak diganti)</label><input type="file" name="cover_buku" id="cover_buku" class="form-control"></div>
+                <div class="field"><label class="form-label">File Buku baru (Kosongkan jika tidak diganti)</label><input type="file" name="file_buku" id="edit-file-buku" accept=".pdf" class="form-control"></div>
+                <div class="field"><label class="form-label">Cover Buku baru (Kosongkan jika tidak diganti)</label><input type="file" name="cover_buku" id="edit-cover-buku" accept=".png, .jpg, .jpeg" class="form-control"></div>
               </div>
             </div>
             <div class="modal-footer">
@@ -190,14 +229,54 @@ unset($_SESSION['success'], $_SESSION['error']);
                 toast: true,
                 position: 'top-end',
                 icon: <?= json_encode($flashError ? 'error' : 'success'); ?>,
-                title: <?= json_encode($flashError ? 'Gagal' : 'Berhasil'); ?>,
+                title: <?= json_encode($flashError ? 'Gagal Upload!' : 'Berhasil'); ?>,
                 text: <?= json_encode($flashError ?: $flashSuccess); ?>,
                 showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                confirmButtonColor: '#512da8'
+                timer: 4000,
+                timerProgressBar: true
             });
         <?php endif; ?>
+
+        const fileBukuInputs = document.querySelectorAll('#create-file-buku, #edit-file-buku');
+        const coverBukuInputs = document.querySelectorAll('#create-cover-buku, #edit-cover-buku');
+
+        fileBukuInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    if (ext !== 'pdf') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Format File Salah!',
+                            text: 'File Buku dilarang keras selain format PDF.',
+                            confirmButtonColor: '#dc3545'
+                        });
+                        this.value = ''; 
+                    }
+                }
+            });
+        });
+
+        
+        coverBukuInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    const allowedExt = ['png', 'jpg', 'jpeg'];
+                    if (!allowedExt.includes(ext)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Format Cover Salah!',
+                            text: 'Cover Buku wajib berformat Gambar (PNG, JPG, JPEG).',
+                            confirmButtonColor: '#dc3545'
+                        });
+                        this.value = ''; 
+                    }
+                }
+            });
+        });
 
         const tombolEdit = document.querySelectorAll('.btn-edit');
         tombolEdit.forEach(button => {
@@ -216,7 +295,6 @@ unset($_SESSION['success'], $_SESSION['error']);
         tombolHapus.forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
-
                 Swal.fire({
                     icon: 'warning',
                     title: 'Hapus buku?',

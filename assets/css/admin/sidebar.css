@@ -320,29 +320,73 @@ th {
     cursor: pointer;
     box-shadow: 0 10px 24px var(--shadow);
 }
+/* ==========================================================================
+   TAMBAHAN UNTUK LAYOUT RESPONSIF & HAMBURGER (TANPA MENGUBAH / MENGURANGI ASLINYA)
+   ========================================================================== */
+
+/* Tombol hamburger: Sembunyi di desktop, muncul di HP/Tablet */
+.hamburger-menu {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1100;
+    background: #2e245b;
+    color: #fff;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(46, 36, 91, 0.2);
+}
+
+body.dark-mode .hamburger-menu {
+    background: #e5e7eb;
+    color: #111;
+}
 
 @media (max-width: 991px) {
+    
+    .hamburger-menu {
+        display: block;
+    }
+
+    
     .admin-layout {
         grid-template-columns: 1fr;
+        display: block;
     }
 
-    #admin-sidebar,
+
+    #admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: -300px; 
+        width: 280px;
+        height: 100vh;
+        z-index: 1050;
+        transition: left 0.3s ease-in-out;
+    }
+
     #admin-sidebar .sidebar {
-        height: auto;
-        min-height: auto;
+        height: 100vh;
+        min-height: 100vh;
     }
 
-    .sidebar {
-        border-right: none;
-        border-bottom: 1px solid rgba(46, 36, 91, 0.12);
+
+    #admin-sidebar.show {
+        left: 0;
     }
 
-    .cards {
-        grid-template-columns: 1fr;
+    .main-content {
+        padding: 20px;
+        padding-top: 85px; 
     }
 
-    .content-grid,
-    .form-grid {
-        grid-template-columns: 1fr;
+    .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }

@@ -1,4 +1,39 @@
 <?php
+// Fungsi untuk menghitung total seluruh buku di database
+function hitungTotalBuku($conn) {
+    $query = "SELECT COUNT(*) AS total FROM books";
+    $hasil = $conn->query($query);
+    if (!$hasil) {
+        return 0;
+    }
+    $data = $hasil->fetch_assoc();
+    return (int)$data['total'];
+}
+
+// Fungsi untuk mengambil data buku dengan batasan halaman (LIMIT & OFFSET)
+function ambilSemuaBukuPaging($conn, $limit, $offset) {
+    $query = "SELECT b.*, c.category_name AS category_name 
+              FROM books b 
+              LEFT JOIN category c ON b.category_id = c.id 
+              ORDER BY b.id DESC 
+              LIMIT ? OFFSET ?";
+              
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->execute();
+    $hasil = $stmt->get_result();
+    
+    if (!$hasil) {
+        return [];
+    }
+    
+    $data = $hasil->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    return $data;
+}
+
+// --- FUNGSI ASLI BAWAAN ANDA ---
+
 // Ambil semua data buku beserta nama kategorinya (JOIN)
 function ambilSemuaBuku($conn) {
     $query = "SELECT b.*, c.category_name AS category_name 
@@ -11,6 +46,7 @@ function ambilSemuaBuku($conn) {
     }
     return $hasil->fetch_all(MYSQLI_ASSOC);
 }
+
 function ambilSemuaKategori($conn) {
     $query = "SELECT id, category_name FROM category ORDER BY category_name ASC";
     $hasil = $conn->query($query);
@@ -19,6 +55,7 @@ function ambilSemuaKategori($conn) {
     }
     return $hasil->fetch_all(MYSQLI_ASSOC);
 }
+
 function ambilBukuById($conn, $id) {
     $query = "SELECT * FROM books WHERE id = ?";
     $stmt = $conn->prepare($query);
@@ -49,6 +86,7 @@ function updateBuku($conn, $id, $title, $author, $publisher, $synopsis, $file_pa
     $stmt->close();
     return $berhasil;
 }
+
 function hapusBuku($conn, $id) {
     $query = "DELETE FROM books WHERE id = ?";
     $stmt = $conn->prepare($query);
