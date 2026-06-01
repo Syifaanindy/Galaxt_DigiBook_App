@@ -2,16 +2,16 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-// Load semua helper, database, dan model buku
+
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/url-helper.php';
 require_once __DIR__ . '/../../config/auth-helper.php';
 require_once __DIR__ . '/../../models/buku-model.php';
 
-// Proteksi halaman, pastikan hanya admin yang bisa masuk
+
 requireRole('admin');
 
-// Ambil data dinamis awal (Kategori)
+
 $list_kategori = ambilSemuaKategori($conn);
 $flashSuccess = $_SESSION['success'] ?? null;
 $flashError = $_SESSION['error'] ?? null;
