@@ -7,21 +7,27 @@ require_once '../../config/database.php';
 require_once '../../config/url-helper.php';
 require_once '../../models/kategori-model.php';
 
-
+// --- LOGIKA PAGINATION (Pastikan bagian ini aman dan utuh) ---
+$limit = 5; // <-- Variabel ini yang tadinya hilang, sekarang sudah kita adakan lagi
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) { $page = 1; }
 $offset = ($page - 1) * $limit;
 
-
+// Menghitung total baris kategori untuk menentukan jumlah halaman
 $total_kategori = hitungTotalKategori($conn); 
+
+// Mencegah error division by zero jika variabel limit tidak sengaja kosong atau nol
+$limit = ($limit < 1) ? 5 : $limit; 
 $total_pages = ceil($total_kategori / $limit);
 
+// Mengambil data kategori terbatas (sesuai halaman saat ini)
 $kategori = ambilSemuaKategoriLengkapPaging($conn, $limit, $offset);
 
+// Ambil pesan dari session untuk pemicu SweetAlert2
 $flashSuccess = isset($_SESSION['success']) ? $_SESSION['success'] : null;
 $flashError = isset($_SESSION['error']) ? $_SESSION['error'] : null;
 
-
+// Hapus session setelah diambil agar tidak duplikat saat di-refresh
 unset($_SESSION['success']);
 unset($_SESSION['error']);
 ?>
