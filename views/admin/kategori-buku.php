@@ -7,24 +7,21 @@ require_once '../../config/database.php';
 require_once '../../config/url-helper.php';
 require_once '../../models/kategori-model.php';
 
-// --- LOGIKA PAGINATION ---
-$limit = 5; 
+
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) { $page = 1; }
 $offset = ($page - 1) * $limit;
 
-// Menghitung total baris kategori untuk menentukan jumlah halaman
+
 $total_kategori = hitungTotalKategori($conn); 
 $total_pages = ceil($total_kategori / $limit);
 
-// Mengambil data kategori terbatas (sesuai halaman saat ini)
 $kategori = ambilSemuaKategoriLengkapPaging($conn, $limit, $offset);
 
-// Ambil pesan dari session untuk SweetAlert2
 $flashSuccess = isset($_SESSION['success']) ? $_SESSION['success'] : null;
 $flashError = isset($_SESSION['error']) ? $_SESSION['error'] : null;
 
-// Hapus session setelah diambil agar tidak muncul terus-menerus
+
 unset($_SESSION['success']);
 unset($_SESSION['error']);
 ?>
@@ -175,65 +172,64 @@ unset($_SESSION['error']);
 <script src="../../assets/script/admin/shared-layout.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        
-        document.querySelectorAll('.btn-edit').forEach(button => {
-            button.addEventListener('click', function () {
-                document.getElementById('edit_id').value = this.dataset.id;
-                document.getElementById('edit_category_name').value = this.dataset.name;
+    document.querySelectorAll('.btn-edit').forEach(button => {
+        button.addEventListener('click', function () {
+            document.getElementById('edit_id').value = this.dataset.id;
+            document.getElementById('edit_category_name').value = this.dataset.name;
+        });
+    });
+
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const targetUrl = this.href;
+            
+            Swal.fire({
+                icon: 'warning',
+                title: 'Hapus kategori?',
+                text: 'Kategori yang dihapus berisiko mengganggu relasi data buku.',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = targetUrl;
+                }
             });
         });
-t2
-        <?php if ($flashSuccess): ?>
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'Berhasil',
-                text: '<?= addslashes($flashSuccess); ?>',
-                showConfirmButton: false,
-                timer: 4000,
-                timerProgressBar: true
-            });
-        <?php endif; ?>
-
-        <?php if ($flashError): ?>
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'error',
-                title: 'Gagal Proses!',
-                text: '<?= addslashes($flashError); ?>',
-                showConfirmButton: false,
-                timer: 4000,
-                timerProgressBar: true
-            });
-        <?php endif; ?>
-
-        document.querySelectorAll('.btn-delete').forEach(button => {
-            button.addEventListener('click', function(event) {
-                event.preventDefault();
-                const targetUrl = this.href;
-                
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Hapus kategori?',
-                    text: 'Kategori yang dihapus berisiko mengganggu relasi data buku.',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, hapus',
-                    cancelButtonText: 'Batal',
-                    confirmButtonColor: '#dc3545',
-                    cancelButtonColor: '#6c757d'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = targetUrl;
-                    }
-                });
-            });
-        });
-
     });
 </script>
+
+<?php if ($flashSuccess): ?>
+<script>
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Berhasil',
+        text: '<?= addslashes($flashSuccess); ?>',
+        showConfirmButton: false,
+        timer: 4000,
+        timerProgressBar: true
+    });
+</script>
+<?php endif; ?>
+
+<?php if ($flashError): ?>
+<script>
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: 'Gagal Proses!',
+        text: '<?= addslashes($flashError); ?>',
+        showConfirmButton: false,
+        timer: 4000,
+        timerProgressBar: true
+    });
+</script>
+<?php endif; ?>
 </body>
 </html>
