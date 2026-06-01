@@ -1,23 +1,12 @@
 <?php
-<<<<<<< HEAD
-<<<<<<< HEAD
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-=======
-=======
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
->>>>>>> fara
 
->>>>>>> Fara
 require_once '../../config/database.php';
 require_once '../../config/url-helper.php';
 require_once '../../models/kategori-model.php';
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 // --- LOGIKA PAGINATION ---
 $limit = 5; 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -30,21 +19,19 @@ $total_pages = ceil($total_kategori / $limit);
 
 // Mengambil data kategori terbatas (sesuai halaman saat ini)
 $kategori = ambilSemuaKategoriLengkapPaging($conn, $limit, $offset);
-=======
 
+// Ambil pesan dari session untuk SweetAlert2
+$flashSuccess = isset($_SESSION['success']) ? $_SESSION['success'] : null;
+$flashError = isset($_SESSION['error']) ? $_SESSION['error'] : null;
 
-$kategori = ambilSemuaKategoriLengkap($conn);
-
->>>>>>> Fara
-=======
-$kategori = ambilSemuaKategoriLengkap($conn);
->>>>>>> fara
+// Hapus session setelah diambil agar tidak muncul terus-menerus
+unset($_SESSION['success']);
+unset($_SESSION['error']);
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<<<<<<< HEAD
-<<<<<<< HEAD
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - Kategori Buku</title>
@@ -56,34 +43,6 @@ $kategori = ambilSemuaKategoriLengkap($conn);
   <link rel="stylesheet" href="../../assets/css/admin/panel.css">
   <link rel="stylesheet" href="../../assets/css/admin/sidebar.css">
   <link rel="stylesheet" href="../../assets/css/admin/pagination.css">
-=======
-
-=======
->>>>>>> fara
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Kategori Buku</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../../assets/css/admin/panel.css">
-<<<<<<< HEAD
-<<<<<<< HEAD
-
->>>>>>> Fara
-=======
->>>>>>> fara
-=======
-    
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        .swal2-styled.swal2-confirm {
-            background-color: #dc3545 !important;
-        }
-        .swal2-styled.swal2-cancel {
-            background-color: #6c757d !important;
-        }
-    </style>
->>>>>>> Fara
 </head>
 <body>
 
@@ -96,42 +55,7 @@ $kategori = ambilSemuaKategoriLengkap($conn);
             <p>Tambah, edit, dan hapus kategori buku.</p>
         </header>
 
-<<<<<<< HEAD
-
-
-        <?php if (isset($_SESSION['success'])): ?>
-
-            <div class="alert alert-success">
-
-                <?= $_SESSION['success']; unset($_SESSION['success']); ?>
-
-            </div>
-
-        <?php endif; ?>
-
-
-
-        <?php if (isset($_SESSION['error'])): ?>
-
-            <div class="alert alert-danger">
-
-                <?= $_SESSION['error']; unset($_SESSION['error']); ?>
-
-            </div>
-
-        <?php endif; ?>
-
-<<<<<<< HEAD
-        <section class="panel">
-=======
-
-
         <section class="panel table-wrap">
-
->>>>>>> Fara
-=======
-        <section class="panel table-wrap">
->>>>>>> fara
             <div class="actions d-flex justify-content-between mb-3">
                 <h3 class="m-0">Data Kategori</h3>
                 <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#createKategoriModal">
@@ -139,58 +63,6 @@ $kategori = ambilSemuaKategoriLengkap($conn);
                 </button>
             </div>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-            <div class="table-wrap">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama Kategori</th>
-                            <th>Jumlah Buku</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="kategoriTableBody">
-                        <?php if (!empty($kategori)): ?>
-                            <?php foreach ($kategori as $item): ?>
-                                <tr>
-                                    <td>KT-<?= str_pad($item['id'], 3, '0', STR_PAD_LEFT); ?></td>
-                                    <td><?= htmlspecialchars($item['category_name']); ?></td>
-                                    <td><?= $item['total_buku']; ?></td>
-                                    <td>
-                                        <div class="actions">
-                                            <button class="btn btn-soft btn-edit" type="button" 
-                                                    data-bs-toggle="modal" data-bs-target="#editKategoriModal"
-                                                    data-id="<?= $item['id']; ?>" 
-                                                    data-name="<?= htmlspecialchars($item['category_name']); ?>">
-                                                Edit
-                                            </button>
-                                            <a href="<?= base_url('controllers/kategori-controller.php?action=delete&id=' . $item['id']); ?>" 
-                                               class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">
-                                                Hapus
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr><td colspan="4" class="text-center">Data kategori belum ada</td></tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-
-            <?php 
-              $total_data = $total_kategori; 
-              $target_url = 'kategori-buku.php'; 
-              include 'partials/pagination.php'; 
-            ?>
-=======
-
-
-=======
->>>>>>> fara
             <table class="table">
                 <thead>
                     <tr>
@@ -212,14 +84,13 @@ $kategori = ambilSemuaKategoriLengkap($conn);
                                         <button class="btn btn-soft btn-edit" type="button"
                                                 data-bs-toggle="modal" data-bs-target="#editKategoriModal"
                                                 data-id="<?= $item['id']; ?>"
-                                                data-name="<?= htmlspecialchars($item['category_name']); ?>">
+                                                data-name="<?= htmlspecialchars($item['category_name'], ENT_QUOTES); ?>">
                                             Edit
                                         </button>
-                                        <button type="button" class="btn btn-danger btn-hapus-swal" 
-                                                data-id="<?= $item['id']; ?>" 
-                                                data-name="<?= htmlspecialchars($item['category_name']); ?>">
+                                        <a href="<?= base_url('controllers/kategori-controller.php?action=delete&id=' . $item['id']); ?>"
+                                           class="btn btn-danger btn-delete">
                                             Hapus
-                                        </button>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -229,11 +100,25 @@ $kategori = ambilSemuaKategoriLengkap($conn);
                     <?php endif; ?>
                 </tbody>
             </table>
-<<<<<<< HEAD
->>>>>>> Fara
 
-=======
->>>>>>> fara
+            <?php if ($total_pages > 1): ?>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-3">
+                        <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $page - 1; ?>">Previous</a>
+                        </li>
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?= ($page == $i) ? 'active' : ''; ?>">
+                                <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+                        <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $page + 1; ?>">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            <?php endif; ?>
+
         </section>
     </main>
 </div>
@@ -286,90 +171,69 @@ $kategori = ambilSemuaKategoriLengkap($conn);
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../../assets/script/admin/shared-layout.js"></script>
+
 <script>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     document.addEventListener('DOMContentLoaded', function() {
+        
+        
         document.querySelectorAll('.btn-edit').forEach(button => {
             button.addEventListener('click', function () {
                 document.getElementById('edit_id').value = this.dataset.id;
                 document.getElementById('edit_category_name').value = this.dataset.name;
             });
-=======
-=======
-    setActiveMenu(); // Memastikan sidebar aktif menyala
->>>>>>> fara
-=======
-    setActiveMenu();
->>>>>>> Fara
-
-    document.querySelectorAll('.btn-edit').forEach(button => {
-        button.addEventListener('click', function () {
-            document.getElementById('edit_id').value = this.dataset.id;
-            document.getElementById('edit_category_name').value = this.dataset.name;
-<<<<<<< HEAD
-
->>>>>>> Fara
-=======
->>>>>>> fara
         });
-    });
-
-    document.querySelectorAll('.btn-hapus-swal').forEach(button => {
-        button.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const name = this.dataset.name;
-            
+t2
+        <?php if ($flashSuccess): ?>
             Swal.fire({
-                title: 'Hapus kategori?',
-                text: `Kategori "${name}" yang dihapus tidak bisa dikembalikan.`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, hapus',
-                cancelButtonText: 'Batal',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = `../../controllers/kategori-controller.php?action=delete&id=${id}`;
-                }
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Berhasil',
+                text: '<?= addslashes($flashSuccess); ?>',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+            });
+        <?php endif; ?>
+
+        <?php if ($flashError): ?>
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: 'Gagal Proses!',
+                text: '<?= addslashes($flashError); ?>',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+            });
+        <?php endif; ?>
+
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const targetUrl = this.href;
+                
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Hapus kategori?',
+                    text: 'Kategori yang dihapus berisiko mengganggu relasi data buku.',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, hapus',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = targetUrl;
+                    }
+                });
             });
         });
+
     });
 </script>
-
-<?php if (isset($_SESSION['success'])): ?>
-    <script>
-        Swal.fire({
-            title: 'Berhasil',
-            text: "<?= $_SESSION['success']; ?>",
-            icon: 'success',
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true, // Garis waktu berjalan aktif
-            toast: true
-        });
-    </script>
-    <?php unset($_SESSION['success']); ?>
-<?php endif; ?>
-
-<?php if (isset($_SESSION['error'])): ?>
-    <script>
-        Swal.fire({
-            title: 'Gagal',
-            text: "<?= $_SESSION['error']; ?>",
-            icon: 'error',
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 4000,
-            timerProgressBar: true, // Garis waktu berjalan aktif
-            toast: true
-        });
-    </script>
-    <?php unset($_SESSION['error']); ?>
-<?php endif; ?>
-
 </body>
 </html>

@@ -202,27 +202,33 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../../assets/script/admin/shared-layout.js"></script>
   
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Script Hamburger Menu Responsif
-        const toggleBtn = document.getElementById('toggleSidebarBtn');
-        if(toggleBtn) {
-            toggleBtn.addEventListener('click', function() {
-                document.getElementById('admin-sidebar').classList.toggle('show');
-            });
-        }
 
-        <?php if ($flashSuccess || $flashError): ?>
+        <?php if ($flashSuccess): ?>
             Swal.fire({
                 toast: true,
                 position: 'top-end',
-                icon: <?= json_encode($flashError ? 'error' : 'success'); ?>,
-                title: <?= json_encode($flashError ? 'Gagal Upload!' : 'Berhasil'); ?>,
-                text: <?= json_encode($flashError ?: $flashSuccess); ?>,
+                icon: 'success',
+                title: 'Berhasil',
+                text: '<?= addslashes($flashSuccess); ?>',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true
+            });
+        <?php endif; ?>
+
+        <?php if ($flashError): ?>
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: 'Gagal Proses!',
+                text: '<?= addslashes($flashError); ?>',
                 showConfirmButton: false,
                 timer: 4000,
                 timerProgressBar: true
@@ -230,8 +236,6 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
         <?php endif; ?>
 
         const fileBukuInputs = document.querySelectorAll('#create-file-buku, #edit-file-buku');
-        const coverBukuInputs = document.querySelectorAll('#create-cover-buku, #edit-cover-buku');
-
         fileBukuInputs.forEach(input => {
             input.addEventListener('change', function() {
                 const file = this.files[0];
@@ -250,6 +254,7 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
             });
         });
 
+        const coverBukuInputs = document.querySelectorAll('#create-cover-buku, #edit-cover-buku');
         coverBukuInputs.forEach(input => {
             input.addEventListener('change', function() {
                 const file = this.files[0];
@@ -268,7 +273,6 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
                 }
             });
         });
-
         const tombolEdit = document.querySelectorAll('.btn-edit');
         tombolEdit.forEach(button => {
             button.addEventListener('click', function() {
@@ -281,11 +285,12 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
                 document.getElementById('edit-synopsis').value = this.getAttribute('data-synopsis');
             });
         });
-
         const tombolHapus = document.querySelectorAll('.btn-delete');
         tombolHapus.forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
+                const targetUrl = this.href;
+                
                 Swal.fire({
                     icon: 'warning',
                     title: 'Hapus buku?',
@@ -297,11 +302,12 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
                     cancelButtonColor: '#6c757d'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = this.href;
+                        window.location.href = targetUrl;
                     }
                 });
             });
         });
+
     });
   </script>
 </body>
