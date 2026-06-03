@@ -1,3 +1,36 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../config/auth-helper.php';
+require_once __DIR__ . '/../../models/detailModel.php';
+
+requireRole('user');
+
+// 1. Cek apakah ada parameter ID di URL
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    header("Location: dashboard.php");
+    exit;
+}
+
+$id_buku = $_GET['id'];
+
+$buku = ambilDetailBuku($conn, $id_buku);
+if (!$buku) {
+    header("Location: dashboard.php");
+    exit;
+}
+
+$ratingData = ambilRatingBuku($conn, $id_buku);
+
+$rataRataRating = $ratingData['avg_rating'];
+$totalUlasan = $ratingData['total_ulasan'];
+
+$semuaReview = ambilReviewBuku($conn, $id_buku);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,8 +61,8 @@
             <!-- Breadcrumb -->
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb custom-breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item"><a href="index.html#koleksi">Koleksi Buku</a></li>
+                    <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
+                    <li class="breadcrumb-item"><a href="dashboard.php#koleksi">Koleksi Buku</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Detail Produk</li>
                 </ol>
             </nav>
@@ -38,8 +71,11 @@
 
                 <!-- KOLOM KIRI: COVER BUKU -->
                 <div class="col-lg-4 text-center text-lg-start">
-                    <div class="detail-cover-wrapper position-sticky">
-                        <img src="../../assets/pic/b-1.png" alt="Cover Buku Premium" class="img-fluid main-book-img">
+                    <div class="detail-cover-wrapper position-sticky" style="top: 20px;">
+                        <!-- Path gambar disesuaikan dengan database -->
+                        <img src="../../<?= !empty($buku['cover_image']) ? htmlspecialchars($buku['cover_image']) : 'assets/pic/default.png' ?>" 
+                            alt="<?= htmlspecialchars($buku['title']) ?>" 
+                            class="img-fluid main-book-img">
                         <div class="cover-shadow-effect"></div>
                     </div>
                 </div>
@@ -47,28 +83,52 @@
                 <!-- KOLOM KANAN: DETAIL, DETAIL HARGA, SPEKS, TOMBOL BELI & SINOPSIS -->
                 <div class="col-lg-8">
                     <div class="detail-info-header">
-                        <span class="badge badge-category mb-2"><i
-                                class="fa-solid fa-circle-check text-success me-1"></i> Terverifikasi Original</span>
-                        <h1 class="detail-title fw-extrabold mb-1">Makrifat Daun: Daun Makrifat</h1>
-                        <p class="detail-author fs-5 text-muted mb-3">Karya Penulis: <span
-                                class="fw-semibold text-primary-theme">Kuntowijoyo</span></p>
+                        <span class="badge badge-category mb-2">
+                            <i class="fa-solid fa-circle-check text-success me-1"></i> Terverifikasi Original
+                        </span>
+                        
+                        <!-- Cetak Judul Buku -->
+                        <h1 class="detail-title fw-extrabold mb-1"><?= htmlspecialchars($buku['title']) ?></h1>
+                        
+                        <!-- Cetak Penulis Buku -->
+                        <p class="detail-author fs-5 text-muted mb-3">Karya Penulis: 
+                            <span class="fw-semibold text-primary-theme"><?= htmlspecialchars($buku['author']) ?></span>
+                        </p>
 
                         <div class="detail-rating-box d-flex align-items-center gap-2 mb-4">
                             <div class="stars text-warning">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
+                                <?php 
+                                // Mengubah rating desimal ke angka bulat ke bawah (misal 4.5 jadi 4)
+                                $bintangBulat = floor($rataRataRating); 
+                                
+                                for ($i = 1; $i <= 5; $i++) {
+                                    if ($i <= $bintangBulat) {
+                                        // Tampilkan Bintang Penuh
+                                        echo '<i class="fa-solid fa-star"></i>';
+                                    } elseif ($i == $bintangBulat + 1 && ($rataRataRating - $bintangBulat) >= 0.5) {
+                                        // Tampilkan Bintang Setengah (Jika ratingnya .5 ke atas seperti 4.5, 4.7)
+                                        echo '<i class="fa-solid fa-star-half-stroke"></i>';
+                                    } else {
+                                        // Tampilkan Bintang Kosong
+                                        echo '<i class="fa-regular fa-star" style="color: #ccc;"></i>';
+                                    }
+                                }
+                                ?>
                             </div>
-                            <span class="fw-bold fs-6 mt-1">5.0</span>
-                            <span class="text-muted fs-7 mt-1">(42 Ulasan Pembaca)</span>
+                            
+                            <!-- Tampilkan Angka Rata-rata Rating -->
+                            <span class="fw-bold fs-6 mt-1"><?= $rataRataRating > 0 ? $rataRataRating : '0.0' ?></span>
+                            
+                            <!-- Tampilkan Jumlah Total Ulasan dari Database -->
+                            <span class="text-muted fs-7 mt-1">(<?= $totalUlasan ?> Ulasan Pembaca)</span>
                         </div>
 
+                        <!-- Cetak Harga Buku Berformat Rupiah -->
                         <div class="detail-price-box p-4 rounded-4 mb-4">
-                            <small class="text-muted d-block text-uppercase letter-spacing-1">Harga Akses
-                                Digital</small>
-                            <h2 class="display-6 fw-bold text-gradient-price m-0">Rp 50.000</h2>
+                            <small class="text-muted d-block text-uppercase letter-spacing-1">Harga Akses Digital</small>
+                            <h2 class="display-6 fw-bold text-gradient-price m-0">
+                                Rp <?= number_format($buku['price'], 0, ',', '.') ?>
+                            </h2>
                         </div>
                     </div>
 
@@ -122,7 +182,7 @@
                     </div>
 
                     <!-- TOMBOL AKSI DENGAN BUTTON BAYAR / BELI LANGSUNG -->
-                    <div class="detail-action-buttons row g-3 mb-5">
+                    <div class="detail-action-buttons row g-3 mb-5 justify-content-end">
                         <div class="col-sm-5">
                             <a href="transaction.html"
                                 class="btn btn-primary-buy w-100 py-3 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
@@ -130,15 +190,9 @@
                             </a>
                         </div>
                         <div class="col-sm-4">
-                            <a href="#"
+                            <a href="keranjang.php?action=add&id=<?= $buku['id'] ?>"
                                 class="btn btn-outline-cart w-100 py-3 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2">
                                 <i class="fa-solid fa-basket-shopping"></i> + Keranjang
-                            </a>
-                        </div>
-                        <div class="col-sm-3">
-                            <a href="#"
-                                class="btn btn-outline-wishlist w-100 py-3 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2">
-                                <i class="fa-regular fa-bookmark"></i> Simpan
                             </a>
                         </div>
                     </div>
@@ -147,17 +201,17 @@
                     <div class="synopsis-card p-4 p-md-5 rounded-4">
                         <h3 class="fw-bold mb-4 position-relative section-title-line">Sinopsis Lengkap</h3>
                         <div class="synopsis-content text-secondary fs-6">
-                            <p>Buku <strong>"Makrifat Daun: Daun Makrifat"</strong> menguraikan esensi pemikiran
-                                mendalam mengenai realitas sosial, spiritual, dan eksistensi manusia dalam balutan
-                                bahasa yang puitis namun sarat analisis kritis khas Kuntowijoyo. Karya ini mengajak
-                                pembaca menelaah fenomena kehidupan sehari-hari melalui kacamata yang lebih jernih,
-                                mengaitkan perilaku kultural masyarakat dengan struktur sosial makro yang membentuknya.
-                            </p>
-                            <p class="mt-3">Sangat direkomendasikan untuk akademisi, mahasiswa sosiologi, peneliti
-                                kebudayaan, maupun pembaca umum yang mendambakan bacaan reflektif berbobot tinggi.
-                                Dengan format e-book premium ini, Anda mendapatkan teks orisinal utuh yang telah melalui
-                                proses digitalisasi resolusi tinggi, memastikan kenyamanan maksimal saat dibaca di layar
-                                perangkat mobile ataupun desktop Anda kapan saja.</p>
+                            
+                            <?php if (!empty($buku['synopsis'])) : ?>
+                                <!-- Jika di database ada sinopsisnya, tampilkan di sini -->
+                                <p style="text-align: justify; line-height: 1.8;">
+                                    <?= nl2br(htmlspecialchars($buku['synopsis'])) ?>
+                                </p>
+                            <?php else : ?>
+                                <!-- Antispasi kalau admin lupa ngisi sinopsis di database -->
+                                <p class="text-muted italic">Sinopsis untuk buku <strong>"<?= htmlspecialchars($buku['title']) ?>"</strong> belum tersedia.</p>
+                            <?php endif; ?>
+                            
                         </div>
                     </div>
 
@@ -165,56 +219,41 @@
                     <div class="review-card synopsis-card p-4 p-md-5 rounded-4 mt-4">
                         <h3 class="fw-bold mb-4 position-relative section-title-line">Review Pembaca</h3>
 
-                        <form id="reviewForm" class="mb-4">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label for="reviewerName" class="form-label fw-semibold">Nama</label>
-                                    <input type="text" class="form-control" id="reviewerName"
-                                        placeholder="Tulis nama Anda" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="reviewRating" class="form-label fw-semibold">Rating</label>
-                                    <select class="form-select" id="reviewRating" required>
-                                        <option value="">Pilih rating</option>
-                                        <option value="5">5 - Sangat bagus</option>
-                                        <option value="4">4 - Bagus</option>
-                                        <option value="3">3 - Cukup</option>
-                                        <option value="2">2 - Kurang</option>
-                                        <option value="1">1 - Tidak rekomendasi</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-12">
-                                    <label for="reviewText" class="form-label fw-semibold">Ulasan</label>
-                                    <textarea class="form-control" id="reviewText" rows="4"
-                                        placeholder="Bagikan pendapat Anda tentang buku ini..." required></textarea>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary mt-3 px-4">Kirim Review</button>
-                        </form>
-
                         <div class="review-list-wrapper">
-                            <h5 class="fw-bold mb-3">Daftar Review</h5>
                             <div id="reviewList" class="d-flex flex-column gap-3">
-                                <div class="border rounded-3 p-3">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <strong>Rahma</strong>
-                                        <span class="text-warning"><i class="fa-solid fa-star"></i><i
-                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                                
+                                <?php if (!empty($semuaReview)) : ?>
+                                    <?php foreach ($semuaReview as $r) : ?>
+                                        <div class="border rounded-3 p-3">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <!-- Nama User hasil JOIN dari database -->
+                                                <strong><?= htmlspecialchars($r['username']) ?></strong>
+                                                
+                                                <!-- Loop Bintang Dinamis sesuai rating ulasan -->
+                                                <span class="text-warning">
+                                                    <?php 
+                                                    for ($i = 1; $i <= 5; $i++) {
+                                                        if ($i <= $r['rating']) {
+                                                            echo '<i class="fa-solid fa-star"></i>';
+                                                        } else {
+                                                            echo '<i class="fa-regular fa-star" style="color: #ccc;"></i>';
+                                                        }
+                                                    }
+                                                    ?>
+                                                </span>
+                                            </div>
+                                            <!-- Isi Ulasan/Komentar -->
+                                            <p class="mb-0 text-secondary"><?= htmlspecialchars($r['comment']) ?></p>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php else : ?>
+                                    <!-- Tampilan manis kalau buku ini belum punya ulasan sama sekali -->
+                                    <div class="text-center py-4 text-muted border border-dashed rounded-3">
+                                        <i class="fa-regular fa-comments fs-3 mb-2 d-block text-black-50"></i>
+                                        Belum ada ulasan untuk buku ini.
                                     </div>
-                                    <p class="mb-0 text-secondary">Bahasanya indah dan bikin saya merenung. Sangat
-                                        layak dibaca!</p>
-                                </div>
-                                <div class="border rounded-3 p-3">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <strong>Bima</strong>
-                                        <span class="text-warning"><i class="fa-solid fa-star"></i><i
-                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                                class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span>
-                                    </div>
-                                    <p class="mb-0 text-secondary">Kontennya berbobot, cocok untuk yang suka kajian
-                                        sosial dan budaya.</p>
-                                </div>
+                                <?php endif; ?>
+
                             </div>
                         </div>
                     </div>
