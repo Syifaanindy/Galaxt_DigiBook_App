@@ -159,6 +159,6 @@ function redirectByRole($role) {
         return;
     }
 
-    header("Location: " . base_url('views/user/dashboard.html'));
+    header("Location: " . base_url('views/user/dashboard.php'));
 }
 ?>
