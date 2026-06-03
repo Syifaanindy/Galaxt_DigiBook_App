@@ -62,7 +62,7 @@ $semuaReview = ambilReviewBuku($conn, $id_buku);
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb custom-breadcrumb">
                     <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
-                    <li class="breadcrumb-item"><a href="dashboard.php#koleksi">Koleksi Buku</a></li>
+                    <li class="breadcrumb-item"><a href="koleksi.html">Koleksi Buku</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Detail Produk</li>
                 </ol>
             </nav>
