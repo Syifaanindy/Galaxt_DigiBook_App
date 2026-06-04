@@ -6,9 +6,21 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/ulasan-website-model.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // MEMPERBAIKI TYPO: Sekarang menangkap $_POST['nama'] dengan benar
-    $nama = isset($_POST['nama']) ? trim($_POST['nama']) : '';
-    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+    // Proteksi data Nama langsung dari session server
+    $nama = '';
+    if (isset($_SESSION['nama'])) {
+        $nama = trim($_SESSION['nama']);
+    } elseif (isset($_SESSION['name'])) {
+        $nama = trim($_SESSION['name']);
+    } elseif (isset($_SESSION['username'])) {
+        $nama = trim($_SESSION['username']);
+    } else {
+        $nama = isset($_POST['nama']) ? trim($_POST['nama']) : '';
+    }
+
+    // Proteksi data Email langsung dari session server
+    $email = isset($_SESSION['email']) ? trim($_SESSION['email']) : (isset($_POST['email']) ? trim($_POST['email']) : '');
+    
     $ulasan = isset($_POST['ulasan']) ? trim($_POST['ulasan']) : '';
     $rating = isset($_POST['rating']) ? (int)$_POST['rating'] : 0;
 

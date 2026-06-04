@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 function prosesTambahBuku() {
     global $conn;
     
-    // Mengambil data teks dan angka dari form
+   
     $title       = trim($_POST['title']);
     $author      = trim($_POST['author']);
     $publisher   = trim($_POST['publisher']);
@@ -35,7 +35,13 @@ function prosesTambahBuku() {
     $synopsis    = trim($_POST['synopsis']);
     $price       = intval($_POST['price'] ?? 0);
 
-    //buat folder penyimpanan
+   
+    if (empty($_FILES['file_buku']['name']) || empty($_FILES['cover_buku']['name'])) {
+        $_SESSION['error'] = "Gagal! File Buku (PDF) dan Cover Buku wajib diunggah.";
+        header("Location: " . base_url('views/admin/katalog-buku.php'));
+        exit;
+    }
+
     $target_dir = __DIR__ . "/../assets/book/";
     $target_diir = __DIR__ . "/../assets/cover/";
     if (!is_dir($target_dir)) { mkdir($target_dir, 0777, true); }
@@ -46,7 +52,6 @@ function prosesTambahBuku() {
     if (!empty($_FILES['file_buku']['name'])) {
         $file_ext = strtolower(pathinfo($_FILES['file_buku']['name'], PATHINFO_EXTENSION));
         
-     
         if ($file_ext !== 'pdf') {
             $_SESSION['error'] = "Gagal! Format File Buku wajib berformat PDF.";
             header("Location: " . base_url('views/admin/katalog-buku.php'));
@@ -80,8 +85,6 @@ function prosesTambahBuku() {
             $cover_image = "assets/cover/" . $cover_name;
         }
     }
-
-    // Mengirimkan parameter lengkap ke fungsi model
     if (tambahBuku($conn, $title, $author, $publisher, $synopsis, $file_path, $cover_image, $category_id, $price)) {
         $_SESSION['success'] = "Buku berhasil ditambahkan ke katalog!";
     } else {

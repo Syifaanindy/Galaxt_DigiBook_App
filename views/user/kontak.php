@@ -1,3 +1,19 @@
+<?php
+session_start();
+
+// Deteksi otomatis key session untuk Nama (mencegah salah key seperti 'name' atau 'username')
+$user_nama = '';
+if (isset($_SESSION['nama'])) {
+    $user_nama = $_SESSION['nama'];
+} elseif (isset($_SESSION['name'])) {
+    $user_nama = $_SESSION['name'];
+} elseif (isset($_SESSION['username'])) {
+    $user_nama = $_SESSION['username'];
+}
+
+// Ambil data email dari session
+$user_email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -33,11 +49,11 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label" for="nama">Nama</label>
-                                    <input type="text" id="nama" name="nama" class="form-control" placeholder="Tulis nama Anda" required>
+                                    <input type="text" id="nama" name="nama" class="form-control" placeholder="Tulis nama Anda" value="<?php echo htmlspecialchars($user_nama); ?>" readonly required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label" for="email">Email</label>
-                                    <input type="email" id="email" name="email" class="form-control" placeholder="nama@email.com" required>
+                                    <input type="email" id="email" name="email" class="form-control" placeholder="nama@email.com" value="<?php echo htmlspecialchars($user_email); ?>" readonly required>
                                 </div>
                                 
                                 <div class="col-12">

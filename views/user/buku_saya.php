@@ -303,9 +303,9 @@ $result = mysqli_query($conn, $query);
                     icon: 'success',
                     title: 'Berhasil!',
                     text: data.message,
-                    showConfirmButton: false, // Menghilangkan tombol OK
-                    timer: 3000,              // 3 detik
-                    timerProgressBar: true,   // Menampilkan progress bar biar makin estetik
+                    showConfirmButton: false, 
+                    timer: 3000,             
+                    timerProgressBar: true,   
                     didOpen: () => {
                         Swal.showLoading();
                     }

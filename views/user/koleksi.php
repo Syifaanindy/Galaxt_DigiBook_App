@@ -1,6 +1,3 @@
-<?php
-require_once dirname(__DIR__, 2) . '/controllers/koleksi-controller.php';
-?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -28,78 +25,71 @@ require_once dirname(__DIR__, 2) . '/controllers/koleksi-controller.php';
             </div>
 
             <section class="filters mb-4">
-                <form method="GET" action="koleksi.php">
-                    <div class="filter-grid">
-                        <div class="search-wrap">
-                            <label for="searchInput" class="form-label">Cari Buku</label>
-                            <input id="searchInput" type="text" name="search" class="form-control" placeholder="Contoh: Makrifat, Kuntowijoyo" value="<?= htmlspecialchars($search) ?>" onchange="this.form.submit()">
-                        </div>
-
-                        <div class="category-wrap">
-                            <label for="categorySelect" class="form-label">Kategori</label>
-                            <select id="categorySelect" name="kategori" class="form-select" onchange="this.form.submit()">
-                                <option value="all" <?= ($kategori_id === 'all') ? 'selected' : '' ?>>Semua Kategori</option>
-                                <?php while($kat = $listKategori->fetch_assoc()): ?>
-                                    <option value="<?= $kat['id'] ?>" <?= ($kategori_id == $kat['id']) ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($kat['category_name']) ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
+                <form method="GET" action="" class="filter-grid">
+                    <div class="search-wrap">
+                        <label for="searchInput" class="form-label">Cari Buku</label>
+                        <input id="searchInput" name="search" type="text" class="form-control" 
+                               placeholder="Contoh: Makrifat, Kuntowijoyo" 
+                               value="<?= htmlspecialchars($search ?? '') ?>">
                     </div>
+
+                    <div class="category-wrap">
+                        <label for="categorySelect" class="form-label">Kategori</label>
+                        <select id="categorySelect" name="category" class="form-select" onchange="this.form.submit()">
+                            <option value="all" <?= (($category ?? 'all') == 'all') ? 'selected' : '' ?>>Semua Kategori</option>
+                            <option value="sastra" <?= (($category ?? 'all') == 'sastra') ? 'selected' : '' ?>>Sastra Indonesia</option>
+                            <option value="filsafat" <?= (($category ?? 'all') == 'filsafat') ? 'selected' : '' ?>>Filsafat</option>
+                            <option value="sosiologi" <?= (($category ?? 'all') == 'sosiologi') ? 'selected' : '' ?>>Sosiologi</option>
+                            <option value="agama" <?= (($category ?? 'all') == 'agama') ? 'selected' : '' ?>>Agama</option>
+                            <option value="sejarah" <?= (($category ?? 'all') == 'sejarah') ? 'selected' : '' ?>>Sejarah</option>
+                        </select>
+                    </div>
+                    <button type="submit" style="display: none;"></button>
                 </form>
             </section>
 
             <section>
-                <p id="resultInfo" class="result-info" style="display: block;">
-                    <?= $totalBuku ?> buku ditemukan · Halaman <?= $page ?>/<?= max(1, $totalPage) ?> · Maks 20 buku/halaman
+                <p id="resultInfo" class="result-info">
+                    <?= $totalBooks ?? 0 ?> buku ditemukan · Halaman <?= $page ?? 1 ?>/<?= max(1, $totalPages ?? 1) ?> · Maks 20 buku/halaman
                 </p>
                 
                 <div id="bookGrid" class="book-grid">
-                    <?php if ($daftarBuku->num_rows > 0): ?>
-                        <?php while ($buku = $daftarBuku->fetch_assoc()): ?>
-                            <div class="book-card-item">
-                                <div class="book-card-top">
-                                    <img src="../../assets/img/books/<?= !empty($buku['cover']) ? htmlspecialchars($buku['cover']) : 'default-cover.png' ?>" alt="Cover Buku" class="book-cover-img">
-                                </div>
-                                
-                                <div class="book-card-bottom">
-                                    <h4 class="book-title"><?= htmlspecialchars($buku['judul']) ?></h4>
-                                    <p class="book-author"><?= htmlspecialchars($buku['penulis']) ?></p>
-                                    <p class="book-category">Kategori: <?= htmlspecialchars($buku['nama_kategori'] ?? 'Umum') ?></p>
+                    <?php if (!empty($books)): ?>
+                        <?php foreach ($books as $buku): ?>
+                            <div class="book-card-wrapper" style="width: 250px; display: inline-block; margin-right: 20px; margin-bottom: 20px; vertical-align: top;">
+                                <div class="card h-100 border-0 shadow-sm p-3" style="border-radius: 20px;">
+                                    <div class="text-center mb-3">
+                                        <img src="<?= !empty($buku['cover']) ? $buku['cover'] : '../../assets/img/default-cover.jpg' ?>" 
+                                             alt="<?= htmlspecialchars($buku['judul']) ?>" 
+                                             class="img-fluid" style="max-height: 180px; border-radius: 10px;">
+                                    </div>
+                                    <h5 class="fw-bold mb-1 text-dark text-truncate" style="font-size: 1.1rem;"><?= htmlspecialchars($buku['judul']) ?></h5>
+                                    <p class="text-muted small mb-1"><?= htmlspecialchars($buku['penulis']) ?></p>
+                                    <p class="text-secondary small mb-3">Kategori: <?= htmlspecialchars($buku['kategori']) ?></p>
                                     
-                                    <div class="book-card-footer">
-                                        <span class="book-price">Rp <?= number_format($buku['harga'], 0, ',', '.') ?></span>
-                                        <a href="detail-buku.php?id=<?= $buku['id'] ?>" class="btn-detail">Detail</a>
+                                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                                        <span class="fw-bold text-primary">Rp <?= number_format(($buku['harga'] ?? 0), 0, ',', '.') ?></span>
+                                        <a href="detail-buku.php?id=<?= $buku['id'] ?>" class="btn btn-dark btn-sm px-3" style="background-color: #211c4a; border-radius: 8px;">Detail</a>
                                     </div>
                                 </div>
                             </div>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     <?php else: ?>
-                        <div class="text-center py-5" style="grid-column: 1 / -1; width: 100%;">
-                            <i class="fa-solid fa-folder-open text-muted display-4 mb-3"></i>
-                            <p class="text-secondary">Tidak ada koleksi buku yang cocok dengan kriteria pencarian Anda.</p>
+                        <div class="alert alert-info w-100 text-center" style="border-radius: 15px;">
+                            Tidak ada koleksi buku yang ditemukan untuk kategori ini.
                         </div>
                     <?php endif; ?>
                 </div>
 
-                <div id="pagination" class="pagination-wrap d-flex justify-content-center mt-5">
-                    <?php if ($totalPage > 1): ?>
+                <div id="pagination" class="pagination-wrap mt-4 d-flex justify-content-center">
+                    <?php if (isset($totalPages) && $totalPages > 1): ?>
                         <nav>
                             <ul class="pagination">
-                                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                    <a class="page-link" href="koleksi.php?search=<?= urlencode($search) ?>&kategori=<?= urlencode($kategori_id) ?>&page=<?= $page - 1 ?>"><i class="fa-solid fa-angle-left"></i></a>
-                                </li>
-
-                                <?php for ($i = 1; $i <= $totalPage; $i++): ?>
-                                    <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
-                                        <a class="page-link" href="koleksi.php?search=<?= urlencode($search) ?>&kategori=<?= urlencode($kategori_id) ?>&page=<?= $i ?>"><?= $i ?></a>
+                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                    <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                        <a class="page-link" href="?search=<?= urlencode($search) ?>&category=<?= urlencode($category ?? 'all') ?>&page=<?= $i ?>"><?= $i ?></a>
                                     </li>
                                 <?php endfor; ?>
-
-                                <li class="page-item <?= ($page >= $totalPage) ? 'disabled' : '' ?>">
-                                    <a class="page-link" href="koleksi.php?search=<?= urlencode($search) ?>&kategori=<?= urlencode($kategori_id) ?>&page=<?= $page + 1 ?>"><i class="fa-solid fa-angle-right"></i></a>
-                                </li>
                             </ul>
                         </nav>
                     <?php endif; ?>
@@ -111,6 +101,8 @@ require_once dirname(__DIR__, 2) . '/controllers/koleksi-controller.php';
     <div id="site-footer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/script/user/koleksi.js"></script>
     <script src="../../assets/script/user/shared-layout.js"></script>
 </body>
+
 </html>
