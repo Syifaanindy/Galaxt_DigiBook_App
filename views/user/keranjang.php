@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/auth-helper.php';
 require_once __DIR__ . '/../../controllers/keranjang-controller.php';
+require_once __DIR__ . '/../../models/keranjangModel.php';
 
 requireRole('user');
 
@@ -53,6 +54,16 @@ $cart_books = getUserCartItems($conn, $user_id);
             <section class="cart-card p-4 p-md-5">
                 <div id="cartItems">
                     <?php if (!empty($cart_books)) : ?>
+                        <div class="select-all-wrapper mb-3 p-3 bg-light rounded-4 d-flex align-items-center" 
+                            style="border: 1px dashed #ced4da;">
+                            <div class="cart-selection-area pe-3">
+                                <input type="checkbox" id="selectAllTop" class="form-check-input" 
+                                    style="width: 24px; height: 24px; cursor: pointer;">
+                            </div>
+                            <label for="selectAllTop" class="fw-bold text-dark mb-0" style="cursor: pointer;">
+                                Pilih Semua Buku (<?= count($cart_books) ?>)
+                            </label>
+                        </div>
                         <?php foreach ($cart_books as $book) : ?>
                             <article class="cart-item cart-item-wrap mb-4 shadow-sm" 
                                 style="display: grid !important; 
@@ -136,18 +147,25 @@ $cart_books = getUserCartItems($conn, $user_id);
     <script src="../../assets/script/user/shared-layout.js"></script>
     <script>
         (function () {
+            // Ambil elemen Select All dan semua checkbox buku
+            const selectAllTop = document.getElementById('selectAllTop');
             const checkboxes = document.querySelectorAll('.book-checkbox');
+            
             const totalDisplay = document.getElementById('totalDisplay');
             const countSelected = document.getElementById('countSelected');
             const btnCheckout = document.getElementById('btnCheckout');
             const selectedIdsInput = document.getElementById('selectedIds');
 
+            // --- FUNGSI UPDATE SUMMARY ---
             function updateSummary() {
                 let total = 0;
                 let count = 0;
                 let ids = [];
 
-                checkboxes.forEach(cb => {
+                // Kita harus query ulang di sini karena kalau ada item dihapus, jumlah list berubah
+                const currentCheckboxes = document.querySelectorAll('.book-checkbox');
+                
+                currentCheckboxes.forEach(cb => {
                     if (cb.checked) {
                         total += parseInt(cb.dataset.price);
                         count++;
@@ -155,24 +173,61 @@ $cart_books = getUserCartItems($conn, $user_id);
                     }
                 });
 
-                totalDisplay.innerText = total.toLocaleString('id-ID');
-                countSelected.innerText = count;
-                selectedIdsInput.value = ids.join(',');
-                btnCheckout.disabled = count === 0;
+                // Update tampilan angka
+                if(totalDisplay) totalDisplay.innerText = total.toLocaleString('id-ID');
+                if(countSelected) countSelected.innerText = count;
+                
+                // Masukkan ID ke hidden input
+                if(selectedIdsInput) selectedIdsInput.value = ids.join(',');
+                
+                // Aktifkan/Matikan tombol checkout
+                if(btnCheckout) btnCheckout.disabled = (count === 0);
             }
 
-            checkboxes.forEach(cb => {
-                cb.addEventListener('change', updateSummary);
+            // --- LOGIKA SELECT ALL ---
+            if (selectAllTop) {
+                selectAllTop.addEventListener('change', function() {
+                    // Semua checkbox buku ngikutin status Select All
+                    const currentCheckboxes = document.querySelectorAll('.book-checkbox');
+                    currentCheckboxes.forEach(cb => {
+                        cb.checked = this.checked;
+                    });
+                    updateSummary();
+                });
+            }
+
+            // --- LOGIKA CHECKBOX SATUAN ---
+            // Pake event delegation supaya kalau ada item baru/hapus tetep jalan
+            document.getElementById('cartItems').addEventListener('change', function(e) {
+                if (e.target.classList.contains('book-checkbox')) {
+                    // Kalau ada satu aja yang gak dicentang, Select All ikut mati
+                    if (selectAllTop) {
+                        const currentCheckboxes = document.querySelectorAll('.book-checkbox');
+                        const allChecked = Array.from(currentCheckboxes).every(cb => cb.checked);
+                        selectAllTop.checked = allChecked;
+                    }
+                    updateSummary();
+                }
             });
 
-            // Tetap simpan fungsi hapus bawaan kamu
+            // --- LOGIKA HAPUS ITEM ---
             const cartItems = document.getElementById('cartItems');
             cartItems.addEventListener('click', function (event) {
                 const removeBtn = event.target.closest('.btn-remove-cart');
                 if (!removeBtn) return;
+                
                 const item = removeBtn.closest('.cart-item-wrap');
-                if (item) item.remove();
-                updateSummary(); // Update total kalau item dihapus
+                if (item) {
+                    item.remove();
+                    // Setelah dihapus, hitung ulang totalnya
+                    updateSummary();
+                    
+                    // Cek ulang Select All kalau item abis
+                    const currentCheckboxes = document.querySelectorAll('.book-checkbox');
+                    if(currentCheckboxes.length === 0 && selectAllTop) {
+                        selectAllTop.checked = false;
+                    }
+                }
             });
         })();
     </script>
