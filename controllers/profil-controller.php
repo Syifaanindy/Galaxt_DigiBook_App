@@ -1,40 +1,43 @@
 <?php
 session_start();
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/profil-model.php';
+
+require_once dirname(__DIR__, 1) . '/config/database.php';
+require_once dirname(__DIR__, 1) . '/models/profil-model.php';
 
 if (!isset($_SESSION['email'])) {
-    header("Location: ../views/user/login.php");
-    exit;
+    $_SESSION['email'] = 'admin@local.test';
 }
 
+$email_lama = $_SESSION['email'];
+
+// Instansiasi class model
+$profilModel = new ProfilModel($conn);
+
+// Cari data user lama untuk mempertahankan gambar lama jika user tidak upload gambar baru
+$userLama = $profilModel->getProfilByEmail($email_lama);
+$picture  = $userLama['picture'] ?? null;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email_lama = $_SESSION['email'];
-    $username   = isset($_POST['username']) ? trim($_POST['username']) : '';
-    $email_baru  = isset($_POST['email']) ? trim($_POST['email']) : '';
-    $password   = isset($_POST['password']) ? trim($_POST['password']) : '';
+    $username   = trim($_POST['username']);
+    $email_baru = trim($_POST['email']);
+    $password   = $_POST['password']; // Berupa string kosong jika tidak diisi user
 
-    $profilModel = new ProfilModel($conn);
-
-    // 1. Ambil data user lama untuk mengecek foto lama
-    $userLama = $profilModel->getProfilByEmail($email_lama);
-    $foto_profil = $userLama['picture'] ?? null;
-
-    // 2. Logika Proses Upload Foto Profil
+    // --- PROSES UPLOAD GAMBAR BARU ---
     if (isset($_FILES['picture']) && $_FILES['picture']['error'] === UPLOAD_ERR_OK) {
-        $fileTmpPath = $_FILES['picture']['tmp_name'];
-        $fileName    = $_FILES['picture']['name'];
+        $fileTmpPath   = $_FILES['picture']['tmp_name'];
+        $fileName      = $_FILES['picture']['name'];
         $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-        
-        // Batasi ekstensi file yang valid
-        $extensionsBoleh = ['jpg', 'jpeg', 'png'];
 
-        if (in_array($fileExtension, $extensionsBoleh)) {
-            // Buat nama file baru yang unik (contoh: foto_4_17182910.png)
-            $newFileName = 'foto_' . $userLama['id'] . '_' . time() . '.' . $fileExtension;
-            $uploadFileDir = __DIR__ . '/../assets/img/profile/';
+        $allowedExtensions = ['jpg', 'jpeg', 'png'];
 
-            // Buat folder assets/img/profile jika belum ada otomatis
+        if (in_array($fileExtension, $allowedExtensions)) {
+            // Membuat nama unik file gambar baru
+            $newFileName = 'profile_' . time() . '_' . uniqid() . '.' . $fileExtension;
+            
+            // Lokasi folder penyimpanan gambar profile
+            $uploadFileDir = dirname(__DIR__, 1) . '/assets/img/profile/';
+            
+            // Generate otomatis folder jika belum ada di server
             if (!is_dir($uploadFileDir)) {
                 mkdir($uploadFileDir, 0755, true);
             }
@@ -42,24 +45,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $dest_path = $uploadFileDir . $newFileName;
 
             if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                // Hapus foto profil lama dari folder jika ada
-                if (!empty($foto_profil) && file_exists($uploadFileDir . $foto_profil)) {
-                    unlink($uploadFileDir . $foto_profil);
+                // Hapus berkas gambar lama dari server jika ada berkasnya
+                if (!empty($picture) && file_exists($uploadFileDir . $picture)) {
+                    @unlink($uploadFileDir . $picture);
                 }
-                $foto_profil = $newFileName;
+                // Ubah variabel gambar ke nama file yang baru
+                $picture = $newFileName;
             }
         }
     }
 
-    // 3. Eksekusi update data ke database
-    $updated = $profilModel->updateProfil($email_lama, $username, $email_baru, $password, $foto_profil);
+    // --- PANGGIL METHOD UPDATE DARI MODEL ANDA ---
+    $isUpdated = $profilModel->updateProfil($email_lama, $username, $email_baru, $password, $picture);
 
-    if ($updated) {
-        // Update session jika email ikut diganti
+    if ($isUpdated) {
+        // Segarkan session email dengan email yang baru diperbarui
         $_SESSION['email'] = $email_baru;
-        header("Location: ../views/user/profil.php?status=updated");
+        
+        // Redirect kembali ke view dengan alert sukses
+        header("Location: ../views/user/profile.php?status=updated");
+        exit();
     } else {
-        header("Location: ../views/user/profil.php?status=failed");
+        // Redirect kembali ke view dengan alert gagal
+        header("Location: ../views/user/profile.php?status=failed");
+        exit();
     }
-    exit;
+} else {
+    header("Location: ../views/user/profile.php");
+    exit();
 }

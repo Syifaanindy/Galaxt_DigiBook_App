@@ -1,20 +1,33 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/buku-user-model.php';
+// Folder: koleksi-controllers
+// File: KoleksiController.php
 
-$bukuUserModel = new BukuUserModel($conn);
+// Menghubungkan secara dinamis ke folder model kustom Anda
+require_once __DIR__ . '/../buku-user-model/BukuUserModel.php';
 
-$search      = isset($_GET['search']) ? trim($_GET['search']) : '';
-$kategori_id = isset($_GET['kategori']) ? trim($_GET['kategori']) : 'all';
-$page        = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+class KoleksiController {
+    private $bookModel;
 
-if ($page < 1) $page = 1;
+    public function __construct($dbConnection) {
+        $this->bookModel = new BukuUserModel($dbConnection);
+    }
 
-$limit  = 20; 
-$offset = ($page - 1) * $limit;
+    public function index() {
+        // Menangkap parameter filter dari URL menggunakan GET
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $category = isset($_GET['category']) ? trim($_GET['category']) : 'all'; 
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 20; 
 
-$listKategori = $bukuUserModel->getAllKategori();
-$daftarBuku   = $bukuUserModel->getBukuKoleksi($search, $kategori_id, $limit, $offset);
-$totalBuku    = $bukuUserModel->getTotalBukuKoleksi($search, $kategori_id);
+        // Eksekusi penarikan data dari database melalui model
+        $result = $this->bookModel->getBuku($search, $category, $page, $limit);
 
-$totalPage    = ceil($totalBuku / $limit);
+        // Ekstrak data hasil query untuk dilempar ke View
+        $books = $result['data'];
+        $totalBooks = $result['total'];
+        $totalPages = $result['total_pages'];
+
+        // Memanggil file view HTML/PHP koleksi Anda
+        require __DIR__ . '/../views/user/koleksi.php';
+    }
+}

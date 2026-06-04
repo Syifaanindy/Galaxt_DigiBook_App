@@ -1,96 +1,65 @@
 <?php
+// Folder: buku-user-model
+// File: BukuUserModel.php
+
 class BukuUserModel {
     private $db;
 
-    public function __construct($databaseConnection) {
-        $this->db = $databaseConnection;
+    public function __construct($dbConnection) {
+        $this->db = $dbConnection;
     }
 
     /**
-     * Mengambil data kategori untuk dropdown filter
+     * Mengambil data buku berdasarkan filter kata kunci dan kategori
      */
-    public function getAllKategori() {
-        $sql = "SELECT * FROM category";
-        return $this->db->query($sql);
-    }
-
-    /**
-     * Mengambil data dari tabel 'books' menggunakan nama kolom asli database
-     * dialiaskan (AS) agar kompatibel dengan penamaan di file tampilan Anda
-     */
-    public function getBukuKoleksi($search, $kategori_id, $limit, $offset) {
-        $sql = "SELECT 
-                    b.id,
-                    b.title AS judul,
-                    b.author AS penulis,
-                    b.price AS harga,
-                    b.cover_image AS cover,
-                    b.category_id,
-                    k.category_name AS nama_kategori 
-                FROM books b 
-                LEFT JOIN category k ON b.category_id = k.id 
-                WHERE 1=1";
+    public function getBuku($search = '', $category = 'all', $page = 1, $limit = 20) {
+        $offset = ($page - 1) * $limit;
         
+        // Query dasar
+        $query = "SELECT * FROM buku WHERE 1=1";
         $params = [];
-        $types = "";
 
+        // 1. Filter Pencarian Teks (Judul atau Penulis)
         if (!empty($search)) {
-            $sql .= " AND (b.title LIKE ? OR b.author LIKE ?)";
-            $searchParam = "%" . $search . "%";
-            $params[] = $searchParam;
-            $params[] = $searchParam;
-            $types .= "ss";
+            $query .= " AND (judul LIKE ? OR penulis LIKE ?)";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
         }
 
-        if (!empty($kategori_id) && $kategori_id !== 'all') {
-            $sql .= " AND b.category_id = ?";
-            $params[] = $kategori_id;
-            $types .= "i";
+        // 2. Filter Kategori Fleksibel
+        // Menggunakan LOWER agar value 'sastra' dari HTML cocok dengan 'Sastra Indonesia' atau 'sastra' di DB Admin
+        if (!empty($category) && $category !== 'all') {
+            $query .= " AND (LOWER(kategori) LIKE ? OR LOWER(kategori) = ?)";
+            $params[] = "%" . strtolower($category) . "%";
+            $params[] = strtolower($category);
         }
 
-        $sql .= " ORDER BY b.id DESC LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
-        $types .= "ii";
+        // Hitung total data untuk info teks jumlah buku di UI
+        $countQuery = str_replace("SELECT *", "SELECT COUNT(*) as total", $query);
+        $stmtCount = $this->db->prepare($countQuery);
+        $stmtCount->execute($params);
+        $totalRows = $stmtCount->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
 
-        $stmt = $this->db->prepare($sql);
-        if (!empty($types)) {
-            $stmt->bind_param($types, ...$params);
+        // Tambahkan limit dan offset untuk pagination
+        $query .= " LIMIT ? OFFSET ?";
+        $params[] = (int)$limit;
+        $params[] = (int)$offset;
+
+        $stmt = $this->db->prepare($query);
+        
+        // Bind parameter untuk mencegah SQL Injection dan ketidakcocokan tipe data PDO
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key + 1, $val, is_int($val) ? PDO::PARAM_INT : PDO::PARAM_STR);
         }
         
         $stmt->execute();
-        return $stmt->get_result();
-    }
+        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    /**
-     * Menghitung total buku yang sesuai untuk keperluan paginasi
-     */
-    public function getTotalBukuKoleksi($search, $kategori_id) {
-        $sql = "SELECT COUNT(*) as total FROM books b WHERE 1=1";
-        $params = [];
-        $types = "";
-
-        if (!empty($search)) {
-            $sql .= " AND (b.title LIKE ? OR b.author LIKE ?)";
-            $searchParam = "%" . $search . "%";
-            $params[] = $searchParam;
-            $params[] = $searchParam;
-            $types .= "ss";
-        }
-
-        if (!empty($kategori_id) && $kategori_id !== 'all') {
-            $sql .= " AND b.category_id = ?";
-            $params[] = $kategori_id;
-            $types .= "i";
-        }
-
-        $stmt = $this->db->prepare($sql);
-        if (!empty($types)) {
-            $stmt->bind_param($types, ...$params);
-        }
-
-        $stmt->execute();
-        $res = $stmt->get_result()->fetch_assoc();
-        return $res['total'] ?? 0;
+        return [
+            'data' => $books,
+            'total' => $totalRows,
+            'current_page' => $page,
+            'total_pages' => ceil($totalRows / $limit)
+        ];
     }
 }

@@ -10,12 +10,12 @@ if (!isset($_SESSION['email'])) {
 
 $email_login = $_SESSION['email'];
 
-// 1. Ambil informasi utama akun user (id, username, email, picture)
-$queryUser = $conn->prepare("SELECT id, username, email, picture FROM users WHERE email = ?");
-$queryUser->bind_param("s", $email_login);
-$queryUser->execute();
-$dataUser = $queryUser->get_result()->fetch_assoc();
-$userId = $dataUser['id'] ?? 0;
+// Instansiasi class model menggunakan koneksi database dari config
+$profilModel = new ProfilModel($conn);
+
+// 1. Ambil informasi utama akun user via ProfilModel
+$dataUser = $profilModel->getProfilByEmail($email_login);
+$userId   = $dataUser['id'] ?? 0;
 
 $user_name   = $dataUser['username'] ?? 'User Galaxy';
 $user_email  = $dataUser['email'] ?? $email_login;
