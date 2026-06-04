@@ -26,6 +26,5 @@ class DashboardAdminController {
     }
 }
 
-// Jalankan controllernya langsung
 $controller = new DashboardAdminController();
 $controller->index();

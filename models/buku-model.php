@@ -1,5 +1,4 @@
 <?php
-// Fungsi untuk menghitung total seluruh buku di database
 function hitungTotalBuku($conn) {
     $query = "SELECT COUNT(*) AS total FROM books";
     $hasil = $conn->query($query);
@@ -9,8 +8,6 @@ function hitungTotalBuku($conn) {
     $data = $hasil->fetch_assoc();
     return (int)$data['total'];
 }
-
-// Fungsi untuk mengambil data buku dengan batasan halaman (LIMIT & OFFSET)
 function ambilSemuaBukuPaging($conn, $limit, $offset) {
     $query = "SELECT b.*, c.category_name AS category_name 
               FROM books b 
@@ -32,9 +29,7 @@ function ambilSemuaBukuPaging($conn, $limit, $offset) {
     return $data;
 }
 
-// --- FUNGSI ASLI BAWAAN ANDA ---
 
-// Ambil semua data buku beserta nama kategorinya (JOIN)
 function ambilSemuaBuku($conn) {
     $query = "SELECT b.*, c.category_name AS category_name 
               FROM books b 
