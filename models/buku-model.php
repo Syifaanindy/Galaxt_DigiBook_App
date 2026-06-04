@@ -32,9 +32,7 @@ function ambilSemuaBukuPaging($conn, $limit, $offset) {
     return $data;
 }
 
-// --- FUNGSI ASLI BAWAAN ANDA ---
 
-// Ambil semua data buku beserta nama kategorinya (JOIN)
 function ambilSemuaBuku($conn) {
     $query = "SELECT b.*, c.category_name AS category_name 
               FROM books b 

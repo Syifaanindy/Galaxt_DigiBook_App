@@ -2,8 +2,11 @@
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../models/buku-model.php';
 
-$books = ambilSemuaBuku($conn);
-$booksJson = json_encode($books, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$list_kategori = ambilSemuaKategori($conn);
+
+$buku_data = ambilSemuaBuku($conn); 
+
+$booksJson = json_encode($buku_data);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -42,6 +45,12 @@ $booksJson = json_encode($books, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
                         <label for="categorySelect" class="form-label">Kategori</label>
                         <select id="categorySelect" class="form-select">
                             <option value="all" selected>Semua Kategori</option>
+                        
+                            <?php foreach ($list_kategori as $kat): ?>
+                                <option value="<?= htmlspecialchars($kat['nama_kategori']) ?>">
+                                    <?= htmlspecialchars($kat['nama_kategori']) ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -49,8 +58,9 @@ $booksJson = json_encode($books, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
 
             <section>
                 <p id="resultInfo" class="result-info"></p>
-                <div id="bookGrid" class="book-grid"></div>
-                <div id="pagination" class="pagination-wrap"></div>
+                <div id="bookGrid" class="book-grid row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+                </div>
+                <div id="pagination" class="pagination-wrap mt-4 d-flex justify-content-center"></div>
             </section>
         </section>
     </main>
@@ -58,6 +68,7 @@ $booksJson = json_encode($books, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
     <div id="site-footer"></div>
 
     <script>
+   
         window.BOOK_LIST = <?= $booksJson ?: '[]' ?>;
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
