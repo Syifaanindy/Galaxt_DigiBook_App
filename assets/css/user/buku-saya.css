@@ -32,9 +32,382 @@
     background: linear-gradient(135deg, #2e245b, #5640a0) !important;
     color: #fff !important;
     border: none !important;
+    border-radius: 10px !important;
 }
 
 .btn-read-book:hover {
     background: linear-gradient(135deg, #3d2b87, #6a52b9) !important;
     color: #fff !important;
+}
+
+.my-books-page-container .search-container-wrap {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 20px;
+    box-shadow: 0 4px 25px rgba(46, 36, 91, 0.04);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 30px;
+}
+
+.my-books-page-container .input-group {
+    border-radius: 12px !important;
+    overflow: hidden;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+
+.my-books-page-container .form-control {
+    border: none !important;
+    background: transparent !important;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #4a5568;
+}
+
+.my-books-page-container .form-control:focus {
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.my-books-page-container .form-select {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #4a5568;
+}
+
+.my-books-page-container .form-select:focus {
+    border-color: #5640a0;
+    box-shadow: none;
+}
+
+.my-books-page-container .btn-primary {
+    background: linear-gradient(135deg, #2e245b, #5640a0) !important;
+    border: none !important;
+    color: #ffffff !important;
+    border-radius: 12px !important;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 24px !important;
+    width: auto !important;
+    height: auto !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.my-books-page-container .btn-primary:hover {
+    background: linear-gradient(135deg, #3d2b87, #6a52b9) !important;
+    transform: none !important;
+}
+
+.my-books-page-container .btn-secondary {
+    background-color: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #64748b !important;
+    border-radius: 12px !important;
+    padding: 10px 16px !important;
+    font-size: 14px;
+    margin-left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.my-books-page-container .btn-secondary:hover {
+    background-color: #cbd5e1 !important;
+    color: #1e293b !important;
+}
+
+.book-card .btn-outline-warning {
+    color: #c27803 !important;
+    border: 1.5px solid #f59e0b !important;
+    background-color: transparent !important;
+    font-weight: 600;
+    border-radius: 10px !important;
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+
+.book-card .btn-outline-warning:hover {
+    background-color: #fef3c7 !important;
+    color: #b45309 !important;
+    border-color: #d97706 !important;
+}
+
+.pagination {
+    gap: 6px;
+}
+
+.pagination .page-item .page-link {
+    color: #2e245b !important;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 8px 16px;
+    font-weight: 600;
+    border-radius: 10px !important;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #2e245b, #5640a0) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(46, 36, 91, 0.2);
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #f4f2fa !important;
+    border-color: #cbd5e1;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #94a3b8 !important;
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0;
+}
+
+.my-library-stats {
+    background: #ffffff;
+    padding: 20px 36px;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 6px 25px rgba(46, 36, 91, 0.06);
+    width: 100%;
+    max-width: 290px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    user-select: none;
+}
+
+.my-library-stats:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(46, 36, 91, 0.12);
+    border-color: rgba(86, 64, 160, 0.2);
+}
+
+.my-library-stats .stats-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, rgba(46, 36, 91, 0.1), rgba(86, 64, 160, 0.1));
+    color: #2e245b;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: all 0.3s ease;
+}
+
+.my-library-stats:hover .stats-icon {
+    transform: scale(1.05) rotate(8deg);
+    background: linear-gradient(135deg, #2e245b, #5640a0);
+    color: #ffffff;
+}
+
+.my-library-stats:active {
+    transform: scale(0.95) translateY(-2px);
+}
+
+.my-library-stats:active .stats-icon {
+    background: linear-gradient(135deg, #ff9a00, #ff5100);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(255, 154, 0, 0.5);
+    transform: scale(1.1);
+}
+
+.my-library-stats .stats-label {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+}
+
+.my-library-stats .stats-value {
+    font-size: 32px;
+    color: #2e245b;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.my-library-stats .stats-unit {
+    font-size: 18px;
+    color: #64748b;
+    font-weight: 600;
+    margin-left: 2px;
+}
+
+.my-books-page-container .text-muted.mb-0 {
+    font-weight: 700;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.65); 
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 6px 16px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(46, 36, 91, 0.04);
+    display: inline-block;
+    margin-top: 5px;
+    background-image: linear-gradient(90deg, #ff007f, #7f00ff, #00d2ff, #ff007f);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shineGalaxy 4s linear infinite;
+}
+
+@keyframes shineGalaxy {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); 
+    backdrop-filter: blur(5px); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    text-align: left;
+}
+
+@keyframes glow-move {
+    0% { box-shadow: 0 0 5px #8a2be2, 0 0 10px #8a2be2; }
+    50% { box-shadow: 0 0 20px #8a2be2, 0 0 30px #8a2be2; }
+    100% { box-shadow: 0 0 5px #8a2be2, 0 0 10px #8a2be2; }
+}
+
+.btn-warning {
+    position: relative;
+    overflow: hidden; /* Penting agar efek glow tidak keluar dari tombol */
+    background: linear-gradient(90deg, #5640a0, #8a2be2); /* Gradasi ungu */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn-warning::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%; /* Mulai dari luar kiri */
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        transparent
+    );
+    animation: slide-glow 3s infinite; /* Animasi berulang */
+}
+
+/* Definisi Animasi */
+@keyframes slide-glow {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+}
+
+/* Style tombol Batal agar serasi */
+.btn-secondary {
+    background: transparent;
+    border: 2px solid #5640a0;
+    color: #5640a0;
+    font-weight: bold;
+}
+
+.modal-header {
+    /* Gradasi dari ungu tua ke ungu yang sedikit lebih terang */
+    background: linear-gradient(135deg, #2e245b, #5640a0); 
+    border-bottom: none;
+    padding: 20px;
+}
+
+/* Judul putih agar kontras di atas gradasi ungu */
+.modal-header .modal-title {
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+/* Tombol close (X) putih */
+.modal-header .btn-close {
+    filter: invert(1) brightness(2);
+}
+
+.modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(86, 64, 160, 0.2);
+}
+
+/* Berikan sedikit warna latar pada overlay modal agar terlihat estetik */
+.modal-backdrop.show {
+    background-color: rgba(46, 36, 91, 0.4) !important; /* Warna ungu transparan */
+    backdrop-filter: blur(5px); /* Efek kaca buram */
+}
+
+/* Biarkan modal-content tetap putih tapi dengan sudut membulat */
+.modal-content {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Mengubah tampilan SweetAlert2 agar senada dengan web */
+.swal2-popup {
+    border-radius: 20px !important;
+    background: #ffffff !important;
+    border: 2px solid #e0d8ff; /* Border tipis ungu muda */
+}
+
+.swal2-title {
+    color: #2e245b !important;
+    font-weight: 700 !important;
+}
+
+/* Mengubah warna tombol OK di SweetAlert */
+.swal2-confirm {
+    background: linear-gradient(135deg, #5640a0, #7a63c9) !important;
+    border-radius: 10px !important;
+    padding: 10px 30px !important;
+    font-weight: 600 !important;
+}
+
+/* Mengatur icon agar lebih lembut */
+.swal2-icon.swal2-success {
+    border-color: #5640a0 !important;
+    color: #5640a0 !important;
+}
+.swal2-success-ring {
+    border-color: #5640a0 !important;
+}
+
+/* Warna progress bar sesuai tema ungu */
+.swal2-timer-progress-bar {
+    background: #5640a0 !important;
 }
