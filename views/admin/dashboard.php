@@ -15,15 +15,15 @@ requireRole('admin');
 global $conn; // Menggunakan $conn sesuai konfigurasi database.php kamu
 
 // Membuat objek model dengan mengoper koneksi $conn
-$model = new DashboardAdminModel($conn); 
+$model = new DashboardAdminModel($conn);
 
 // Mengambil data untuk kartu KPI dan Chart
 $totalPenjualan = $model->getTotalPenjualan();
-$totalOrder     = $model->getTotalOrder();
-$rataRata       = $totalOrder > 0 ? ($totalPenjualan / $totalOrder) : 0;
+$totalOrder = $model->getTotalOrder();
+$rataRata = $totalOrder > 0 ? ($totalPenjualan / $totalOrder) : 0;
 
-$kategoriData   = $model->getBukuPerKategori();
-$bulananData    = $model->getPenjualanBulanan();
+$kategoriData = $model->getBukuPerKategori();
+$bulananData = $model->getPenjualanBulanan();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -33,19 +33,20 @@ $bulananData    = $model->getPenjualanBulanan();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Galaxy Digi Book</title>
 
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../assets/css/admin/sidebar.css">
     <link rel="stylesheet" href="../../assets/css/admin/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     <div class="admin-layout">
         <?php include 'partials/sidebar.php'; ?>
-        
+
         <main class="main-content">
             <header class="topbar">
                 <h2>Selamat Datang, Dashboard Admin</h2>
@@ -68,17 +69,20 @@ $bulananData    = $model->getPenjualanBulanan();
             </section>
 
             <div class="dashboard-bottom-layout">
-                
-                <section class="info-box chart-column" style="background: #fff; padding: 24px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
+
+                <section class="info-box chart-column"
+                    style="background: #fff; padding: 24px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
                     <div class="box-header" style="margin-bottom: 16px;">
-                        <h3 style="font-size: 18px; color: #1f2937;"><i class="fa-solid fa-chart-line"></i> Monthly Sales</h3>
+                        <h3 style="font-size: 18px; color: #1f2937;"><i class="fa-solid fa-chart-line"></i> Monthly
+                            Sales</h3>
                     </div>
                     <div class="chart-wrapper" style="position: relative; height: 280px;">
                         <canvas id="monthlySalesChart"></canvas>
                     </div>
                 </section>
 
-                <section class="info-box chart-column" style="background: #fff; padding: 24px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
+                <section class="info-box chart-column"
+                    style="background: #fff; padding: 24px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
                     <div class="box-header" style="margin-bottom: 16px;">
                         <h3 style="font-size: 18px; color: #1f2937;"><i class="fa-solid fa-book"></i> Category Book</h3>
                     </div>
@@ -86,7 +90,7 @@ $bulananData    = $model->getPenjualanBulanan();
                         <canvas id="categoryBookChart"></canvas>
                     </div>
                 </section>
-                
+
             </div>
         </main>
     </div>
@@ -98,7 +102,7 @@ $bulananData    = $model->getPenjualanBulanan();
         const dataPenjualan = phpBulananData.map(item => item.total);
 
         const phpKategoriData = <?= json_encode($kategoriData); ?>;
-        const labelsKategori = phpKategoriData.map(item => item.kategori); 
+        const labelsKategori = phpKategoriData.map(item => item.kategori);
         const dataJumlahBuku = phpKategoriData.map(item => item.jumlah);
 
         // Rendering Line Chart (Monthly Sales)
@@ -115,7 +119,7 @@ $bulananData    = $model->getPenjualanBulanan();
                     borderWidth: 2,
                     pointBackgroundColor: '#3b82f6',
                     pointRadius: 4,
-                    tension: 0 
+                    tension: 0
                 }]
             },
             options: {
@@ -145,7 +149,7 @@ $bulananData    = $model->getPenjualanBulanan();
                         beginAtZero: true,
                         ticks: {
                             stepSize: 1,
-                            callback: function(value) { return value + ' Buku'; }
+                            callback: function (value) { return value + ' Buku'; }
                         }
                     }
                 }
@@ -154,4 +158,5 @@ $bulananData    = $model->getPenjualanBulanan();
     </script>
     <script src="../../assets/script/admin/shared-layout.js"></script>
 </body>
+
 </html>

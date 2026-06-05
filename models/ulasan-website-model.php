@@ -7,19 +7,18 @@ class UlasanWebsiteModel {
     }
 
     /**
-     * Menyimpan ulasan ke tabel web_reviews sesuai struktur kolom di phpMyAdmin
+     * Menyimpan ulasan ke tabel web_reviews menggunakan user_id sebagai relasinya
      */
-    public function simpanUlasan($nama, $email, $rating, $ulasan) {
-        // Query disesuaikan 100% dengan kolom database: nama, email, rating, comment
-        $sql = "INSERT INTO web_reviews (nama, email, rating, comment) VALUES (?, ?, ?, ?)";
+    public function simpanUlasan($rating, $ulasan, $user_id) {
+        $sql = "INSERT INTO web_reviews (rating, comment, user_id) VALUES (?, ?, ?)";
         
         $stmt = $this->db->prepare($sql);
         if (!$stmt) {
             return false;
         }
         
-        // s = string (nama), s = string (email), i = integer (rating), s = string (ulasan)
-        $stmt->bind_param("ssis", $nama, $email, $rating, $ulasan);
+        // i = int (rating), s = string (comment), i = int (user_id)
+        $stmt->bind_param("isi", $rating, $ulasan, $user_id);
         $result = $stmt->execute();
         $stmt->close();
         
