@@ -163,22 +163,22 @@ if (isset($_GET['type'])) {
 <h2>Report Dashboard</h2>
 <p>Laporan Penjualan</p>
 </header>
-<div class="dashboard">
-  <section class="cards">
-                <article class="card">
-                    <h3>Total Penjualan</h3>
-                    <p id="totalSales"></p>
-                </article>
-                <article class="card">
-                    <h3>Total Order</h3>
-                    <p id="totalOrder"></p>
-                </article>
-                <article class="card">
-                    <h3>Rata-Rata</h3>
-                    <p id="avgOrder"></p>
-                </article>
-    </section>
-</div>
+        <div class="dashboard">
+        <section class="cards">
+                        <article class="card">
+                            <h3>Total Penjualan</h3>
+                            <p id="totalSales"></p>
+                        </article>
+                        <article class="card">
+                            <h3>Total Order</h3>
+                            <p id="totalOrder"></p>
+                        </article>
+                        <article class="card">
+                            <h3>Rata-Rata</h3>
+                            <p id="avgOrder"></p>
+                        </article>
+            </section>
+        </div>
 
 <div class="charts">
     <div class="panel w-100">

@@ -3,14 +3,14 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Memanggil file database, helper, dan model yang sudah disesuaikan namanya
+
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/url-helper.php';
 require_once __DIR__ . '/../models/buku-model.php';
 
 $action = $_GET['action'] ?? '';
 
-// Memilah aksi berdasarkan request form
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'create') {
         prosesTambahBuku();
@@ -27,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 function prosesTambahBuku() {
     global $conn;
     
-   
     $title       = trim($_POST['title']);
     $author      = trim($_POST['author']);
     $publisher   = trim($_POST['publisher']);
@@ -35,18 +34,32 @@ function prosesTambahBuku() {
     $synopsis    = trim($_POST['synopsis']);
     $price       = intval($_POST['price'] ?? 0);
 
-   
     if (empty($_FILES['file_buku']['name']) || empty($_FILES['cover_buku']['name'])) {
         $_SESSION['error'] = "Gagal! File Buku (PDF) dan Cover Buku wajib diunggah.";
         header("Location: " . base_url('views/admin/katalog-buku.php'));
         exit;
     }
 
+    $max_pdf_size   = 20 * 1024 * 1024; 
+    $max_cover_size = 2 * 1024 * 1024;  
+
+    if ($_FILES['file_buku']['size'] > $max_pdf_size) {
+        $_SESSION['error'] = "Gagal! Ukuran File Buku terlalu besar. Maksimal 20 MB.";
+        header("Location: " . base_url('views/admin/katalog-buku.php'));
+        exit;
+    }
+
+    if ($_FILES['cover_buku']['size'] > $max_cover_size) {
+        $_SESSION['error'] = "Gagal! Ukuran Cover Buku terlalu besar. Maksimal 2 MB.";
+        header("Location: " . base_url('views/admin/katalog-buku.php'));
+        exit;
+    }
+    
+
     $target_dir = __DIR__ . "/../assets/book/";
     $target_diir = __DIR__ . "/../assets/cover/";
     if (!is_dir($target_dir)) { mkdir($target_dir, 0777, true); }
     if (!is_dir($target_diir)) { mkdir($target_diir, 0777, true); }
-
 
     $file_path = "";
     if (!empty($_FILES['file_buku']['name'])) {
@@ -69,9 +82,7 @@ function prosesTambahBuku() {
         $cover_ext = strtolower(pathinfo($_FILES['cover_buku']['name'], PATHINFO_EXTENSION));
         $allowed_cover_ext = ['png', 'jpg', 'jpeg'];
 
-
         if (!in_array($cover_ext, $allowed_cover_ext)) {
-        
             if (!empty($file_path) && file_exists(__DIR__ . "/../" . $file_path)) {
                 unlink(__DIR__ . "/../" . $file_path);
             }
@@ -85,6 +96,7 @@ function prosesTambahBuku() {
             $cover_image = "assets/cover/" . $cover_name;
         }
     }
+
     if (tambahBuku($conn, $title, $author, $publisher, $synopsis, $file_path, $cover_image, $category_id, $price)) {
         $_SESSION['success'] = "Buku berhasil ditambahkan ke katalog!";
     } else {
@@ -113,11 +125,21 @@ function prosesUpdateBuku() {
     $target_dir  = __DIR__ . "/../assets/book/";
     $target_diir = __DIR__ . "/../assets/cover/";
 
-    
+
+    $max_pdf_size   = 20 * 1024 * 1024; 
+    $max_cover_size = 2 * 1024 * 1024; 
+
     $new_file_uploaded = false;
     $temp_new_file = "";
 
     if (!empty($_FILES['file_buku']['name'])) {
+     
+        if ($_FILES['file_buku']['size'] > $max_pdf_size) {
+            $_SESSION['error'] = "Gagal! Ukuran File Buku baru terlalu besar. Maksimal 20 MB.";
+            header("Location: " . base_url('views/admin/katalog-buku.php'));
+            exit;
+        }
+
         $file_ext = strtolower(pathinfo($_FILES['file_buku']['name'], PATHINFO_EXTENSION));
         
         if ($file_ext !== 'pdf') {
@@ -133,13 +155,21 @@ function prosesUpdateBuku() {
         }
     }
 
-
     if (!empty($_FILES['cover_buku']['name'])) {
+
+        if ($_FILES['cover_buku']['size'] > $max_cover_size) {
+            if ($new_file_uploaded && file_exists(__DIR__ . "/../" . $temp_new_file)) {
+                unlink(__DIR__ . "/../" . $temp_new_file);
+            }
+            $_SESSION['error'] = "Gagal! Ukuran Cover Buku baru terlalu besar. Maksimal 2 MB.";
+            header("Location: " . base_url('views/admin/katalog-buku.php'));
+            exit;
+        }
+
         $cover_ext = strtolower(pathinfo($_FILES['cover_buku']['name'], PATHINFO_EXTENSION));
         $allowed_cover_ext = ['png', 'jpg', 'jpeg'];
 
         if (!in_array($cover_ext, $allowed_cover_ext)) {
- 
             if ($new_file_uploaded && file_exists(__DIR__ . "/../" . $temp_new_file)) {
                 unlink(__DIR__ . "/../" . $temp_new_file);
             }
@@ -150,7 +180,6 @@ function prosesUpdateBuku() {
 
         $cover_name = time() . "_" . basename($_FILES['cover_buku']['name']);
         if (move_uploaded_file($_FILES['cover_buku']['tmp_name'], $target_diir . $cover_name)) {
-            
             if (!empty($bukuLama['cover_image']) && file_exists(__DIR__ . "/../" . $bukuLama['cover_image'])) {
                 unlink(__DIR__ . "/../" . $bukuLama['cover_image']);
             }

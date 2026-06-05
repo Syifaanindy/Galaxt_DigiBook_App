@@ -8,25 +8,15 @@ require_once __DIR__ . '/../../config/url-helper.php';
 require_once __DIR__ . '/../../config/auth-helper.php';
 require_once __DIR__ . '/../../models/buku-model.php';
 
-
 requireRole('admin');
-
 
 $list_kategori = ambilSemuaKategori($conn);
 $flashSuccess = $_SESSION['success'] ?? null;
 $flashError = $_SESSION['error'] ?? null;
 unset($_SESSION['success'], $_SESSION['error']);
 
-// --- LOGIKA PAGINATION ---
-$limit = 5; 
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-if ($page < 1) { $page = 1; }
-$offset = ($page - 1) * $limit;
-
-$total_buku = hitungTotalBuku($conn); 
-$total_pages = ceil($total_buku / $limit);
-
-$list_buku = ambilSemuaBukuPaging($conn, $limit, $offset); 
+// Mengambil seluruh data buku sekaligus untuk dikelola oleh DataTables client-side
+$list_buku = ambilSemuaBuku($conn); 
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -39,9 +29,11 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
   <link rel="stylesheet" href="../../assets/css/admin/panel.css">
   <link rel="stylesheet" href="../../assets/css/admin/sidebar.css">
-  <link rel="stylesheet" href="../../assets/css/admin/pagination.css">
 </head>
 <body>
 
@@ -54,13 +46,13 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
       </header>
 
       <section class="panel">
-        <div class="actions" style="justify-content:space-between; margin-bottom:14px;">
+        <div class="actions" style="display: flex; justify-content:space-between; margin-bottom: 20px; align-items: center;">
           <h3 style="margin:0;">List Buku Katalog</h3>
           <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#createKatalogModal">Tambah Data</button>
         </div>
         
         <div class="table-wrap">
-          <table>
+          <table id="tabelBuku" class="table table-striped table-hover" style="width:100%">
             <thead>
               <tr>
                 <th>ID</th>
@@ -68,13 +60,11 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
                 <th>Penulis</th>
                 <th>Kategori</th>
                 <th>Harga</th>
-                <th>Aksi</th>
+                <th style="width: 120px;">Aksi</th>
               </tr>
             </thead>
-            <tbody id="katalogTableBody">
-              <?php if (empty($list_buku)): ?>
-                  <tr><td colspan="6" style="text-align:center;">Belum ada data buku.</td></tr>
-              <?php else: ?>
+            <tbody>
+              <?php if (!empty($list_buku)): ?>
                   <?php foreach ($list_buku as $buku): ?>
                   <tr>
                       <td>BK-<?= str_pad($buku['id'], 3, '0', STR_PAD_LEFT); ?></td>
@@ -83,7 +73,7 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
                       <td><?= htmlspecialchars($buku['category_name'] ?? 'Tanpa Kategori'); ?></td>
                       <td>Rp <?= number_format($buku['price'], 0, ',', '.'); ?></td>
                       <td>
-                          <div class="actions" style="gap: 5px;">
+                          <div class="actions" style="gap: 5px; display: flex;">
                               <a href="<?= base_url('views/admin/detail-buku.php?id=' . $buku['id']); ?>" 
                                  class="btn btn-info btn-sm text-white" title="Detail Buku">
                                  <i class="fa-solid fa-eye"></i>
@@ -115,13 +105,6 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
             </tbody>
           </table>
         </div>
-
-        <?php 
-          $total_data = $total_buku; 
-          $target_url = 'katalog-buku.php'; 
-          include 'partials/pagination.php'; 
-        ?>
-
       </section>
     </main>
   </div>
@@ -202,12 +185,36 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
     </div>
   </div>
 
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../../assets/script/admin/shared-layout.js"></script>
   
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+        $('#tabelBuku').DataTable({
+            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"] ],
+            "language": {
+                "lengthMenu": "Tampilkan _MENU_ data per halaman",
+                "zeroRecords": "Data tidak ditemukan - maaf",
+                "info": "Menampilkan halaman _PAGE_ dari _PAGES_",
+                "infoEmpty": "Tidak ada data tersedia",
+                "infoFiltered": "(difilter dari _MAX_ total data)",
+                "search": "Cari:",
+                "paginate": {
+                    "first": "Pertama",
+                    "last": "Terakhir",
+                    "next": "Kanan",
+                    "previous": "Kiri"
+                }
+            },
+            "columnDefs": [
+                { "orderable": false, "targets": 5 } 
+            ]
+        });
 
         <?php if ($flashSuccess): ?>
             Swal.fire({
@@ -235,12 +242,15 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
             });
         <?php endif; ?>
 
+
         const fileBukuInputs = document.querySelectorAll('#create-file-buku, #edit-file-buku');
         fileBukuInputs.forEach(input => {
             input.addEventListener('change', function() {
                 const file = this.files[0];
                 if (file) {
                     const ext = file.name.split('.').pop().toLowerCase();
+                    const maxBukuSize = 20 * 1024 * 1024; 
+
                     if (ext !== 'pdf') {
                         Swal.fire({
                             icon: 'error',
@@ -249,11 +259,20 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
                             confirmButtonColor: '#dc3545'
                         });
                         this.value = ''; 
+                    } else if (file.size > maxBukuSize) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'File Terlalu Besar!',
+                            text: 'Ukuran file buku tidak boleh melebihi 20 MB.',
+                            confirmButtonColor: '#dc3545'
+                        });
+                        this.value = ''; 
                     }
                 }
             });
         });
 
+  
         const coverBukuInputs = document.querySelectorAll('#create-cover-buku, #edit-cover-buku');
         coverBukuInputs.forEach(input => {
             input.addEventListener('change', function() {
@@ -261,6 +280,8 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
                 if (file) {
                     const ext = file.name.split('.').pop().toLowerCase();
                     const allowedExt = ['png', 'jpg', 'jpeg'];
+                    const maxCoverSize = 2 * 1024 * 1024; // 2 MB
+
                     if (!allowedExt.includes(ext)) {
                         Swal.fire({
                             icon: 'error',
@@ -269,42 +290,47 @@ $list_buku = ambilSemuaBukuPaging($conn, $limit, $offset);
                             confirmButtonColor: '#dc3545'
                         });
                         this.value = ''; 
+                    } else if (file.size > maxCoverSize) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gambar Terlalu Besar!',
+                            text: 'Ukuran cover buku tidak boleh melebihi 2 MB.',
+                            confirmButtonColor: '#dc3545'
+                        });
+                        this.value = ''; 
                     }
                 }
             });
         });
-        const tombolEdit = document.querySelectorAll('.btn-edit');
-        tombolEdit.forEach(button => {
-            button.addEventListener('click', function() {
-                document.getElementById('edit-id').value = this.getAttribute('data-id');
-                document.getElementById('edit-title').value = this.getAttribute('data-title');
-                document.getElementById('edit-publisher').value = this.getAttribute('data-publisher');
-                document.getElementById('edit-author').value = this.getAttribute('data-author');
-                document.getElementById('edit-category').value = this.getAttribute('data-category');
-                document.getElementById('edit-price').value = this.getAttribute('data-price');
-                document.getElementById('edit-synopsis').value = this.getAttribute('data-synopsis');
-            });
+
+      
+        $(document).on('click', '.btn-edit', function() {
+            document.getElementById('edit-id').value = this.getAttribute('data-id');
+            document.getElementById('edit-title').value = this.getAttribute('data-title');
+            document.getElementById('edit-publisher').value = this.getAttribute('data-publisher');
+            document.getElementById('edit-author').value = this.getAttribute('data-author');
+            document.getElementById('edit-category').value = this.getAttribute('data-category');
+            document.getElementById('edit-price').value = this.getAttribute('data-price');
+            document.getElementById('edit-synopsis').value = this.getAttribute('data-synopsis');
         });
-        const tombolHapus = document.querySelectorAll('.btn-delete');
-        tombolHapus.forEach(button => {
-            button.addEventListener('click', function(event) {
-                event.preventDefault();
-                const targetUrl = this.href;
-                
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Hapus buku?',
-                    text: 'Data buku yang dihapus tidak bisa dikembalikan.',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, hapus',
-                    cancelButtonText: 'Batal',
-                    confirmButtonColor: '#dc3545',
-                    cancelButtonColor: '#6c757d'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = targetUrl;
-                    }
-                });
+
+        $(document).on('click', '.btn-delete', function(event) {
+            event.preventDefault();
+            const targetUrl = this.href;
+            
+            Swal.fire({
+                icon: 'warning',
+                title: 'Hapus buku?',
+                text: 'Data buku yang dihapus tidak bisa dikembalikan.',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = targetUrl;
+                }
             });
         });
 

@@ -29,18 +29,21 @@ function ambilReviewTerbaik($conn) {
 }
 
 function ambilBukuBestSeller($conn) {
-    $query = "SELECT books.*, COUNT(transaction.book_id) as total_terjual 
+    // KODE YANG SUDAH DISESUAIKAN DENGAN STRUKTUR 3 TABEL BARU
+    $query = "SELECT books.*, COUNT(transaction_items.id) as total_terjual 
               FROM books 
-              LEFT JOIN transaction ON books.id = transaction.book_id 
+              JOIN transaction_items ON books.id = transaction_items.book_id
+              JOIN transactions ON transaction_items.transaction_id = transactions.id
+              WHERE transactions.status = 'success'
               GROUP BY books.id 
-              ORDER BY total_terjual DESC, books.id ASC LIMIT 3";
+              ORDER BY total_terjual DESC 
+              LIMIT 4"; // Sesuaikan limit sesuai desain asli kamu
               
     $result = mysqli_query($conn, $query);
     
     if (!$result) {
-        die("Error Query Best Seller: " . mysqli_error($conn));
+        die("Query Error di dashboardUserModel: " . mysqli_error($conn));
     }
     
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
-?>

@@ -55,15 +55,15 @@ $bulananData    = $model->getPenjualanBulanan();
             <section class="cards">
                 <article class="card">
                     <h3>Total Penjualan</h3>
-                    <p><?= number_format($totalPenjualan, 0, ',', '') ?></p>
+                    <p>Rp. <?php echo number_format($totalPenjualan, 0, ',', '.'); ?></p>
                 </article>
                 <article class="card">
                     <h3>Total Order</h3>
-                    <p><?= $totalOrder ?></p>
+                    <p><?php echo number_format($totalOrder, 0, ',', '.'); ?></p>
                 </article>
                 <article class="card">
                     <h3>Rata-Rata</h3>
-                    <p><?= number_format($rataRata, 4, '.', '') ?></p>
+                    <p>Rp. <?php echo number_format($rataRata, 0, ',', '.'); ?></p>
                 </article>
             </section>
 

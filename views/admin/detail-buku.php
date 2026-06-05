@@ -128,6 +128,10 @@ foreach ($list_kategori as $kat) {
                     <a href="<?= base_url('views/admin/katalog-buku.php'); ?>" class="btn-custom btn-back">
                         <i class="fa-solid fa-arrow-left me-2"></i>Kembali
                     </a>
+                    
+                    <button type="button" class="btn btn-primary px-4 py-2" id="btn-bayar-sekarang" data-book-id="<?= $buku['id']; ?>" data-price="<?= $buku['price']; ?>" style="border-radius: 8px; background-color: #3b3173; border: none;">
+                        <i class="fa-solid fa-credit-card me-2"></i>Bayar Sekarang
+                    </button>
                 </div>
             </div>
         </div>
@@ -137,5 +141,41 @@ foreach ($list_kategori as $kat) {
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../../assets/script/admin/shared-layout.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+  $(document).ready(function() {
+      $('#btn-bayar-sekarang').click(function(e) {
+          e.preventDefault();
+
+          let idBuku = $(this).data('book-id');
+          let hargaBuku = $(this).data('price');
+
+          if (confirm("Apakah anda yakin ingin langsung membeli buku ini? (Simulasi Sukses)")) {
+              $.ajax({
+                  url: 'proses_bayar_langsung.php',
+                  type: 'POST',
+                  data: {
+                      book_id: idBuku,
+                      price: hargaBuku
+                  },
+                  dataType: 'json',
+                  success: function(response) {
+                      if (response.status === 'success') {
+                          alert('Pembayaran Berhasil! Buku telah masuk ke tabel user_book.');
+                          window.location.reload(); 
+                      } else {
+                          alert('Gagal: ' + response.message);
+                      }
+                  },
+                  error: function(xhr) {
+                      console.error(xhr.responseText);
+                      alert('Terjadi kesalahan sistem saat memproses transaksi.');
+                  }
+              });
+          }
+      });
+  });
+  </script>
 </body>
 </html>

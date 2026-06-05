@@ -1,3 +1,34 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// KODE TAMBAHAN 1: IMPORT KONEKSI, MODEL, & PENGAMAN LOGIN
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../models/buku-model.php'; // Digunakan untuk fungsi ambilBukuById
+
+// Proteksi: Pastikan user sudah login sebelum bayar
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['error'] = "Silahkan login terlebih dahulu.";
+    header("Location: login.php"); // Sesuaikan dengan nama halaman login user kamu
+    exit;
+}
+
+// Tangkap ID Buku dari URL parameter ?id=...
+$id_buku = intval($_GET['id'] ?? 0);
+$buku = ambilBukuById($conn, $id_buku);
+
+// Validasi jika buku tidak ditemukan
+if (!$buku) {
+    $_SESSION['error'] = "Data buku untuk transaksi tidak ditemukan.";
+    header("Location: index.php");
+    exit;
+}
+
+// Hitung total harga (Harga buku + Biaya layanan 2500)
+$biaya_layanan = 2500;
+$total_harga = $buku['price'] + $biaya_layanan;
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,8 +65,11 @@
             <div class="mb-4">
                 <span class="section-subtitle">Checkout Aman</span>
                 <h1 class="transaction-title fw-extrabold">Selesaikan Pembayaran</h1>
-                <p class="text-muted mb-0">Lengkapi data pembayaran Anda dan konfirmasi transaksi dalam satu langkah.
-                </p>
+                <p class="text-muted mb-0">Lengkapi data pembayaran Anda dan konfirmasi transaksi dalam satu langkah.</p>
+                
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="alert alert-danger mt-3 mb-0"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+                <?php endif; ?>
             </div>
 
             <div class="row g-4">
@@ -46,12 +80,12 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Nama Lengkap</label>
                                 <input type="text" class="form-control checkout-form-control"
-                                    placeholder="Masukkan nama lengkap">
+                                    placeholder="Masukkan nama lengkap" value="<?= htmlspecialchars($_SESSION['username'] ?? ''); ?>" readonly>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Email</label>
                                 <input type="email" class="form-control checkout-form-control"
-                                    placeholder="nama@email.com">
+                                    placeholder="nama@email.com" value="<?= htmlspecialchars($_SESSION['email'] ?? ''); ?>" readonly>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">No. WhatsApp</label>
@@ -66,18 +100,7 @@
                         </div>
                     </section>
 
-                    <section class="checkout-card p-4 p-md-5">
-                        <h5 class="fw-bold mb-3">Kode Promo</h5>
-                        <div class="row g-2">
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control checkout-form-control"
-                                    placeholder="Contoh: GDBHEMAT10">
-                            </div>
-                            <div class="col-sm-4">
-                                <button type="button" class="btn btn-outline-cart w-100 py-2 fw-bold">Gunakan</button>
-                            </div>
-                        </div>
-                    </section>
+                    
                 </div>
 
                 <div class="col-lg-4">
@@ -85,21 +108,25 @@
                         <h5 class="fw-bold mb-3">Ringkasan Pesanan</h5>
 
                         <div class="d-flex gap-3 align-items-start mb-3">
-                            <img src="../../assets/pic/b-1.png" alt="Makrifat Daun" class="summary-cover">
+                            <?php if (!empty($buku['cover_image']) && file_exists(__DIR__ . '/../../' . $buku['cover_image'])): ?>
+                                <img src="../../<?= $buku['cover_image']; ?>" alt="Cover Buku" class="summary-cover">
+                            <?php else: ?>
+                                <img src="../../assets/pic/b-1.png" alt="Cover Buku Default" class="summary-cover">
+                            <?php endif; ?>
                             <div>
-                                <h6 class="fw-bold mb-1">Makrifat Daun: Daun Makrifat</h6>
-                                <small class="text-muted d-block">Kuntowijoyo</small>
+                                <h6 class="fw-bold mb-1"><?= htmlspecialchars($buku['title']); ?></h6>
+                                <small class="text-muted d-block"><?= htmlspecialchars($buku['author']); ?></small>
                                 <small class="text-muted">PDF Premium • Akses Selamanya</small>
                             </div>
                         </div>
 
                         <div class="price-row">
                             <span>Harga Buku</span>
-                            <strong>Rp 50.000</strong>
+                            <strong>Rp <?= number_format($buku['price'], 0, ',', '.'); ?></strong>
                         </div>
                         <div class="price-row">
                             <span>Biaya Layanan</span>
-                            <strong id="feeAmount">Rp 2.500</strong>
+                            <strong id="feeAmount">Rp <?= number_format($biaya_layanan, 0, ',', '.'); ?></strong>
                         </div>
                         <div class="price-row">
                             <span>Diskon</span>
@@ -107,13 +134,18 @@
                         </div>
                         <div class="price-row total">
                             <span>Total Pembayaran</span>
-                            <span id="totalAmount">Rp 52.500</span>
+                            <span id="totalAmount">Rp <?= number_format($total_harga, 0, ',', '.'); ?></span>
                         </div>
 
-                        <button type="button"
-                            class="btn btn-primary-buy w-100 py-3 fw-bold rounded-3 mt-3 d-flex align-items-center justify-content-center gap-2">
-                            <i class="fa-solid fa-lock"></i> Bayar Sekarang
-                        </button>
+                        <form action="../../controllers/transaksi-controller.php" method="POST">
+                            <input type="hidden" name="book_id" value="<?= $buku['id']; ?>">
+                            <input type="hidden" name="price" value="<?= $total_harga; ?>">
+                            
+                            <button type="submit" name="aksi_bayar"
+                                class="btn btn-primary-buy w-100 py-3 fw-bold rounded-3 mt-3 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fa-solid fa-lock"></i> Bayar Sekarang
+                            </button>
+                        </form>
                     </aside>
                 </div>
             </div>
@@ -126,8 +158,9 @@
     <script src="../../assets/script/user/shared-layout.js"></script>
     <script>
         (function () {
-            const bookPrice = 50000;
-            const serviceFee = 2500;
+            // JavaScript disesuaikan dengan nilai dinamis PHP agar format tetap rapi
+            const bookPrice = <?= $buku['price']; ?>;
+            const serviceFee = <?= $biaya_layanan; ?>;
             const feeAmount = document.getElementById('feeAmount');
             const totalAmount = document.getElementById('totalAmount');
             feeAmount.textContent = 'Rp ' + serviceFee.toLocaleString('id-ID');

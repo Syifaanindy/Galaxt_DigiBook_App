@@ -182,16 +182,16 @@ $semuaReview = ambilReviewBuku($conn, $id_buku);
                     </div>
 
                     <!-- TOMBOL AKSI DENGAN BUTTON BAYAR / BELI LANGSUNG -->
-                    <div class="detail-action-buttons row g-3 mb-5 justify-content-end">
+                   <div class="detail-action-buttons row g-3 mb-5 justify-content-end">
                         <div class="col-sm-5">
-                            <a href="transaction.html"
-                                class="btn btn-primary-buy w-100 py-3 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
+                            <a href="transaksi.php?id=<?= $buku['id']; ?>"
+                            class="btn btn-primary-buy w-100 py-3 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
                                 <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
                             </a>
                         </div>
                         <div class="col-sm-4">
                             <a href="keranjang.php?action=add&id=<?= $buku['id'] ?>"
-                                class="btn btn-outline-cart w-100 py-3 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2">
+                            class="btn btn-outline-cart w-100 py-3 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2">
                                 <i class="fa-solid fa-basket-shopping"></i> + Keranjang
                             </a>
                         </div>
