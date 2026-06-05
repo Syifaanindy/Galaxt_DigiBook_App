@@ -132,26 +132,12 @@ $category = $data['category'];
                 <div class="filter-grid">
                     <div class="search-wrap">
                         <label for="searchInput" class="form-label">Cari Buku</label>
-<<<<<<< HEAD
-                        <input id="searchInput" type="text" class="form-control" placeholder="Contoh: Makrifat, Kuntowijoyo">
-=======
                         <input id="searchInput" name="search" type="text" class="form-control"
                             placeholder="Contoh: Makrifat, Kuntowijoyo" value="<?= htmlspecialchars($search) ?>">
->>>>>>> Fara
                     </div>
 
                     <div class="category-wrap">
                         <label for="categorySelect" class="form-label">Kategori</label>
-<<<<<<< HEAD
-                        <select id="categorySelect" class="form-select">
-                            <option value="all" selected>Semua Kategori</option>
-                        
-                            <?php foreach ($list_kategori as $kat): ?>
-                                <option value="<?= htmlspecialchars($kat['nama_kategori']) ?>">
-                                    <?= htmlspecialchars($kat['nama_kategori']) ?>
-                                </option>
-                            <?php endforeach; ?>
-=======
                         <select id="categorySelect" name="category" class="form-select" onchange="this.form.submit()">
                             <option value="all" <?= ($category == 'all') ? 'selected' : '' ?>>Semua Kategori</option>
                             <option value="sastra" <?= ($category == 'sastra') ? 'selected' : '' ?>>Sastra Indonesia</option>
@@ -159,17 +145,12 @@ $category = $data['category'];
                             <option value="sosiologi" <?= ($category == 'sosiologi') ? 'selected' : '' ?>>Sosiologi</option>
                             <option value="agama" <?= ($category == 'agama') ? 'selected' : '' ?>>Agama</option>
                             <option value="sejarah" <?= ($category == 'sejarah') ? 'selected' : '' ?>>Sejarah</option>
->>>>>>> Fara
                         </select>
                     </div>
                 </div>
             </section>
 
             <section>
-<<<<<<< HEAD
-                <p id="resultInfo" class="result-info"></p>
-                <div id="bookGrid" class="book-grid row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-=======
                 <p id="resultInfo" class="result-info mb-4">
                     <?= $totalBooks ?> buku ditemukan · Halaman <?= $page ?>/<?= max(1, $totalPages) ?> · Maks 20 buku/halaman
                 </p>
@@ -251,7 +232,6 @@ $category = $data['category'];
                             </ul>
                         </nav>
                     <?php endif; ?>
->>>>>>> Fara
                 </div>
                 <div id="pagination" class="pagination-wrap mt-4 d-flex justify-content-center"></div>
             </section>

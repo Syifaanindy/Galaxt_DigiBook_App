@@ -15,7 +15,6 @@ $halaman_aktif = basename($_SERVER['PHP_SELF']);
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 
                 <ul class="navbar-nav ms-auto me-5">
-<<<<<<< HEAD:views/user/partials/navbar.php
                     <li class="nav-item">
                         <a class="nav-link <?php echo ($halaman_aktif == 'dashboard.php') ? 'active' : ''; ?>" data-nav="home" href="dashboard.php">Beranda</a>
                     </li>
@@ -24,10 +23,6 @@ $halaman_aktif = basename($_SERVER['PHP_SELF']);
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?php echo ($halaman_aktif == 'kontak.php') ? 'active' : ''; ?>" data-nav="kontak" href="kontak.php">Ulasan Website</a>
-=======
-                    <li class="nav-item"><a class="nav-link" data-nav="home" href="dashboard.php">Beranda</a></li>
-                    <li class="nav-item"><a class="nav-link" data-nav="koleksi" href="koleksi.php">Koleksi Kami</a>
->>>>>>> Fara:views/user/partials/navbar.html
                     </li>
                 </ul>
 
