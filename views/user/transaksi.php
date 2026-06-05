@@ -49,7 +49,7 @@ $total_harga = $buku['price'] + $biaya_layanan;
 </head>
 
 <body>
-    <div id="site-navbar"></div>
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
 
     <main class="transaction-page-container py-5">
         <div class="container">

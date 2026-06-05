@@ -40,7 +40,7 @@ $bukuBestSeller = ambilBukuBestSeller($conn);
 
 <body data-page="home">
 
-    <div id="site-navbar"></div>
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
 
     <section class="banner-section">
         <div class="container">
