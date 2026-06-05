@@ -275,10 +275,10 @@ $bukuBestSeller = ambilBukuBestSeller($conn);
                         
                         <div class="reviewer-profile">
                             <div class="reviewer-avatar text-bg-primary">
-                                <?= strtoupper(substr($rev['nama'], 0, 1)) ?>
+                                <?= strtoupper(substr($rev['username'], 0, 1)) ?>
                             </div>
                             <div class="reviewer-info">
-                                <h6 class="m-0"><?= htmlspecialchars($rev['nama']) ?></h6>
+                                <h6 class="m-0"><?= htmlspecialchars($rev['username']) ?></h6>
                             </div>
                         </div>
                     </div>
