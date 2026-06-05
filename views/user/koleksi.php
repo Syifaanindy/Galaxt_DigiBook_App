@@ -119,20 +119,22 @@ $category = $data['category'];
 </head>
 
 <body data-page="koleksi">
-    <?php include __DIR__ . '/partials/navbar.php'; ?>
+     <?php include __DIR__ . '/partials/navbar.php'; ?>
+
 
     <main class="collection-page">
         <section class="container py-5">
-            <div class="hero-box mb-4">
+            <div class="mb-4">
                 <h1>Koleksi Buku</h1>
                 <p>Cari buku berdasarkan judul/penulis dan filter berdasarkan kategori.</p>
             </div>
 
             <section class="filters mb-4">
-                <div class="filter-grid">
+                <form method="GET" action="" class="filter-grid">
                     <div class="search-wrap">
                         <label for="searchInput" class="form-label">Cari Buku</label>
-                        <input id="searchInput" type="text" class="form-control" placeholder="Contoh: Makrifat, Kuntowijoyo">
+                        <input id="searchInput" name="search" type="text" class="form-control"
+                            placeholder="Contoh: Makrifat, Kuntowijoyo" value="<?= htmlspecialchars($search) ?>">
                     </div>
 
                     <div class="category-wrap">
@@ -146,7 +148,8 @@ $category = $data['category'];
                             <option value="sejarah" <?= ($category == 'sejarah') ? 'selected' : '' ?>>Sejarah</option>
                         </select>
                     </div>
-                </div>
+                    <button type="submit" style="display: none;"></button>
+                </form>
             </section>
 
             <section>
@@ -232,17 +235,12 @@ $category = $data['category'];
                         </nav>
                     <?php endif; ?>
                 </div>
-                <div id="pagination" class="pagination-wrap mt-4 d-flex justify-content-center"></div>
             </section>
         </section>
     </main>
 
     <div id="site-footer"></div>
 
-    <script>
-   
-        window.BOOK_LIST = <?= $booksJson ?: '[]' ?>;
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/script/user/shared-layout.js"></script>
 </body>
