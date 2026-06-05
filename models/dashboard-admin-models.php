@@ -8,7 +8,7 @@ class DashboardAdminModel {
 
     // 1. Total Pendapatan
     public function getTotalPenjualan() {
-        $query = "SELECT SUM(total_price) as total FROM `transaction`"; 
+        $query = "SELECT SUM(total_price) as total FROM `transactions`"; 
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         
@@ -21,7 +21,7 @@ class DashboardAdminModel {
 
     // 2. Total Order
     public function getTotalOrder() {
-        $query = "SELECT COUNT(*) as total FROM `transaction`"; 
+        $query = "SELECT COUNT(*) as total FROM `transactions`"; 
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         
@@ -53,7 +53,7 @@ class DashboardAdminModel {
     // 4. Penjualan bulanan
     public function getPenjualanBulanan() {
         $query = "SELECT MONTHNAME(transaction_date) as bulan, SUM(total_price) as total 
-                  FROM `transaction` 
+                  FROM `transactions` 
                   GROUP BY MONTH(transaction_date), MONTHNAME(transaction_date)
                   ORDER BY MONTH(transaction_date) ASC";
         $stmt = $this->db->prepare($query);

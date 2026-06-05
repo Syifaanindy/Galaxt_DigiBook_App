@@ -49,6 +49,10 @@ $cart_books = getUserCartItems($conn, $user_id);
                 <span class="section-subtitle">Belanja Anda</span>
                 <h1 class="cart-title fw-extrabold mb-1">Keranjang Buku Digital</h1>
                 <p class="text-muted mb-0">Periksa kembali item Anda sebelum melanjutkan pembayaran.</p>
+
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="alert alert-danger mt-3 mb-0"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+                <?php endif; ?>
             </div>
 
             <section class="cart-card p-4 p-md-5">
@@ -118,7 +122,7 @@ $cart_books = getUserCartItems($conn, $user_id);
                                 <p class="text-muted mb-0">Total Terpilih:</p>
                                 <h4 class="fw-bold text-dark">Rp <span id="totalDisplay">0</span></h4>
                             </div>
-                            <form action="transaction.html" method="POST">
+                            <form action="transaksi-multiple.php" method="POST">
                                 <input type="hidden" name="selected_ids" id="selectedIds">
                                 <button type="submit" id="btnCheckout" class="btn btn-outline-cart w-100 py-3 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2" disabled>
                                     Checkout (<span id="countSelected">0</span>)

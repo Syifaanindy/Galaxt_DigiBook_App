@@ -5,7 +5,7 @@ function ambilSemuaTransaksi($conn, $tgl_mulai = null, $tgl_akhir = null, $limit
     $query = "SELECT 
                 t.transaction_code, 
                 u.username, 
-                b.title, 
+                GROUP_CONCAT(b.title ORDER BY b.title SEPARATOR ', ') as title, 
                 t.total_price, 
                 t.transaction_date, 
                 t.status
@@ -24,6 +24,7 @@ function ambilSemuaTransaksi($conn, $tgl_mulai = null, $tgl_akhir = null, $limit
     $limit = (int)$limit;
     $offset = (int)$offset;
 
+    $query .= " GROUP BY t.id, t.transaction_code, u.username, t.total_price, t.transaction_date, t.status";
     $query .= " ORDER BY t.transaction_date DESC LIMIT $limit OFFSET $offset";
               
     $result = mysqli_query($conn, $query);
@@ -36,7 +37,7 @@ function ambilSemuaTransaksi($conn, $tgl_mulai = null, $tgl_akhir = null, $limit
 }
 
 function hitungTotalTransaksi($conn, $tgl_mulai = null, $tgl_akhir = null) {
-    $query = "SELECT COUNT(*) as total 
+    $query = "SELECT COUNT(DISTINCT t.id) as total 
               FROM transactions t 
               JOIN users u ON t.user_id = u.id 
               JOIN transaction_items ti ON t.id = ti.transaction_id
@@ -66,8 +67,10 @@ function ambilRiwayatTransaksiUser($conn, $user_id) {
     $query = "SELECT 
                 t.transaction_code, 
                 u.username, 
-                b.id as book_id,
-                b.title, 
+                MIN(b.id) as book_id,
+                COUNT(ti.id) as item_count,
+                GROUP_CONCAT(b.id ORDER BY b.title SEPARATOR ',') as book_ids,
+                GROUP_CONCAT(b.title ORDER BY b.title SEPARATOR ', ') as title, 
                 t.total_price, 
                 t.transaction_date, 
                 t.status
@@ -76,6 +79,7 @@ function ambilRiwayatTransaksiUser($conn, $user_id) {
               JOIN transaction_items ti ON t.id = ti.transaction_id
               JOIN books b ON ti.book_id = b.id
               WHERE t.user_id = $user_id
+              GROUP BY t.id, t.transaction_code, u.username, t.total_price, t.transaction_date, t.status
               ORDER BY t.transaction_date DESC";
               
     $result = mysqli_query($conn, $query);

@@ -46,6 +46,7 @@ function prosesLogin() {
 
         $_SESSION['user_id']  = $dataUser['id'];
         $_SESSION['username'] = $dataUser['username'];
+        $_SESSION['email']    = $dataUser['email'];
         $_SESSION['role']     = $dataUser['role'];
 
         redirectByRole($dataUser['role']);

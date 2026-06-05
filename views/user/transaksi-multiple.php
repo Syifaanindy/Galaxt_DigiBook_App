@@ -3,33 +3,78 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// KODE TAMBAHAN 1: IMPORT KONEKSI, MODEL, & PENGAMAN LOGIN
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/url-helper.php';
 require_once __DIR__ . '/../../helpers/midtrans-helper.php';
-require_once __DIR__ . '/../../models/buku-model.php'; // Digunakan untuk fungsi ambilBukuById
 
-// Proteksi: Pastikan user sudah login sebelum bayar
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['error'] = "Silahkan login terlebih dahulu.";
     header("Location: " . base_url('views/auth/auth.php'));
     exit;
 }
 
-// Tangkap ID Buku dari URL parameter ?id=...
-$id_buku = intval($_GET['id'] ?? 0);
-$buku = ambilBukuById($conn, $id_buku);
+function checkout_multiple_normalize_ids($selectedIds) {
+    if (is_string($selectedIds)) {
+        $selectedIds = explode(',', $selectedIds);
+    }
 
-// Validasi jika buku tidak ditemukan
-if (!$buku) {
-    $_SESSION['error'] = "Data buku untuk transaksi tidak ditemukan.";
-    header("Location: index.php");
+    if (!is_array($selectedIds)) {
+        return [];
+    }
+
+    $ids = [];
+    foreach ($selectedIds as $selectedId) {
+        $selectedId = (int)$selectedId;
+        if ($selectedId > 0) {
+            $ids[$selectedId] = $selectedId;
+        }
+    }
+
+    return array_values($ids);
+}
+
+if (isset($_POST['selected_ids'])) {
+    $_SESSION['checkout_multiple_ids'] = $_POST['selected_ids'];
+} elseif (isset($_GET['selected_ids'])) {
+    $_SESSION['checkout_multiple_ids'] = $_GET['selected_ids'];
+}
+
+$user_id = (int)$_SESSION['user_id'];
+$selected_ids = checkout_multiple_normalize_ids($_SESSION['checkout_multiple_ids'] ?? '');
+
+if (empty($selected_ids)) {
+    $_SESSION['error'] = "Pilih minimal satu buku dari keranjang.";
+    header("Location: " . base_url('views/user/keranjang.php'));
     exit;
 }
 
-// Hitung total harga (Harga buku + Biaya layanan 2500)
+$placeholders = implode(',', array_fill(0, count($selected_ids), '?'));
+$types = 'i' . str_repeat('i', count($selected_ids));
+$params = array_merge([$user_id], $selected_ids);
+
+$query = "SELECT b.*
+          FROM books b
+          JOIN cart c ON c.book_id = b.id
+          WHERE c.user_id = ? AND b.id IN ($placeholders)";
+$stmt = $conn->prepare($query);
+$stmt->bind_param($types, ...$params);
+$stmt->execute();
+$books = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+if (count($books) !== count($selected_ids)) {
+    $_SESSION['error'] = "Beberapa buku pilihan tidak valid atau sudah tidak ada di keranjang.";
+    header("Location: " . base_url('views/user/keranjang.php'));
+    exit;
+}
+
 $biaya_layanan = 2500;
-$total_harga = $buku['price'] + $biaya_layanan;
+$subtotal_buku = 0;
+foreach ($books as $book) {
+    $subtotal_buku += (int)$book['price'];
+}
+$total_harga = $subtotal_buku + $biaya_layanan;
+$book_ids_json = json_encode(array_map('intval', $selected_ids));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +82,7 @@ $total_harga = $buku['price'] + $biaya_layanan;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pembayaran - BookStore</title>
+    <title>Pembayaran Keranjang - BookStore</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,18 +102,17 @@ $total_harga = $buku['price'] + $biaya_layanan;
         <div class="container">
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb custom-breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item"><a href="index.html#koleksi">Koleksi Buku</a></li>
-                    <li class="breadcrumb-item"><a href="detail.html">Detail Produk</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Pembayaran</li>
+                    <li class="breadcrumb-item"><a href="<?= base_url('index.php'); ?>">Home</a></li>
+                    <li class="breadcrumb-item"><a href="keranjang.php">Keranjang</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Pembayaran Keranjang</li>
                 </ol>
             </nav>
 
             <div class="mb-4">
                 <span class="section-subtitle">Checkout Aman</span>
-                <h1 class="transaction-title fw-extrabold">Selesaikan Pembayaran</h1>
-                <p class="text-muted mb-0">Lengkapi data pembayaran Anda dan konfirmasi transaksi dalam satu langkah.</p>
-                
+                <h1 class="transaction-title fw-extrabold">Selesaikan Pembayaran Keranjang</h1>
+                <p class="text-muted mb-0">Semua buku yang dipilih akan digabung dalam satu invoice dan satu pembayaran Midtrans.</p>
+
                 <?php if (isset($_SESSION['error'])): ?>
                     <div class="alert alert-danger mt-3 mb-0"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
                 <?php endif; ?>
@@ -82,12 +126,12 @@ $total_harga = $buku['price'] + $biaya_layanan;
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Nama Lengkap</label>
                                 <input type="text" class="form-control checkout-form-control"
-                                    placeholder="Masukkan nama lengkap" value="<?= htmlspecialchars($_SESSION['username'] ?? ''); ?>" readonly>
+                                    value="<?= htmlspecialchars($_SESSION['username'] ?? ''); ?>" readonly>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Email</label>
                                 <input type="email" class="form-control checkout-form-control"
-                                    placeholder="nama@email.com" value="<?= htmlspecialchars($_SESSION['email'] ?? ''); ?>" readonly>
+                                    value="<?= htmlspecialchars($_SESSION['email'] ?? ''); ?>" readonly>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">No. WhatsApp</label>
@@ -102,29 +146,37 @@ $total_harga = $buku['price'] + $biaya_layanan;
                         </div>
                     </section>
 
-                    
+                    <section class="checkout-card p-4 p-md-5">
+                        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                            <h5 class="fw-bold mb-0">Buku Terpilih</h5>
+                            <span class="secure-chip"><?= count($books); ?> buku</span>
+                        </div>
+
+                        <?php foreach ($books as $index => $book): ?>
+                            <div class="d-flex gap-3 align-items-start <?= $index < count($books) - 1 ? 'border-bottom pb-3 mb-3' : ''; ?>">
+                                <?php if (!empty($book['cover_image']) && file_exists(__DIR__ . '/../../' . $book['cover_image'])): ?>
+                                    <img src="../../<?= htmlspecialchars($book['cover_image']); ?>" alt="Cover Buku" class="summary-cover">
+                                <?php else: ?>
+                                    <img src="../../assets/pic/b-1.png" alt="Cover Buku Default" class="summary-cover">
+                                <?php endif; ?>
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-bold mb-1"><?= htmlspecialchars($book['title']); ?></h6>
+                                    <small class="text-muted d-block"><?= htmlspecialchars($book['author']); ?></small>
+                                    <small class="text-muted">PDF Premium • Akses Selamanya</small>
+                                </div>
+                                <strong class="text-nowrap">Rp <?= number_format((int)$book['price'], 0, ',', '.'); ?></strong>
+                            </div>
+                        <?php endforeach; ?>
+                    </section>
                 </div>
 
                 <div class="col-lg-4">
                     <aside class="checkout-card p-4 summary-sticky">
                         <h5 class="fw-bold mb-3">Ringkasan Pesanan</h5>
 
-                        <div class="d-flex gap-3 align-items-start mb-3">
-                            <?php if (!empty($buku['cover_image']) && file_exists(__DIR__ . '/../../' . $buku['cover_image'])): ?>
-                                <img src="../../<?= $buku['cover_image']; ?>" alt="Cover Buku" class="summary-cover">
-                            <?php else: ?>
-                                <img src="../../assets/pic/b-1.png" alt="Cover Buku Default" class="summary-cover">
-                            <?php endif; ?>
-                            <div>
-                                <h6 class="fw-bold mb-1"><?= htmlspecialchars($buku['title']); ?></h6>
-                                <small class="text-muted d-block"><?= htmlspecialchars($buku['author']); ?></small>
-                                <small class="text-muted">PDF Premium • Akses Selamanya</small>
-                            </div>
-                        </div>
-
                         <div class="price-row">
-                            <span>Harga Buku</span>
-                            <strong>Rp <?= number_format($buku['price'], 0, ',', '.'); ?></strong>
+                            <span>Subtotal Buku</span>
+                            <strong>Rp <?= number_format($subtotal_buku, 0, ',', '.'); ?></strong>
                         </div>
                         <div class="price-row">
                             <span>Biaya Layanan</span>
@@ -164,13 +216,7 @@ $total_harga = $buku['price'] + $biaya_layanan;
     <script src="../../assets/script/user/shared-layout.js"></script>
     <script>
         (function () {
-            const bookPrice = <?= $buku['price']; ?>;
-            const serviceFee = <?= $biaya_layanan; ?>;
-            const feeAmount = document.getElementById('feeAmount');
-            const totalAmount = document.getElementById('totalAmount');
-            feeAmount.textContent = 'Rp ' + serviceFee.toLocaleString('id-ID');
-            totalAmount.textContent = 'Rp ' + (bookPrice + serviceFee).toLocaleString('id-ID');
-
+            const selectedBookIds = <?= $book_ids_json ?: '[]'; ?>;
             const payButton = document.getElementById('payButton');
             const message = document.getElementById('paymentMessage');
             const phoneInput = document.getElementById('phoneInput');
@@ -210,14 +256,14 @@ $total_harga = $buku['price'] + $biaya_layanan;
             if (payButton) {
                 payButton.addEventListener('click', function () {
                     setLoading(true, 'Membuat pembayaran...');
-                    showMessage('Membuat transaksi pending dan membuka Snap Midtrans...', 'text-muted');
+                    showMessage('Membuat satu transaksi pending untuk semua buku pilihan...', 'text-muted');
 
                     fetch('../../controllers/transaksi-controller.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            action: 'create_midtrans_transaction',
-                            book_id: <?= (int)$buku['id']; ?>,
+                            action: 'create_midtrans_transaction_multiple',
+                            book_ids: selectedBookIds,
                             phone: phoneInput.value.trim()
                         })
                     })
@@ -229,7 +275,7 @@ $total_harga = $buku['price'] + $biaya_layanan;
 
                             activeTransactionCode = data.transaction_code;
                             setLoading(false);
-                            showMessage('Transaksi dibuat dengan status pending. Selesaikan pembayaran di Snap.', 'text-muted');
+                            showMessage('Transaksi gabungan dibuat. Selesaikan pembayaran di Snap.', 'text-muted');
 
                             window.snap.pay(data.snap_token, {
                                 onSuccess: function () {

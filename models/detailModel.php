@@ -53,4 +53,17 @@ function ambilReviewBuku($conn, $id_buku) {
     $stmt->close();
     return $reviews;
 }
-?>
+
+function userSudahMemilikiBuku($conn, $user_id, $book_id) {
+    $query = "SELECT id FROM user_book WHERE user_id = ? AND book_id = ? LIMIT 1";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ii", $user_id, $book_id);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $sudahMemiliki = $result->num_rows > 0;
+
+    $stmt->close();
+    return $sudahMemiliki;
+}
+?> 

@@ -8,7 +8,7 @@ require_once __DIR__ . '/../../config/url-helper.php';
 require_once __DIR__ . '/../../models/invoice.php'; 
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: " . base_url('views/auth/login.php'));
+    header("Location: " . base_url('views/auth/auth.php'));
     exit;
 }
 
@@ -77,6 +77,7 @@ $riwayat_transaksi = ambilTransaksiPerHalaman($conn, $user_id, $limit, $offset);
                     <div class="btn-group history-filter" role="group" aria-label="Filter status transaksi">
                         <button type="button" class="btn btn-outline-cart active" data-filter="all">Semua</button>
                         <button type="button" class="btn btn-outline-cart" data-filter="success">Berhasil</button>
+                        <button type="button" class="btn btn-outline-cart" data-filter="pending">Pending</button>
                         <button type="button" class="btn btn-outline-cart" data-filter="failed">Gagal</button>
                     </div>
                     <div class="w-100 w-md-auto" style="max-width: 280px;">
@@ -90,35 +91,48 @@ $riwayat_transaksi = ambilTransaksiPerHalaman($conn, $user_id, $limit, $offset);
                             $status_class = strtolower($transaksi['status']); 
                             $date_timestamp = strtotime($transaksi['transaction_date']);
                             $fmt_date = date('d M Y • H:i', $date_timestamp) . ' WIB';
+                            $item_count = (int)($transaksi['item_count'] ?? 1);
+                            $book_title = $item_count > 1
+                                ? $item_count . ' buku: ' . $transaksi['title']
+                                : $transaksi['title'];
+                            $retry_url = $item_count > 1
+                                ? base_url('views/user/transaksi-multiple.php?selected_ids=' . urlencode($transaksi['book_ids']))
+                                : base_url('views/user/transaksi.php?id=' . $transaksi['book_id']);
                         ?>
                             <article class="transaction-row" data-status="<?php echo $status_class; ?>" data-invoice="<?php echo htmlspecialchars($transaksi['transaction_code']); ?>">
                                 <div class="transaction-head">
                                     <span class="invoice-id"><?php echo htmlspecialchars($transaksi['transaction_code']); ?></span>
                                     <?php if ($status_class === 'success'): ?>
                                         <span class="status-badge status-success"><i class="fa-solid fa-circle-check me-1"></i> Berhasil</span>
+                                    <?php elseif ($status_class === 'pending'): ?>
+                                        <span class="status-badge status-process"><i class="fa-solid fa-clock me-1"></i> Pending</span>
                                     <?php else: ?>
                                         <span class="status-badge status-failed"><i class="fa-solid fa-circle-xmark me-1"></i> Gagal</span>
                                     <?php endif; ?>
                                 </div>
                                 <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                                    <span class="book-chip"><i class="fa-solid fa-book"></i> <?php echo htmlspecialchars($transaksi['title']); ?></span>
+                                    <span class="book-chip"><i class="fa-solid fa-book"></i> <?php echo htmlspecialchars($book_title); ?></span>
                                     <small class="text-muted"><?php echo $fmt_date; ?></small>
                                 </div>
                                 <div class="transaction-foot">
                                     <strong>Total: Rp <?php echo number_format($transaksi['total_price'], 0, ',', '.'); ?></strong>
                                     <div class="d-flex gap-2">
                                         <?php if ($status_class === 'success'): ?>
-                                            <a href="<?php echo base_url('views/user/detail.php?id=' . $transaksi['book_id']); ?>" class="btn btn-sm btn-outline-cart">Lihat Buku</a>
+                                            <?php if ($item_count > 1): ?>
+                                                <a href="<?php echo base_url('views/user/buku_saya.php'); ?>" class="btn btn-sm btn-outline-cart">Lihat Buku</a>
+                                            <?php else: ?>
+                                                <a href="<?php echo base_url('views/user/detail.php?id=' . $transaksi['book_id']); ?>" class="btn btn-sm btn-outline-cart">Lihat Buku</a>
+                                            <?php endif; ?>
                                             <button type="button" class="btn btn-sm btn-primary-buy btn-buka-invoice" 
                                                     data-code="<?php echo htmlspecialchars($transaksi['transaction_code']); ?>"
-                                                    data-title="<?php echo htmlspecialchars($transaksi['title']); ?>"
+                                                    data-title="<?php echo htmlspecialchars($book_title); ?>"
                                                     data-date="<?php echo $fmt_date; ?>"
                                                     data-price="Rp <?php echo number_format($transaksi['total_price'], 0, ',', '.'); ?>"
                                                     data-status="<?php echo $status_class; ?>">
                                                 Unduh Invoice
                                             </button>
                                         <?php else: ?>
-                                            <a href="<?php echo base_url('views/user/transaction.php?retry_book=' . $transaksi['book_id']); ?>" class="btn btn-sm btn-outline-cart">Coba Lagi</a>
+                                            <a href="<?php echo $retry_url; ?>" class="btn btn-sm btn-outline-cart">Coba Lagi</a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
