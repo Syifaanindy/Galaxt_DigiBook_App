@@ -80,7 +80,7 @@ $result = mysqli_query($conn, $query);
     <link rel="stylesheet" href="../../assets/css/user/buku-saya.css">
 </head>
 <body data-page="profile">
-    <div id="site-navbar"></div>
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
     
     <main class="my-books-page-container py-5">
         <div class="container">

@@ -119,7 +119,7 @@ $category = $data['category'];
 </head>
 
 <body data-page="koleksi">
-    <div id="site-navbar"></div>
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
 
     <main class="collection-page">
         <section class="container py-5">

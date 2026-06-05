@@ -56,7 +56,7 @@ if (!empty($user_id)) {
 </head>
 
 <body data-page="kontak">
-    <div id="site-navbar"></div>
+   <?php include __DIR__ . '/partials/navbar.php'; ?>
 
     <main class="contact-page py-5">
         <section class="container">

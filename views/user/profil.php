@@ -62,7 +62,7 @@ $totalUlasan = $dataReview['total_review'] ?? 0;
 </head>
 
 <body data-page="profile">
-    <div id="site-navbar"></div>
+   <?php include __DIR__ . '/partials/navbar.php'; ?>
 
     <main class="profile-page">
         <section class="container py-5">

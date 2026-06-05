@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="../../assets/css/user/baca-buku.css">
 </head>
 <body data-page="profile">
-    <div id="site-navbar"></div>
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
 
     <main class="read-book-page-container py-5">
         <div class="container">

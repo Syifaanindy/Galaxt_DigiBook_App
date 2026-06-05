@@ -53,7 +53,7 @@ $semuaReview = ambilReviewBuku($conn, $id_buku);
 </head>
 
 <body>
-    <div id="site-navbar"></div>
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
 
     <main class="detail-page-container py-5">
         <div class="container">

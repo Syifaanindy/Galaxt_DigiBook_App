@@ -55,7 +55,7 @@ $riwayat_transaksi = ambilTransaksiPerHalaman($conn, $user_id, $limit, $offset);
     </style>
 </head>
 <body data-page="profile">
-    <div id="site-navbar"></div>
+   <?php include __DIR__ . '/partials/navbar.php'; ?>
 
     <main class="history-page-container py-5">
         <div class="container">
