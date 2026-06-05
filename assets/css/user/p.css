@@ -52,7 +52,6 @@ p {
     color: #4a4175;
 }
 
-/* Reusable Component Headings */
 .section-subtitle {
     display: inline-block;
     font-size: 0.85rem;
@@ -109,7 +108,6 @@ p {
     margin-bottom: 2.5rem;
 }
 
-/* Banner text yang diletakkan di sisi kanan (di bawah slider) */
 .home-slider+.banner-text {
     margin-top: 1.5rem;
     text-align: right;
@@ -544,6 +542,12 @@ p {
     background: white;
 }
 
+.book-card .book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .book-card .book-content {
     padding: 55px 20px 20px;
     display: flex;
@@ -583,10 +587,8 @@ p {
     color: var(--primary-color);
 }
 
-.book-card .btn
-
 /* ==========================================================================
-   REVIEW / TESTIMONI SECTION (Grid Masonry Style)
+   REVIEW / TESTIMONI SECTION
    ========================================================================== */
 .review-section {
     background: #f6f4ff;
@@ -670,7 +672,7 @@ p {
 }
 
 /* ==========================================================================
-   DINAMIS MULTI-COLUMN FOOTER
+   FOOTER
    ========================================================================== */
 .footer {
     background: white;
@@ -757,7 +759,6 @@ p {
     margin-top: 4px;
 }
 
-/* Newsletter Form With Glass Style Input */
 .newsletter-form input {
     background: #f7f6fb;
     border: 1px solid rgba(46, 36, 91, 0.08);
@@ -801,34 +802,15 @@ p {
    ANIMATIONS & KEYFRAMES
    ========================================================================== */
 @keyframes autoSlide {
-
-    0%,
-    20% {
-        transform: translateX(0%);
-    }
-
-    25%,
-    45% {
-        transform: translateX(-100%);
-    }
-
-    50%,
-    70% {
-        transform: translateX(-200%);
-    }
-
-    75%,
-    95% {
-        transform: translateX(-300%);
-    }
-
-    100% {
-        transform: translateX(0%);
-    }
+    0%, 20%   { transform: translateX(0%); }
+    25%, 45%  { transform: translateX(-100%); }
+    50%, 70%  { transform: translateX(-200%); }
+    75%, 95%  { transform: translateX(-300%); }
+    100%      { transform: translateX(0%); }
 }
 
 /* ==========================================================================
-   RESPONSIVE MEDIA QUERIES (Sistem Grid Adaptif)
+   RESPONSIVE MEDIA QUERIES
    ========================================================================== */
 @media(max-width:991px) {
     body {
@@ -861,7 +843,6 @@ p {
         width: 80%;
     }
 
-
     .best-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
@@ -873,7 +854,6 @@ p {
 }
 
 @media(max-width:767px) {
-
     .best-grid,
     .review-grid {
         grid-template-columns: 1fr;

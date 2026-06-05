@@ -11,6 +11,17 @@ function ambilBukuTerbatas($conn, $limit = 4) {
     
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
+function ambilSemua($conn) {
+    $query = "SELECT * FROM books ORDER BY id DESC LIMIT $limit";
+    
+    $result = mysqli_query($conn, $query);
+    
+    if (!$result) {
+        die("Query Error: " . mysqli_error($conn));
+    }
+    
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
 
 function ambilReviewTerbaik($conn) {
     $query = "SELECT web_reviews.*, users.username 

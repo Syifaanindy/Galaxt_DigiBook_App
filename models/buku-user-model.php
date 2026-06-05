@@ -1,65 +1,61 @@
 <?php
-// Folder: buku-user-model
-// File: BukuUserModel.php
+function ambilKoleksiDinamis($conn, $search = '', $category = 'all', $page = 1, $limit = 20) {
+    $offset = ($page - 1) * $limit;
+    $query = "SELECT * FROM books WHERE 1=1";
+    $types = "";
+    $bindParams = [];
 
-class BukuUserModel {
-    private $db;
-
-    public function __construct($dbConnection) {
-        $this->db = $dbConnection;
+    // Filter Pencarian Teks
+    if (!empty($search)) {
+        $query .= " AND (title LIKE ? OR author LIKE ?)";
+        $types .= "ss";
+        $searchWildcard = "%$search%";
+        $bindParams[] = $searchWildcard;
+        $bindParams[] = $searchWildcard;
     }
 
-    /**
-     * Mengambil data buku berdasarkan filter kata kunci dan kategori
-     */
-    public function getBuku($search = '', $category = 'all', $page = 1, $limit = 20) {
-        $offset = ($page - 1) * $limit;
-        
-        // Query dasar
-        $query = "SELECT * FROM buku WHERE 1=1";
-        $params = [];
-
-        // 1. Filter Pencarian Teks (Judul atau Penulis)
-        if (!empty($search)) {
-            $query .= " AND (judul LIKE ? OR penulis LIKE ?)";
-            $params[] = "%$search%";
-            $params[] = "%$search%";
-        }
-
-        // 2. Filter Kategori Fleksibel
-        // Menggunakan LOWER agar value 'sastra' dari HTML cocok dengan 'Sastra Indonesia' atau 'sastra' di DB Admin
-        if (!empty($category) && $category !== 'all') {
-            $query .= " AND (LOWER(kategori) LIKE ? OR LOWER(kategori) = ?)";
-            $params[] = "%" . strtolower($category) . "%";
-            $params[] = strtolower($category);
-        }
-
-        // Hitung total data untuk info teks jumlah buku di UI
-        $countQuery = str_replace("SELECT *", "SELECT COUNT(*) as total", $query);
-        $stmtCount = $this->db->prepare($countQuery);
-        $stmtCount->execute($params);
-        $totalRows = $stmtCount->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
-
-        // Tambahkan limit dan offset untuk pagination
-        $query .= " LIMIT ? OFFSET ?";
-        $params[] = (int)$limit;
-        $params[] = (int)$offset;
-
-        $stmt = $this->db->prepare($query);
-        
-        // Bind parameter untuk mencegah SQL Injection dan ketidakcocokan tipe data PDO
-        foreach ($params as $key => $val) {
-            $stmt->bindValue($key + 1, $val, is_int($val) ? PDO::PARAM_INT : PDO::PARAM_STR);
-        }
-        
-        $stmt->execute();
-        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return [
-            'data' => $books,
-            'total' => $totalRows,
-            'current_page' => $page,
-            'total_pages' => ceil($totalRows / $limit)
-        ];
+    // Filter Dropdown Kategori
+    if (!empty($category) && $category !== 'all') {
+        // Menyesuaikan kolom kategori di database (bisa teks publisher / category_id)
+        $query .= " AND (LOWER(publisher) LIKE ? OR category_id = ?)";
+        $types .= "ss";
+        $categoryLower = "%" . strtolower($category) . "%";
+        $bindParams[] = $categoryLower;
+        $bindParams[] = $category;
     }
+
+    // Hitung Total Data untuk Pagination
+    $countQuery = str_replace("SELECT *", "SELECT COUNT(*) as total", $query);
+    $stmtCount = $conn->prepare($countQuery);
+    if (!empty($types)) {
+        $stmtCount->bind_param($types, ...$bindParams);
+    }
+    $stmtCount->execute();
+    $totalBooks = $stmtCount->get_result()->fetch_assoc()['total'] ?? 0;
+
+    // Tambahkan Limit & Offset Pemisah Halaman
+    $query .= " ORDER BY id DESC LIMIT ? OFFSET ?";
+    $types .= "ii";
+    $bindParams[] = $limit;
+    $bindParams[] = $offset;
+
+    $stmt = $conn->prepare($query);
+    if (!empty($types)) {
+        $stmt->bind_param($types, ...$bindParams);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $books = [];
+    while ($row = $result->fetch_assoc()) {
+        $books[] = $row;
+    }
+
+    return [
+        'books' => $books,
+        'total' => $totalBooks,
+        'total_pages' => ceil($totalBooks / $limit)
+    ];
 }
+
+?>

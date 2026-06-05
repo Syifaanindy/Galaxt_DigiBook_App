@@ -1,19 +1,44 @@
 <?php
 session_start();
 
-// Deteksi otomatis key session untuk Nama (mencegah salah key seperti 'name' atau 'username')
-$user_nama = '';
-if (isset($_SESSION['nama'])) {
-    $user_nama = $_SESSION['nama'];
-} elseif (isset($_SESSION['name'])) {
-    $user_nama = $_SESSION['name'];
-} elseif (isset($_SESSION['username'])) {
-    $user_nama = $_SESSION['username'];
-}
+// 1. Pastikan file database.php di-require agar bisa melakukan query
+require_once __DIR__ . '/../../config/database.php'; 
 
-// Ambil data email dari session
-$user_email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
+// 2. Ambil user_id dari session login
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : (isset($_SESSION['id']) ? $_SESSION['id'] : '');
+
+$user_nama = '';
+$user_email = '';
+
+// 3. Tarik data user dari database berdasarkan ID
+if (!empty($user_id)) {
+    // Menggunakan SELECT * agar tidak eror jika nama kolom berbeda
+    $query = "SELECT * FROM users WHERE id = ?"; 
+    $stmt = $conn->prepare($query);
+    if ($stmt) {
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            // Deteksi otomatis kolom EMAIL
+            $user_email = isset($row['email']) ? $row['email'] : '';
+
+            // Deteksi otomatis kolom NAMA (mencari mana yang tersedia di tabel Anda)
+            if (isset($row['nama'])) {
+                $user_nama = $row['nama'];
+            } elseif (isset($row['name'])) {
+                $user_nama = $row['name'];
+            } elseif (isset($row['username'])) {
+                $user_nama = $row['username'];
+            } elseif (isset($row['nama_lengkap'])) {
+                $user_nama = $row['nama_lengkap'];
+            }
+        }
+        $stmt->close();
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -46,14 +71,16 @@ $user_email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
                         <h3>Kirim Ulasan Website</h3>
                         
                         <form class="contact-form" action="../../controllers/ulasan-website-controller.php" method="POST">
+                            <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user_id); ?>">
+
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label" for="nama">Nama</label>
-                                    <input type="text" id="nama" name="nama" class="form-control" placeholder="Tulis nama Anda" value="<?php echo htmlspecialchars($user_nama); ?>" readonly required>
+                                    <input type="text" id="nama" class="form-control" placeholder="Tulis nama Anda" value="<?php echo htmlspecialchars($user_nama); ?>" readonly>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label" for="email">Email</label>
-                                    <input type="email" id="email" name="email" class="form-control" placeholder="nama@email.com" value="<?php echo htmlspecialchars($user_email); ?>" readonly required>
+                                    <input type="email" id="email" class="form-control" placeholder="nama@email.com" value="<?php echo htmlspecialchars($user_email); ?>" readonly>
                                 </div>
                                 
                                 <div class="col-12">

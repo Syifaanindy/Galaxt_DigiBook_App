@@ -80,3 +80,35 @@ body {
 .send-btn:hover {
     background: #1f1840;
 }
+
+/* Menghilangkan border patah di antara input dan button */
+.custom-newsletter input {
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+    border: 1px solid #e0e0e0;
+    font-size: 14px;
+}
+
+.custom-newsletter button {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+    border: 1px solid #e0e0e0;
+}
+
+/* Mengatur ikon pesawat kertas agar berwarna putih di dalam kotak ungu bulat */
+.custom-newsletter button i {
+    background-color: #2b1854; /* Warna ungu gelap sesuai gambar */
+    color: #ffffff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+/* Memastikan background footer putih bersih dan tidak transparan */
+#site-footer {
+    background-color: #ffffff !important;
+    color: #333333;
+    padding-top: 40px;
+    padding-bottom: 20px;
+    border-top: 1px solid #f0f0f0;
+}
