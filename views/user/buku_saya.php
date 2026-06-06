@@ -10,12 +10,9 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Ambil parameter search dan category dari URL
 $search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
 $category_filter = isset($_GET['category']) ? mysqli_real_escape_string($conn, $_GET['category']) : '';
 
-// 1. AMBIL DAFTAR KATEGORI UNTUK DROPDOWN
-// JIKA NAMA TABEL/KOLOM KATEGORI ANDA BERBEDA, UBAH DI SINI:
 $categories_options = mysqli_query($conn, "SELECT DISTINCT category_name FROM category WHERE category_name IS NOT NULL AND category_name != '' ORDER BY category_name ASC");
 
 $limit = 4; 
@@ -25,11 +22,11 @@ if ($page < 1) $page = 1;
 
 $offset = ($page - 1) * $limit;
 
-// 2. QUERY COUNT (Menghitung total data dengan relasi LEFT JOIN)
-$count_query = "SELECT COUNT(*) AS total FROM transaction 
-                INNER JOIN books ON transaction.book_id = books.id 
+$count_query = "SELECT COUNT(DISTINCT transaction_items.book_id) AS total FROM transactions
+                INNER JOIN transaction_items ON transactions.id = transaction_items.transaction_id
+                INNER JOIN books ON transaction_items.book_id = books.id 
                 LEFT JOIN category ON books.category_id = category.id 
-                WHERE transaction.user_id = '$user_id'";
+                WHERE transactions.user_id = '$user_id'";
 
 if (!empty($search)) {
     $count_query .= " AND (books.title LIKE '%$search%' OR books.author LIKE '%$search%')";
@@ -44,12 +41,12 @@ $total_data = $count_data['total'];
 
 $total_pages = ceil($total_data / $limit);
 
-$query = "SELECT transaction.*, books.title, books.author, books.cover_image, category.category_name 
-          FROM transaction 
-          INNER JOIN books ON transaction.book_id = books.id 
+$query = "SELECT DISTINCT transaction_items.book_id, books.title, books.author, books.cover_image, category.category_name 
+          FROM transactions 
+          INNER JOIN transaction_items ON transactions.id = transaction_items.transaction_id
+          INNER JOIN books ON transaction_items.book_id = books.id 
           LEFT JOIN category ON books.category_id = category.id 
-          WHERE transaction.user_id = '$user_id'";
-
+          WHERE transactions.user_id = '$user_id'";
 if (!empty($search)) {
     $query .= " AND (books.title LIKE '%$search%' OR books.author LIKE '%$search%')";
 }
@@ -57,7 +54,7 @@ if (!empty($category_filter)) {
     $query .= " AND category.category_name = '$category_filter'";
 }
 
-$query .= " ORDER BY transaction.id DESC LIMIT $limit OFFSET $offset";
+$query .= " ORDER BY transactions.id DESC LIMIT $limit OFFSET $offset";
 
 $result = mysqli_query($conn, $query);
 ?>
