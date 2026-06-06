@@ -20,7 +20,7 @@ $picture  = $userLama['picture'] ?? null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username   = trim($_POST['username']);
     $email_baru = trim($_POST['email']);
-    $password   = $_POST['password']; // Berupa string kosong jika tidak diisi user
+    $password   = ''; // Field password dihapus dari form, selalu kosong
 
     // --- PROSES UPLOAD GAMBAR BARU ---
     if (isset($_FILES['picture']) && $_FILES['picture']['error'] === UPLOAD_ERR_OK) {
@@ -63,14 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['email'] = $email_baru;
         
         // Redirect kembali ke view dengan alert sukses
-        header("Location: ../views/user/profile.php?status=updated");
+        header("Location: ../views/user/profil.php?status=updated");
         exit();
     } else {
         // Redirect kembali ke view dengan alert gagal
-        header("Location: ../views/user/profile.php?status=failed");
+        header("Location: ../views/user/profil.php?status=failed");
         exit();
     }
 } else {
-    header("Location: ../views/user/profile.php");
+    header("Location: ../views/user/profil.php");
     exit();
 }
