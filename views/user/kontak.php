@@ -60,7 +60,7 @@ if (!empty($user_id)) {
 
     <main class="contact-page py-5">
         <section class="container">
-            <div class="hero-box mb-4">
+            <div class="mb-4">
                 <h1>Ulasan Website</h1>
                 <p>Bantu kami meningkatkan kualitas Galaxy Digi Book dengan memberikan ulasan, kritik, atau saran terbaik Anda.</p>
             </div>

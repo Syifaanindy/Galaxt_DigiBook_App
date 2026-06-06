@@ -22,7 +22,7 @@ body {
 
 .hero-box,
 .contact-card {
-
+    background:  rgba(255, 255, 255, 0.9);
     border: 1px solid rgba(46, 36, 91, 0.1);
     border-radius: 18px;
     padding: 22px;
