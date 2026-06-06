@@ -62,7 +62,7 @@ $totalUlasan = $dataReview['total_review'] ?? 0;
 </head>
 
 <body data-page="profile">
-   <?php include __DIR__ . '/partials/navbar.php'; ?>
+    <div id="site-navbar"></div>
 
     <main class="profile-page">
         <section class="container py-5">
@@ -83,7 +83,6 @@ $totalUlasan = $dataReview['total_review'] ?? 0;
                         <p class="profile-email mb-1"><?= htmlspecialchars($user_email) ?></p>
                         <div class="profile-meta">
                             <span><i class="fa-solid fa-book-open-reader me-2"></i><?= $totalWishlist ?> Buku Tersimpan</span>
-                            <span><i class="fa-solid fa-clock-rotate-left me-2"></i>Aktif sejak 2026</span>
                         </div>
                     </div>
                 </div>
@@ -150,10 +149,6 @@ $totalUlasan = $dataReview['total_review'] ?? 0;
                         <div class="mb-3">
                             <label class="form-label text-secondary small fw-semibold">Foto Profil Baru (Format: JPG/PNG)</label>
                             <input type="file" name="picture" class="form-control" accept="image/png, image/jpeg, image/jpg" style="border-radius: 8px;">
-                        </div>
-                        <div class="mb-0">
-                            <label class="form-label text-secondary small fw-semibold">Password Baru (Kosongkan jika tidak diganti)</label>
-                            <input type="password" name="password" class="form-control" placeholder="Masukkan password baru jika ingin mengubah" style="border-radius: 8px;">
                         </div>
                     </div>
                     <div class="modal-footer border-0 pt-0">
