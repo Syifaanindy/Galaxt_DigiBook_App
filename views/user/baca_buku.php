@@ -98,7 +98,7 @@ $buku_lainnya = $stmt_next->get_result();
                             
                             <div class="d-flex gap-2">
                                 <?php if (!empty($buku['file_path'])): ?>
-                                    <a href="../../assets/book/<?php echo htmlspecialchars($buku['file_path']); ?>" download class="btn btn-glow-purple"><i class="fa-solid fa-download"></i> Unduh</a>
+                                    <a href="../../<?php echo htmlspecialchars($buku['file_path']); ?>" download class="btn btn-glow-purple"><i class="fa-solid fa-download"></i> Unduh</a>
                                     <a href="path-ke-pdf.pdf" target="_blank" class="btn-new-tab">
                                         <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 8px;"></i> 
                                         Buka
@@ -111,7 +111,7 @@ $buku_lainnya = $stmt_next->get_result();
                         
                         <div class="pdf-viewer-wrap">
                             <?php if (!empty($buku['file_path'])): ?>
-                                <iframe class="pdf-viewer" src="../../assets/book/<?php echo htmlspecialchars($buku['file_path']); ?>" width="100%" height="600px"></iframe>
+                                <iframe class="pdf-viewer" src="../../<?php echo htmlspecialchars($buku['file_path']); ?>" width="100%" height="600px"></iframe>
                             <?php else: ?>
                                 <div class="alert alert-warning text-center">File PDF belum diunggah.</div>
                             <?php endif; ?>
