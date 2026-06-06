@@ -5,30 +5,26 @@ require_once dirname(__DIR__, 2) . '/config/database.php';
 require_once dirname(__DIR__, 2) . '/models/profil-model.php';
 
 if (!isset($_SESSION['email'])) {
-    $_SESSION['email'] = 'admin@local.test'; // Akun simulasi
+    $_SESSION['email'] = 'admin@local.test';
 }
 
 $email_login = $_SESSION['email'];
 
-// Instansiasi class model menggunakan koneksi database dari config
 $profilModel = new ProfilModel($conn);
 
-// 1. Ambil informasi utama akun user via ProfilModel
 $dataUser = $profilModel->getProfilByEmail($email_login);
 $userId   = $dataUser['id'] ?? 0;
 
 $user_name   = $dataUser['username'] ?? 'User Galaxy';
 $user_email  = $dataUser['email'] ?? $email_login;
-$user_avatar = $dataUser['picture'] ?? null; // Tampung nama file gambar
+$user_avatar = $dataUser['picture'] ?? null;
 
-// 2. Hitung total item di Cart milik user
 $queryCart = $conn->prepare("SELECT COUNT(*) AS total_cart FROM cart WHERE user_id = ?");
 $queryCart->bind_param("i", $userId);
 $queryCart->execute();
 $dataCart = $queryCart->get_result()->fetch_assoc();
 $totalWishlist = $dataCart['total_cart'] ?? 0;
 
-// 3. Hitung total ulasan buku yang pernah ditulis oleh user ini
 $queryReview = $conn->prepare("SELECT COUNT(*) AS total_review FROM book_reviews WHERE user_id = ?");
 $queryReview->bind_param("i", $userId);
 $queryReview->execute();
@@ -48,7 +44,7 @@ $totalUlasan = $dataReview['total_review'] ?? 0;
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    
+
     <link rel="stylesheet" href="../../assets/css/user/user.css">
     <link rel="stylesheet" href="../../assets/css/user/layout-shared.css">
     <style>
@@ -62,7 +58,8 @@ $totalUlasan = $dataReview['total_review'] ?? 0;
 </head>
 
 <body data-page="profile">
-    <div id="site-navbar"></div>
+
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
 
     <main class="profile-page">
         <section class="container py-5">
@@ -72,7 +69,7 @@ $totalUlasan = $dataReview['total_review'] ?? 0;
                         <?php if (!empty($user_avatar) && file_exists(__DIR__ . '/../../assets/img/profile/' . $user_avatar)): ?>
                             <img src="../../assets/img/profile/<?= htmlspecialchars($user_avatar) ?>" alt="Foto Profil">
                         <?php else: ?>
-                            <?php 
+                            <?php
                                 $words = explode(" ", $user_name);
                                 echo strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
                             ?>
@@ -97,11 +94,9 @@ $totalUlasan = $dataReview['total_review'] ?? 0;
                                 <i class="fa-solid fa-pen-to-square me-1"></i> Edit Akun
                             </button>
                         </div>
-                        
                         <ul class="detail-list">
                             <li><span>Username</span><strong><?= htmlspecialchars($user_name) ?></strong></li>
                             <li><span>Email Pengguna</span><strong><?= htmlspecialchars($user_email) ?></strong></li>
-                            <li><span>Password</span><strong>********</strong></li>
                         </ul>
                     </div>
                 </div>
@@ -160,11 +155,10 @@ $totalUlasan = $dataReview['total_review'] ?? 0;
         </div>
     </div>
 
-    <div id="site-footer"></div>
+    <?php include __DIR__ . '/partials/footer.html'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../assets/script/user/shared-layout.js"></script>
 
     <script>
         const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });

@@ -40,7 +40,7 @@ function ambilReviewTerbaik($conn) {
 }
 
 function ambilBukuBestSeller($conn) {
-    // KODE YANG SUDAH DISESUAIKAN DENGAN STRUKTUR 3 TABEL BARU
+    
     $query = "SELECT books.*, COUNT(transaction_items.id) as total_terjual 
               FROM books 
               JOIN transaction_items ON books.id = transaction_items.book_id
@@ -48,7 +48,7 @@ function ambilBukuBestSeller($conn) {
               WHERE transactions.status = 'success'
               GROUP BY books.id 
               ORDER BY total_terjual DESC 
-              LIMIT 4"; // Sesuaikan limit sesuai desain asli kamu
+              LIMIT 4"; 
               
     $result = mysqli_query($conn, $query);
     

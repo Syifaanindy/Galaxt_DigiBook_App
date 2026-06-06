@@ -34,7 +34,7 @@ $cart_books = getUserCartItems($conn, $user_id);
     <link rel="stylesheet" href="../../assets/css/user/keranjang.css">
 </head>
 <body data-page="profile">
-    <div id="site-navbar"></div>
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
 
     <main class="cart-page-container py-5">
         <div class="container">
