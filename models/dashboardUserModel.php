@@ -1,17 +1,6 @@
 <?php
 
-function ambilBukuTerbatas($conn, $limit = 4) {
-    $query = "SELECT * FROM books ORDER BY id DESC LIMIT $limit";
-    
-    $result = mysqli_query($conn, $query);
-    
-    if (!$result) {
-        die("Query Error: " . mysqli_error($conn));
-    }
-    
-    return mysqli_fetch_all($result, MYSQLI_ASSOC);
-}
-function ambilSemua($conn) {
+function ambilBukuTerbatas($conn, $limit) {
     $query = "SELECT * FROM books ORDER BY id DESC LIMIT $limit";
     
     $result = mysqli_query($conn, $query);
@@ -24,7 +13,7 @@ function ambilSemua($conn) {
 }
 
 function ambilReviewTerbaik($conn) {
-    $query = "SELECT web_reviews.*, users.username 
+    $query = "SELECT web_reviews.*, users.username, users.picture
               FROM web_reviews 
               JOIN users ON web_reviews.user_id = users.id 
               WHERE web_reviews.rating > 3 
@@ -48,7 +37,7 @@ function ambilBukuBestSeller($conn) {
               WHERE transactions.status = 'success'
               GROUP BY books.id 
               ORDER BY total_terjual DESC 
-              LIMIT 4"; 
+              LIMIT 3"; 
               
     $result = mysqli_query($conn, $query);
     

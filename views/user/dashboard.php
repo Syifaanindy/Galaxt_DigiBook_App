@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/auth-helper.php';
 require_once __DIR__ . '/../../models/dashboardUserModel.php';
+require_once __DIR__ . '/../../models/detailModel.php';
 
 requireRole('user');
 
@@ -69,34 +70,49 @@ $bukuBestSeller = ambilBukuBestSeller($conn);
 
             <div class="best-grid">
                 <?php
-                $index = 1;
-                foreach ($bukuBestSeller as $buku):
-                ?>
-                    <div class="best-card">
-                        <div class="tag-best">Top #<?= $index++ ?></div>
-                        <div class="best-header">
-                            <div class="best-cover">
-                                <img src="../../<?= !empty($buku['cover_image']) ? htmlspecialchars($buku['cover_image']) : 'assets/pic/default.png' ?>"
-                                    alt="<?= htmlspecialchars($buku['title']) ?>">
-                            </div>
+            $index = 1;
+            
+            // Ambil ID User dari session (ganti sesuai nama session di tim kamu, misal $_SESSION['user_id'])
+            $current_user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
+            foreach ($bukuBestSeller as $buku):
+                // PANGGIL FUNGSI KAMU DI SINI
+                // Kalau user belum login, otomatis dianggap belum memiliki buku (false)
+                $sudahMemilikiBuku = false;
+                if ($current_user_id) {
+                    $sudahMemilikiBuku = userSudahMemilikiBuku($conn, $current_user_id, $buku['id']);
+                }
+            ?>
+                <div class="best-card">
+                    <div class="tag-best">Top #<?= $index++ ?></div>
+                    <div class="best-header">
+                        <div class="best-cover">
+                            <img src="../../<?= !empty($buku['cover_image']) ? htmlspecialchars($buku['cover_image']) : 'assets/pic/default.png' ?>"
+                                alt="<?= htmlspecialchars($buku['title']) ?>">
                         </div>
-                        <div class="best-content">
-                            <div class="best-title"><?= htmlspecialchars($buku['title']) ?></div>
-                            <div class="best-author">
-                                <i class="fa-regular fa-user me-1"></i> <?= htmlspecialchars($buku['author']) ?>
-                            </div>
-                            <div class="best-footer">
-                                <div class="best-price">Rp <?= number_format($buku['price'], 0, ',', '.') ?></div>
-                                <div class="best-actions">
+                    </div>
+                    <div class="best-content">
+                        <div class="best-title"><?= htmlspecialchars($buku['title']) ?></div>
+                        <div class="best-author">
+                            <i class="fa-regular fa-user me-1"></i> <?= htmlspecialchars($buku['author']) ?>
+                        </div>
+                        <div class="best-footer">
+                            <div class="best-price">Rp <?= number_format($buku['price'], 0, ',', '.') ?></div>
+                            <div class="best-actions">
+                                
+                                <!-- LOGIKANYA DI SINI: KALAU BELUM PUNYA, TAMPILKAN TOMBOL KERANJANG -->
+                                <?php if (!$sudahMemilikiBuku): ?>
                                     <a href="keranjang.php?action=add&id=<?= $buku['id'] ?>" class="keranjang-btn" title="Tambah ke Keranjang">
                                         <i class="fa-solid fa-cart-shopping"></i>
                                     </a>
-                                    <a href="detail.php?id=<?= $buku['id'] ?>" class="detail-btn">Detail</a>
-                                </div>
+                                <?php endif; ?>
+                                
+                                <a href="detail.php?id=<?= $buku['id'] ?>" class="detail-btn">Detail</a>
                             </div>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                </div>
+            <?php endforeach; ?>
             </div>
         </div>
     </section>
@@ -118,7 +134,17 @@ $bukuBestSeller = ambilBukuBestSeller($conn);
                 <?php if (empty($daftarBuku)): ?>
                     <p class="text-white">Belum ada koleksi buku.</p>
                 <?php else: ?>
-                    <?php foreach ($daftarBuku as $book): ?>
+                    <?php 
+                    // Pastikan id user yang login diambil dulu sebelum loop
+                    $current_user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+                    
+                    foreach ($daftarBuku as $book): 
+                        // Cek kepemilikan buku menggunakan fungsi kamu
+                        $sudahMemilikiBuku = false;
+                        if ($current_user_id) {
+                            $sudahMemilikiBuku = userSudahMemilikiBuku($conn, $current_user_id, $book['id']);
+                        }
+                    ?>
                         <div class="book-card">
                             <div class="book-header" style="background: linear-gradient(135deg, #c4b5fd 0%, #93c5fd 100%);">
                                 <div class="book-cover">
@@ -134,9 +160,14 @@ $bukuBestSeller = ambilBukuBestSeller($conn);
                                 <div class="best-footer">
                                     <div class="best-price">Rp <?= number_format($book['price'], 0, ',', '.') ?></div>
                                     <div class="best-actions">
-                                        <a href="keranjang.php?action=add&id=<?= $book['id'] ?>" class="keranjang-btn" title="Tambah ke Keranjang">
-                                            <i class="fa-solid fa-cart-shopping"></i>
-                                        </a>
+                                        
+                                        <!-- BUNGKUS TOMBOL KERANJANG PAKE LOGIKA SAKTI KAMU -->
+                                        <?php if (!$sudahMemilikiBuku): ?>
+                                            <a href="keranjang.php?action=add&id=<?= $book['id'] ?>" class="keranjang-btn" title="Tambah ke Keranjang">
+                                                <i class="fa-solid fa-cart-shopping"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                        
                                         <a href="detail.php?id=<?= $book['id'] ?>" class="detail-btn">Detail</a>
                                     </div>
                                 </div>
@@ -238,7 +269,15 @@ $bukuBestSeller = ambilBukuBestSeller($conn);
                         <hr class="review-divider">
                         <div class="reviewer-profile">
                             <div class="reviewer-avatar text-bg-primary">
-                                <?= strtoupper(substr($rev['username'], 0, 1)) ?>
+                                <?php if (!empty($rev['picture'])): ?>
+                                    <img src="../../assets/img/profile/<?= htmlspecialchars($rev['picture']) ?>" 
+                                        alt="<?= htmlspecialchars($rev['username']) ?>" 
+                                        style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                <?php else: ?>
+                                    <div class="d-flex align-items-center justify-content-center w-100 h-100 text-bg-primary rounded-circle" style="font-weight: bold;">
+                                        <?= strtoupper(substr($rev['username'], 0, 1)) ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                             <div class="reviewer-info">
                                 <h6 class="m-0"><?= htmlspecialchars($rev['username']) ?></h6>
