@@ -186,26 +186,26 @@ $sudahMemilikiBuku = userSudahMemilikiBuku($conn, $user_id, $id_buku);
                     <!-- TOMBOL AKSI DENGAN BUTTON BAYAR / BELI LANGSUNG -->
                    <div class="detail-action-buttons row g-3 mb-5 justify-content-end">
                         <?php if ($sudahMemilikiBuku): ?>
-                            <div class="col-sm-5">
+                            <div class="col-sm-6">
                                 <a href="baca_buku.php?id=<?= (int)$buku['id']; ?>"
                                 class="btn btn-primary-buy w-100 py-3 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
                                     <i class="fa-solid fa-book-open-reader"></i> Baca Buku
                                 </a>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <a href="buku_saya.php"
                                 class="btn btn-outline-cart w-100 py-3 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2">
                                     <i class="fa-solid fa-book-bookmark"></i> Buku Saya
                                 </a>
                             </div>
                         <?php else: ?>
-                            <div class="col-sm-5">
+                            <div class="col-sm-6">
                                 <a href="transaksi.php?id=<?= (int)$buku['id']; ?>"
                                 class="btn btn-primary-buy w-100 py-3 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
                                     <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
                                 </a>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <a href="keranjang.php?action=add&id=<?= (int)$buku['id']; ?>"
                                 class="btn btn-outline-cart w-100 py-3 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2">
                                     <i class="fa-solid fa-basket-shopping"></i> + Keranjang
