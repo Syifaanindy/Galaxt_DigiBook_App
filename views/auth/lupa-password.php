@@ -14,24 +14,36 @@ unset($_SESSION['error'], $_SESSION['success']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../../assets/css/auth/login.css"> <title>CosmiRead - Forgot Password</title>
+    
+    <link rel="stylesheet" href="../../assets/css/auth/forgot-password.css">
+    
+    <title>Galxy DigiBook - Forgot Password</title>
 </head>
 <body>
-    <div class="container" id="container" style="min-height: 400px; display: flex; align-items: center; justify-content: center;">
-        <div style="padding: 40px; width: 100%; max-width: 400px; text-align: center;">
-            <form action="<?php echo base_url('index.php?action=proses_lupa_password'); ?>" method="POST">
-                <h1>Forgot Password</h1>
-                <p style="margin: 20px 0; color: #555; font-size: 14px;">Enter your email address and we'll send you a link to reset your password.</p>
-                
-                <input type="email" name="email" placeholder="Enter your registered email" required style="width: 100%; padding: 10px; margin: 8px 0; background-color: #eee; border: none; outline: none; border-radius: 8px;">
-                
-                <button type="submit" style="margin-top: 15px; background-color: #512da8; color: #fff; font-size: 12px; padding: 10px 45px; border: 1px solid transparent; border-radius: 8px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer;">Send Reset Link</button>
-                
-                <div style="margin-top: 20px;">
-                    <a href="<?php echo base_url('views/auth/login.php'); ?>" style="color: #333; font-size: 13px; text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Back to Sign In</a>
-                </div>
-            </form>
+
+    <div class="wrapper-card">
+        <div class="logo-container">
+            <img src="<?php echo base_url('assets/pic/logo.png'); ?>" alt="CosmiRead Logo" class="app-logo">
         </div>
+
+        <form action="<?php echo base_url('index.php?action=proses_lupa_password'); ?>" method="POST">
+            <h1>Forgot Password</h1>
+            <p class="subtitle">Enter your email address and we'll send you a link to reset your password.</p>
+            
+            <div class="input-box">
+                <label for="email">Email Address</label>
+                <div class="input-field-wrapper">
+                    <i class="fa-solid fa-envelope field-icon"></i>
+                    <input type="email" id="email" name="email" placeholder="Enter your registered email" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-submit">Send Reset Link</button>
+            
+            <div class="back-link-box">
+                <a href="<?php echo base_url('views/auth/auth.php'); ?>"><i class="fa-solid fa-arrow-left"></i> Back to Sign In</a>
+            </div>
+        </form>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
