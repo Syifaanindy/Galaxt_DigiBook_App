@@ -1,8 +1,5 @@
 <?php
 
-/**
- * Hitung total transaksi milik user tertentu untuk pagination riwayat
- */
 function hitungTotalTransaksiUser($conn, $user_id) {
     $user_id = (int)$user_id;
     
@@ -19,9 +16,7 @@ function hitungTotalTransaksiUser($conn, $user_id) {
     return (int)$data['total'];
 }
 
-/**
- * Ambil data transaksi per halaman (Pagination) dengan JOIN 3 tabel baru
- */
+
 function ambilTransaksiPerHalaman($conn, $user_id, $limit, $offset) {
     $user_id = (int)$user_id;
     $limit = (int)$limit;

@@ -9,6 +9,7 @@ switch ($aksi) {
     case 'register':
     case 'create-default-admin':
     case 'logout':
+    case 'proses_lupa_password': // ⬅️ Tambahkan action baru ini di sini
         require_once __DIR__ . '/controllers/auth-controller.php';
         break;
 

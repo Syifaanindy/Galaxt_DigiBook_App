@@ -64,7 +64,7 @@ unset($_SESSION['error'], $_SESSION['success'], $_SESSION['auth_mode']);
                 <input type="text" name="username" placeholder="Username" required>
                 <input type="password" name="password" placeholder="Password" required>
                 
-                <a href="#">Forget Your Password?</a>
+                <a href="<?php echo base_url('views/auth/lupa-password.php'); ?>">Forget Your Password?</a>
                 <button type="submit">Sign In</button>
             </form>
         </div>

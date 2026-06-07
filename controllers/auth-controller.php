@@ -7,6 +7,15 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/url-helper.php';
 require_once __DIR__ . '/../models/user-model.php';
 
+// Import PHPMailer classes into the global namespace
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+// Load PHPMailer library (Sesuaikan path jika letak foldernya berbeda)
+require_once __DIR__ . '/../PHPMailer/src/Exception.php';
+require_once __DIR__ . '/../PHPMailer/src/PHPMailer.php';
+require_once __DIR__ . '/../PHPMailer/src/SMTP.php';
+
 $aksi = $_GET['action'] ?? '';
 
 if ($aksi === 'login') {
@@ -17,6 +26,8 @@ if ($aksi === 'login') {
     prosesCreateDefaultAdmin();
 } elseif ($aksi === 'logout') {
     prosesLogout();
+} elseif ($aksi === 'proses_lupa_password') { 
+    prosesLupaPassword();
 } else {
     include __DIR__ . '/../views/auth/auth.php';
 }
@@ -148,6 +159,77 @@ function prosesCreateDefaultAdmin() {
     $_SESSION['auth_mode'] = 'login';
     redirectAuth();
     exit;
+}
+
+// ⬇️ PROSES LUPA PASSWORD YANG SUDAH TERKONFIGURASI GMAIL PRIBADI ⬇️
+function prosesLupaPassword() {
+    global $conn;
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header("Location: " . base_url('views/auth/lupa-password.php'));
+        exit;
+    }
+
+    $email = mysqli_real_escape_string($conn, trim($_POST['email'] ?? ''));
+
+    if (empty($email)) {
+        $_SESSION['error'] = "Email address is required.";
+        header("Location: " . base_url('views/auth/lupa-password.php'));
+        exit;
+    }
+
+    // Periksa apakah email terdaftar di database
+    $query = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+    
+    if (mysqli_num_rows($query) > 0) {
+        $token = bin2hex(random_bytes(32)); 
+        $expiry = date("Y-m-d H:i:s", strtotime("+15 minutes"));
+
+        // Update token ke tabel user
+        mysqli_query($conn, "UPDATE users SET reset_token='$token', token_expiry='$expiry' WHERE email='$email'");
+
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'najasnndy290505@gmail.com';     // Menggunakan Gmail Pribadi Anda
+            $mail->Password   = 'ahipnwxpyoelqkld';             // Menggunakan 16 digit Sandi Aplikasi Google Anda
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
+
+            // Parameter kedua diubah menjadi 'Galaxy DigiBook Support'
+            $mail->setFrom('najasnndy290505@gmail.com', 'Galaxy DigiBook Support');
+            $mail->addAddress($email);
+
+            $linkReset = base_url("views/auth/reset-password.php?token=" . $token);
+            
+            $mail->isHTML(true);
+            $mail->isHTML(true);
+            $mail->isHTML(true);
+            $mail->Subject = 'Permintaan Atur Ulang Kata Sandi - Galaxy DigiBook'; // Mengubah Subjek Email
+            $mail->Body    = "<h3>Halo!,</h3>
+                            <p>Kami menerima permintaan untuk mengatur ulang kata sandi akun Galaxy DigiBook Anda.</p>
+                            <p>Silakan klik tombol di bawah ini untuk membuat kata sandi baru. Tautan ini hanya berlaku selama 15 menit demi keamanan akun Anda:</p>
+                            <p><a href='$linkReset' style='background-color: #512da8; color: white; padding: 10px 20px; text-decoration: none; display: inline-block; border-radius: 5px; font-weight: bold;'>Atur Ulang Kata Sandi</a></p>
+                            <p>Jika Anda tidak merasa melakukan permintaan ini, Anda dapat mengabaikan email ini dengan aman.</p>
+                  <br>
+                  <p>Salam hangat,<br><b>Tim Support Galaxy DigiBook</b></p>";
+            $mail->send();
+            
+            $_SESSION['success'] = "The reset link has been sent to your Gmail!";
+            header("Location: " . base_url('views/auth/lupa-password.php'));
+            exit;
+        } catch (Exception $e) {
+            $_SESSION['error'] = "Failed to send email. Error: {$mail->ErrorInfo}";
+            header("Location: " . base_url('views/auth/lupa-password.php'));
+            exit;
+        }
+    } else {
+        $_SESSION['error'] = "Email address is not registered!";
+        header("Location: " . base_url('views/auth/lupa-password.php'));
+        exit;
+    }
 }
 
 function redirectAuth() {
