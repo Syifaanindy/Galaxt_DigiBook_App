@@ -119,6 +119,15 @@
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.next-book-card img{
+    width:100%;
+    height:260px;
+    object-fit:cover;
+    border-radius:12px;
+    display:block;
+    background:#f8f9fa;
+}
+
 /* Efek Glow saat hover */
 .next-book-card:hover {
     transform: translateY(-10px);
@@ -155,4 +164,95 @@
 .next-book-card img[src*="default.jpg"] {
     padding: 20px; /* Memberi ruang di sekitar icon buku */
     opacity: 0.5;
+}
+
+.btn-glow-purple{
+    background: linear-gradient(
+        135deg,
+        #4a3590,
+        #7b5cff
+    );
+
+    color:white;
+    border:none;
+
+    border-radius:12px;
+
+    box-shadow:
+        0 0 15px rgba(123,92,255,.4),
+        0 0 25px rgba(123,92,255,.25);
+
+    transition:.3s;
+}
+
+.btn-glow-purple:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 0 20px rgba(123,92,255,.6),
+        0 0 40px rgba(123,92,255,.35);
+}
+
+.btn-new-tab{
+
+    background:transparent;
+    color:#6f4cff;
+
+    border:2px solid #6f4cff;
+
+    border-radius:12px;
+
+    padding:10px 18px;
+
+    text-decoration:none;
+
+    transition:.3s;
+}
+
+.btn-new-tab:hover{
+
+    background:#6f4cff;
+    color:white;
+
+    box-shadow:
+        0 0 20px rgba(111,76,255,.45),
+        0 0 35px rgba(111,76,255,.25);
+}
+
+.read-book-content .card {
+   padding: 24px;
+    border-radius: 16px;
+    height: fit-content;
+}
+
+.read-book-content .card img {
+    width: 100%;
+    max-height: 450px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.read-book-content .card img {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
+
+.read-book-content .card h4 {
+    margin-bottom: 10px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.read-book-content .card .text-muted {
+    margin-bottom: 16px;
+    display: block;
+}
+
+.read-book-content .card .rating {
+    margin-top: 8px;
+    margin-bottom: 20px !important;
+    font-size: 1rem;
+    font-weight: 600;
 }

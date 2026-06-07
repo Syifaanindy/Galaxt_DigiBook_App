@@ -416,24 +416,24 @@
 
 /* Membuat kotak gambar tetap rapi meski gambar tidak ada */
 .book-cover {
-    background-color: #eef2ff; /* Warna ungu muda lembut */
-    border: 1px solid #d1d5db;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 16px;
 }
 
-/* Jika gambar gagal dimuat, tampilkan ikon buku */
-.book-cover img:not([src*="/"]) {
-    display: none;
+.book-cover img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+    border-radius: 16px;
 }
 
-/* Menambahkan icon sebagai placeholder jika gambar kosong */
-.book-cover::before {
-    content: "\f02d"; /* Kode FontAwesome untuk icon buku */
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    color: #c7d2fe;
-    font-size: 40px;
+.book-cover::before,
+.book-cover::after,
+.book-card::before,
+.book-card::after {
+    display: none !important;
 }

@@ -230,3 +230,62 @@ canvas {
   opacity:.4;
   pointer-events:none;
 }
+
+/* ===== PAGINATION CONTAINER ===== */
+.dataTables_wrapper .dataTables_paginate {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+/* ===== DEFAULT BUTTON ===== */
+.dataTables_wrapper .page-link {
+    border: none !important;
+    background: #fff !important;
+    color: #1f1f1f !important; /* hilangkan biru */
+    font-weight: 600;
+    border-radius: 14px !important;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+}
+
+/* ===== HILANGKAN WARNA BIRU BOOTSTRAP ===== */
+.dataTables_wrapper .page-link:focus,
+.dataTables_wrapper .page-link:active {
+    box-shadow: none !important;
+    outline: none !important;
+    color: #1f1f1f !important;
+}
+
+/* ===== HOVER ===== */
+.dataTables_wrapper .page-link:hover {
+    background: #f3f3f3 !important;
+    color: #4b3b8f !important;
+}
+
+/* ===== ACTIVE (INI YANG UNGU) ===== */
+.dataTables_wrapper .page-item.active .page-link {
+    background: #4b3b8f !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 6px 15px rgba(75, 59, 143, 0.3);
+}
+
+/* ===== PREVIOUS & NEXT ===== */
+.dataTables_wrapper .paginate_button.previous .page-link,
+.dataTables_wrapper .paginate_button.next .page-link {
+    width: auto;
+    padding: 0 18px;
+    border-radius: 12px !important;
+}
+
+/* ===== DISABLED ===== */
+.dataTables_wrapper .page-item.disabled .page-link {
+    background: #f5f5f5 !important;
+    color: #aaa !important;
+}
