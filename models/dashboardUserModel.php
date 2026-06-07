@@ -48,7 +48,7 @@ function ambilBukuBestSeller($conn) {
               WHERE transactions.status = 'success'
               GROUP BY books.id 
               ORDER BY total_terjual DESC 
-              LIMIT 4"; 
+              LIMIT 3"; 
               
     $result = mysqli_query($conn, $query);
     
