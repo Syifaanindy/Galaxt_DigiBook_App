@@ -2,6 +2,7 @@
 session_start();
 
 include '../../config/database.php'; 
+$cover_path = '../../assets/cover/';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/auth.php");
@@ -152,7 +153,9 @@ $result = mysqli_query($conn, $query);
                             <div class="book-card">
                                 <div class="book-header">
                                     <div class="book-cover">
-                                        <img src="../../assets/pic/<?= htmlspecialchars($row['cover_image'] ?? 'default.jpg'); ?>" alt="Cover Buku">
+                                        <img src="../../assets/cover/<?= htmlspecialchars(basename($row['cover_image'] ?? 'default.jpg')); ?>" 
+                                            alt="Cover Buku" 
+                                            onerror="this.src='../../assets/cover/default.jpg'">
                                     </div>
                                 </div>
                                 <div class="book-content">

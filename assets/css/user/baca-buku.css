@@ -141,3 +141,18 @@
     box-shadow: 0 10px 30px rgba(74, 53, 144, 0.3);
     border-color: rgba(74, 53, 144, 0.5);
 }
+
+/* Memperbaiki tampilan kotak gambar agar tidak kosong melompong */
+.next-book-card img {
+    width: 100%;
+    height: 200px; /* Sesuaikan tinggi */
+    object-fit: cover;
+    background-color: #f8f9fa; /* Warna latar belakang agar tidak putih polos */
+    border-radius: 10px;
+}
+
+/* Opsional: Jika gambar rusak, beri border agar tetap terlihat kotak */
+.next-book-card img[src*="default.jpg"] {
+    padding: 20px; /* Memberi ruang di sekitar icon buku */
+    opacity: 0.5;
+}
