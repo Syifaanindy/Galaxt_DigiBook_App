@@ -206,7 +206,6 @@ $total_harga = $buku['price'] + $biaya_layanan;
                         body: JSON.stringify({
                             action: 'create_midtrans_transaction',
                             book_id: <?= (int)$buku['id']; ?>,
-                            phone: phoneInput.value.trim()
                         })
                     })
                         .then(response => response.json())
