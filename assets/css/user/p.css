@@ -146,11 +146,28 @@ p {
     border-radius: 12px;
     font-weight: 700;
     box-shadow: 0 8px 20px rgba(46, 36, 91, 0.18);
+    position: relative;
+    overflow: hidden; /* Penting agar efek glow tidak keluar dari tombol */
+    background: linear-gradient(90deg, #5640a0, #8a2be2); /* Gradasi ungu */
+    color: white;
+    border: none;
+    transition: 0.3s;
 }
 
-.all-btns:hover {
-    background: #231b47;
-    transform: translateY(-2px);
+.all-btns::after {
+     content: "";
+    position: absolute;
+    top: 0;
+    left: -100%; /* Mulai dari luar kiri */
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        transparent
+    );
+    animation: slide-glow 3s infinite;
 }
 
 .all-btns.btn-primary-custom {
@@ -357,13 +374,34 @@ p {
     border-radius: 12px;
     font-size: 0.85rem;
     font-weight: 600;
-    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden; /* Penting agar efek glow tidak keluar dari tombol */
+    background: linear-gradient(90deg, #5640a0, #8a2be2); /* Gradasi ungu */
+    color: white;
+    border: none;
+    transition: 0.3s;
 }
 
-.best-card .detail-btn:hover {
-    background: transparent;
-    color: var(--primary-color);
-    border-color: var(--primary-color);
+.best-card .detail-btn::after {
+     content: "";
+    position: absolute;
+    top: 0;
+    left: -100%; /* Mulai dari luar kiri */
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        transparent
+    );
+    animation: slide-glow 3s infinite;
+}
+
+@keyframes slide-glow {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
 }
 
 .about-section {
