@@ -17,6 +17,7 @@ $totalPages = $data['totalPages'];
 $page = $data['page'];
 $search = $data['search'];
 $category = $data['category'];
+$daftarKategori = $data['daftarKategori'] ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -141,11 +142,11 @@ $category = $data['category'];
                         <label for="categorySelect" class="form-label">Kategori</label>
                         <select id="categorySelect" name="category" class="form-select" onchange="this.form.submit()">
                             <option value="all" <?= ($category == 'all') ? 'selected' : '' ?>>Semua Kategori</option>
-                            <option value="sastra" <?= ($category == 'sastra') ? 'selected' : '' ?>>Sastra Indonesia</option>
-                            <option value="filsafat" <?= ($category == 'filsafat') ? 'selected' : '' ?>>Filsafat</option>
-                            <option value="sosiologi" <?= ($category == 'sosiologi') ? 'selected' : '' ?>>Sosiologi</option>
-                            <option value="agama" <?= ($category == 'agama') ? 'selected' : '' ?>>Agama</option>
-                            <option value="sejarah" <?= ($category == 'sejarah') ? 'selected' : '' ?>>Sejarah</option>
+                            <?php foreach ($daftarKategori as $kat): ?>
+                                <option value="<?= $kat['id'] ?>" <?= ($category == $kat['id']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($kat['category_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <button type="submit" style="display: none;"></button>
