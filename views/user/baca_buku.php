@@ -25,15 +25,21 @@ if (!$buku) {
     exit;
 }
 
-// Query Buku Selanjutnya (Rekomendasi)
+$query_ulasan = "SELECT r.*, u.username, u.picture 
+                 FROM book_reviews r
+                 JOIN users u ON r.user_id = u.id 
+                 WHERE r.book_id = ?";
+$stmt_ulasan = $conn->prepare($query_ulasan);
+$stmt_ulasan->bind_param("i", $id);
+$stmt_ulasan->execute();
+$hasil_ulasan = $stmt_ulasan->get_result();
 // Query Buku Selanjutnya (Rekomendasi)
 $query_next = "SELECT b.id, b.title, b.cover_image, b.author
                FROM books b
                INNER JOIN transaction_items ti ON b.id = ti.book_id
                INNER JOIN transactions t ON ti.transaction_id = t.id
                WHERE t.user_id = ? AND b.id != ? 
-               GROUP BY b.id       
-               LIMIT 4";
+               GROUP BY b.id"; // <--- LIMIT 4 sudah dihapus
 
 $stmt_next = $conn->prepare($query_next);
 $stmt_next->bind_param("ii", $user_id, $id);
@@ -86,7 +92,22 @@ $buku_lainnya = $stmt_next->get_result();
                         <hr>
                         <h5>Ulasan Pembaca</h5>
                         <div class="ulasan-list">
-                            <p><em>"<?php echo htmlspecialchars($buku['ulasan'] ?? 'Buku yang sangat menarik.'); ?>"</em></p>
+                            <?php if ($hasil_ulasan->num_rows > 0): ?>
+                                <?php while ($row_ulasan = $hasil_ulasan->fetch_assoc()): ?>
+                                    <div class="d-flex align-items-center mb-3 p-2 border-bottom">
+                                        <img src="../../assets/img/profile/<?php echo !empty($row_ulasan['picture']) ? htmlspecialchars($row_ulasan['picture']) : 'default-user.png'; ?>" 
+                                            class="rounded-circle me-3" width="40" height="40" style="object-fit:cover;">
+                                        
+                                        <div>
+                                            <div class="fw-bold"><?php echo htmlspecialchars($row_ulasan['username']); ?></div>
+                                            <small class="text-muted"><?php echo str_repeat('<i class="fa-solid fa-star text-warning" style="font-size:10px;"></i>', $row_ulasan['rating']); ?></small>
+                                            <p class="mb-0 small"><em>"<?php echo htmlspecialchars($row_ulasan['comment']); ?>"</em></p>
+                                        </div>
+                                    </div>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <p class="text-muted italic">Belum ada ulasan untuk buku ini.</p>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

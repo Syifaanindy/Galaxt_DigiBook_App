@@ -107,7 +107,7 @@ $result = mysqli_query($conn, $query);
                 </div>
             </div>
             
-            <section class="my-books-card p-4 p-md-5">
+            <section class="my-books-card py-5">
                 
                 <div class="search-container-wrap mb-4">
                     <form action="" method="GET" class="row g-2">
@@ -260,58 +260,66 @@ $result = mysqli_query($conn, $query);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/script/user/shared-layout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
+   <script>
+        // 1. Penanganan Modal Data
         const modalReview = document.getElementById('modalReview');
         if (modalReview) {
             modalReview.addEventListener('show.bs.modal', event => {
                 const button = event.relatedTarget;
-                const idBuku = button.getAttribute('data-id-buku');
-                const judulBuku = button.getAttribute('data-judul-buku');
-
-                const modalTitleSpace = modalReview.querySelector('#review-book-title');
-                const modalIdInput = modalReview.querySelector('#review-id-buku');
-
-                modalTitleSpace.textContent = judulBuku;
-                modalIdInput.value = idBuku;
+                document.getElementById('review-book-title').textContent = button.getAttribute('data-judul-buku');
+                document.getElementById('review-id-buku').value = button.getAttribute('data-id-buku');
             });
         }
-    </script>
 
-    <script>
-    document.querySelector('#modalReview form').addEventListener('submit', function(e) {
-        e.preventDefault(); 
-        
-        let formData = new FormData(this);
+        // 2. Penanganan Submit Form dengan SweetAlert 2
+        document.querySelector('#modalReview form').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            
+            let formData = new FormData(this);
 
-        fetch('../../models/proses-review.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.status === 'success') {
-                // Tutup modal review
-                let modal = bootstrap.Modal.getInstance(document.getElementById('modalReview'));
+            fetch('../../models/proses-review.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Tutup modal secara manual
+                let modalEl = document.getElementById('modalReview');
+                let modal = bootstrap.Modal.getInstance(modalEl);
                 modal.hide();
-                
-                // SweetAlert sukses dengan timer 3 detik
+
+                // Tampilkan SweetAlert 2
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
+                    icon: data.status === 'success' ? 'success' : 'error',
+                    title: data.status === 'success' ? 'Berhasil!' : 'Gagal',
                     text: data.message,
-                    showConfirmButton: false, 
-                    timer: 3000,             
-                    timerProgressBar: true,   
-                    didOpen: () => {
-                        Swal.showLoading();
+                    toast: true,               // Mode notifikasi
+                    position: 'top-end',       // Posisi kanan atas
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                }).then(() => {
+                    // Refresh halaman hanya jika statusnya sukses
+                    if(data.status === 'success') {
+                        location.reload(); 
                     }
                 });
-            } else {
-                Swal.fire({ icon: 'error', title: 'Gagal', text: data.message });
-            }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan Sistem',
+                    text: 'Gagal menghubungi server.',
+                    toast: true,
+                    position: 'top-end'
+                });
+            });
         });
-    });
-</script>
+    </script>
+    
 </body>
 </html>

@@ -1,142 +1,143 @@
-/* --- Global Container untuk menyejajarkan semuanya --- */
-.page-wrapper {
-    max-width: 1140px;
-    margin: 0 auto; /* Tengah secara keseluruhan, tapi konten rata kiri */
-    padding: 0 20px;
+/* 1. Pembungkus Utama */
+.next-books-wrapper {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(46, 36, 91, 0.08);
+    max-width: 1300px;
+    margin: 40px auto; /* Memberi jarak atas bawah dan membuatnya rata tengah */
+    width: 100%;
 }
 
 .read-book-page-container { background: transparent; }
 .read-book-card { background: white; border: 1px solid rgba(46, 36, 91, 0.08); box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 20px; }
 .pdf-viewer-wrap { border: 1px solid rgba(46, 36, 91, 0.12); border-radius: 14px; overflow: hidden; }
-/* --- Section Judul & Kartu (Rata Kiri) --- */
-.next-books-section {
-    width: 100%;
-    padding: 40px 0;
-    text-align: left;
-}
 
-.next-books-section h3 {
+/* 2. Judul Section */
+.section-title {
     text-align: left;
     margin-bottom: 30px;
     font-size: 1.5rem;
     color: #333;
 }
 
-/* --- Grid Rata Kiri --- */
+/* 1. Grid Horizontal (Ganti display grid ke flex agar berjejer) */
 .book-grid {
-    display: grid;
-    /* Membuat kartu berjejer dari kiri, bukan ke tengah */
-    grid-template-columns: repeat(auto-fill, 200px);
-    gap: 30px;
-    justify-content: flex-start; 
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 25px;
+    padding: 10px 0 20px 0;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
-/* --- Kartu Buku (Proporsional) --- */
-/* 1. Atur tinggi kartu agar seragam */
+.book-grid::-webkit-scrollbar { display: none; }
+
+/* 2. Kartu Buku (Lebih proporsional) */
 .next-book-card {
     background: #fff;
     border-radius: 20px;
     padding: 15px;
     border: 1px solid #e0e0e0;
-    transition: 0.3s;
-    height: 380px; /* Tinggi tetap agar semua kartu sama */
-    display: flex;
-    flex-direction: column;
-}
-
-/* 1. Ubah tinggi kartu agar fleksibel (bukan fixed height) */
-.next-book-card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 15px;
-    border: 1px solid #e0e0e0;
-    transition: 0.3s;
-    /* Ganti 'height: 380px' menjadi 'min-height' agar bisa melar */
-    min-height: 380px; 
-    height: auto; 
-    display: flex;
-    flex-direction: column;
-}
-
-/* 2. Ubah pengaturan judul agar muncul semua */
-.next-book-card h5 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 5px;
-    /* Hapus line-clamp agar teks tidak terpotong */
-    display: block; 
-    overflow: visible;
-    white-space: normal; /* Memungkinkan teks pindah baris ke bawah */
-}
-.card-actions {
-    margin-top: auto; /* Mendorong tombol ke dasar kartu */
-    display: flex;
-    gap: 8px;
-    padding-top: 15px;
-}
-.btn-review { border: 1px solid #d4af37; color: #d4af37; background: transparent; padding: 8px; border-radius: 8px; font-size: 0.75rem; flex: 1; transition: 0.3s; }
-.btn-review:hover { background: #d4af37; color: white; }
-.btn-read { background: #4a3590; color: white !important; padding: 8px; border-radius: 8px; font-size: 0.75rem; flex: 1; text-align: center; text-decoration: none; }
-
-.book-section-container {
-     max-width: 900px; /* Samakan dengan lebar grid Anda */
-    margin: 0 auto;   /* Ini kunci agar judul & kartu sejajar di tengah */
-    padding: 20px;
-}
-
-.book-section-container h3 {
-    text-align: left; /* Judul akan otomatis rata kiri dengan kartu */
-    padding-left: 5px; /* Sesuaikan sedikit agar sejajar dengan tepi kartu */
-    margin-top: 30px;      /* Memberi jarak dari konten di atasnya */
-    margin-bottom: 30px;   /* INI kuncinya: memperlebar jarak ke kartu */
-    margin-left: 20px;     /* Menyesuaikan posisi kiri agar sejajar kartu */
-    font-size: 1.5rem;
-}
-
-/* Styling tombol Buka Tab Baru */
-.btn-new-tab {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.5); /* Semi transparan */
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    color: #4a3590;
-    text-decoration: none;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
     transition: all 0.3s ease;
-    backdrop-filter: blur(5px);
+    flex: 0 0 200px; /* Lebar tetap agar rapi */
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.btn-new-tab:hover {
-    background: #4a3590;
-    color: #fff;
-    border-color: #4a3590;
-} 
-
-/* Pembungkus agar punya latar belakang */
-.next-books-wrapper {
-    background: white;        /* Latar belakang putih */
-    border-radius: 24px;      /* Sudut melengkung */
-    padding: 40px;            /* Ruang di dalam card */
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05); /* Efek bayangan lembut */
-    border: 1px solid rgba(46, 36, 91, 0.08);
-    max-width: 1140px;        /* Agar lebar sama dengan konten di atasnya */
-    margin: 40px auto;        /* Membuatnya center */
+.next-book-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
-/* Judul di dalam wrapper */
-.section-title {
-    text-align: left;
-    margin-bottom: 30px;
+/* 3. Gambar Cover (Kunci agar tidak nabrak) */
+.next-book-card img {
+    width: 100%;
+    height: 250px; /* Tinggi cover dibuat konsisten */
+    object-fit: cover; /* Agar tidak gepeng */
+    border-radius: 12px;
+    margin-bottom: 12px;
+    display: block;
+    background: #f0f0f0; /* Warna latar jika gambar gagal load */
 }
 
-/* Pastikan grid di dalam wrapper tetap rata kiri */
-.book-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 200px);
-    gap: 30px;
-    justify-content: flex-start; /* Rata kiri */
+/* 4. Judul & Penulis (Agar tidak nabrak ke bawah) */
+.next-book-card h5 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 5px 0;
+    height: 40px; /* Batasi tinggi judul agar tidak geser tombol */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.next-book-card p {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: auto; /* Mendorong tombol ke bawah */
+}
+
+/* 5. Tombol */
+.card-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+.btn-review { 
+    border: 1px solid #d4af37; 
+    color: #d4af37; 
+    background: transparent; 
+    padding: 8px; 
+    border-radius: 8px; 
+    font-size: 0.75rem; 
+    flex: 1; 
+    transition: 0.3s; 
+}
+
+.btn-read { 
+    background: #4a3590; 
+    color: white !important; 
+    padding: 8px; 
+    border-radius: 8px; 
+    font-size: 0.75rem; 
+    flex: 1; 
+    text-align: center; 
+    text-decoration: none; 
+}
+
+/* --- Efek Glow untuk next-book-card --- */
+
+/* Menambahkan glow halus secara default (opsional) */
+.next-book-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Efek Glow saat hover */
+.next-book-card:hover {
+    transform: translateY(-10px);
+    /* Mengubah box-shadow agar terlihat bercahaya */
+    /* Warna biru muda (sesuai tema Galaxy Digi Book Anda) */
+    box-shadow: 0 10px 30px rgba(74, 53, 144, 0.3), 
+                0 0 15px rgba(74, 53, 144, 0.15);
+    border-color: rgba(74, 53, 144, 0.3);
+}
+
+/* Jika ingin glow warna-warni untuk setiap kartu, 
+   tambahkan class unik di HTML dan gunakan kode ini: */
+
+.next-book-card:hover.glow-gold {
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    border-color: rgba(212, 175, 55, 0.5);
+}
+
+.next-book-card:hover.glow-blue {
+    box-shadow: 0 10px 30px rgba(74, 53, 144, 0.3);
+    border-color: rgba(74, 53, 144, 0.5);
 }

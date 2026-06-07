@@ -379,35 +379,37 @@
 }
 
 /* Mengubah tampilan SweetAlert2 agar senada dengan web */
+/* 1. Warna Utama: Hijau */
 .swal2-popup {
     border-radius: 20px !important;
     background: #ffffff !important;
-    border: 2px solid #e0d8ff; /* Border tipis ungu muda */
+    border: 2px solid #d4edda; /* Border hijau muda */
 }
 
 .swal2-title {
-    color: #2e245b !important;
+    color: #000000 !important; /* Warna teks hijau tua agar kontras */
     font-weight: 700 !important;
 }
 
-/* Mengubah warna tombol OK di SweetAlert */
-.swal2-confirm {
-    background: linear-gradient(135deg, #5640a0, #7a63c9) !important;
-    border-radius: 10px !important;
-    padding: 10px 30px !important;
-    font-weight: 600 !important;
-}
-
-/* Mengatur icon agar lebih lembut */
+/* Mengubah warna ikon sukses menjadi hijau */
 .swal2-icon.swal2-success {
-    border-color: #5640a0 !important;
-    color: #5640a0 !important;
+    border-color: #39cc5b !important;
+    color: #39cc5b !important;
 }
 .swal2-success-ring {
-    border-color: #5640a0 !important;
+    border-color: #39cc5b !important;
+}
+.swal2-success-fix, .swal2-success-circular-line-right {
+    background-color: #ffffff !important;
 }
 
-/* Warna progress bar sesuai tema ungu */
+/* 2. Garis Waktu (Timer Progress Bar) berwarna Abu-abu */
 .swal2-timer-progress-bar {
-    background: #5640a0 !important;
+    background: #adb5bd !important; /* Warna abu-abu */
+}
+
+/* 3. Posisi Kanan Atas (Agar konsisten) */
+.swal2-container.swal2-top-end {
+    padding-top: 80px; 
+    padding-right: 20px;
 }

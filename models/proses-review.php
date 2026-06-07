@@ -1,31 +1,39 @@
 <?php
 session_start();
-include '../config/database.php'; 
+require_once __DIR__ . '/../config/database.php'; // Sesuaikan path jika perlu
 
-header('Content-Type: application/json'); // Penting!
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Anda harus login.']);
+    echo json_encode(['status' => 'error', 'message' => 'Anda harus login terlebih dahulu.']);
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_SESSION['user_id'];
-    $book_id = mysqli_real_escape_string($conn, $_POST['id_buku']);
-    $rating  = mysqli_real_escape_string($conn, $_POST['rating']);
-    $ulasan  = mysqli_real_escape_string($conn, $_POST['ulasan']);
+    $book_id = filter_input(INPUT_POST, 'id_buku', FILTER_SANITIZE_NUMBER_INT);
+    $rating  = filter_input(INPUT_POST, 'rating', FILTER_SANITIZE_NUMBER_INT);
+    $ulasan  = trim($_POST['ulasan'] ?? '');
 
+    // Validasi dasar
     if (empty($book_id) || empty($rating) || empty($ulasan)) {
         echo json_encode(['status' => 'error', 'message' => 'Semua field wajib diisi!']);
         exit;
     }
 
-    $query = "INSERT INTO book_reviews (user_id, book_id, rating, comment) VALUES ('$user_id', '$book_id', '$rating', '$ulasan')";
+    // Menggunakan prepared statement untuk keamanan (mencegah SQL Injection)
+    $stmt = $conn->prepare("INSERT INTO book_reviews (user_id, book_id, rating, comment) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("iiis", $user_id, $book_id, $rating, $ulasan);
 
-    if (mysqli_query($conn, $query)) {
-        echo json_encode(['status' => 'success', 'message' => 'Terima kasih atas ulasan Anda!']);
+    if ($stmt->execute()) {
+        echo json_encode(['status' => 'success', 'message' => 'Ulasan Anda berhasil dikirim!']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Terjadi kesalahan pada database.']);
+        echo json_encode(['status' => 'error', 'message' => 'Gagal menyimpan ulasan ke database.']);
     }
+
+    $stmt->close();
+    exit;
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Metode request tidak valid.']);
 }
 ?>
