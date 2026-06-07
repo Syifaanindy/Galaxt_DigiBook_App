@@ -37,7 +37,7 @@ function ambilRatingBuku($conn, $id_buku) {
 }
 
 function ambilReviewBuku($conn, $id_buku) {
-    $query = "SELECT br.*, users.username 
+    $query = "SELECT br.*, users.username, users.picture 
               FROM book_reviews br
               JOIN users ON br.user_id = users.id
               WHERE br.book_id = ?
