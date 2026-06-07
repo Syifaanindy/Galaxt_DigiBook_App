@@ -314,9 +314,9 @@ p {
 
 .best-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
+    flex-direction: column; /* Ubah jadi tumpuk atas-bawah */
+    align-items: flex-start;
+    margin-top: 15px;
 }
 
 .best-price {
@@ -328,6 +328,8 @@ p {
 .best-actions {
     display: flex;
     gap: 8px;
+    margin-left: auto;
+    align-items: center;
 }
 
 .keranjang-btn {
@@ -504,9 +506,9 @@ p {
 }
 
 .book-card {
-    width: 250px;
+    width: 270px;
     min-width: 250px;
-    height: 440px;
+    height: 400px;
     background: white;
     border-radius: 24px;
     overflow: hidden;
@@ -515,6 +517,16 @@ p {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     scroll-snap-align: start;
     transition: var(--transition-smooth);
+}
+
+.book-card .detail-btn {
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid transparent;
 }
 
 .book-card:hover {

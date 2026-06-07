@@ -1,305 +1,142 @@
-.read-book-page-container {
-    background: transparent;
+/* --- Global Container untuk menyejajarkan semuanya --- */
+.page-wrapper {
+    max-width: 1140px;
+    margin: 0 auto; /* Tengah secara keseluruhan, tapi konten rata kiri */
+    padding: 0 20px;
 }
 
-.read-book-title {
-    color: var(--dark-text);
-    font-size: 2rem;
-    letter-spacing: -0.3px;
+.read-book-page-container { background: transparent; }
+.read-book-card { background: white; border: 1px solid rgba(46, 36, 91, 0.08); box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 20px; }
+.pdf-viewer-wrap { border: 1px solid rgba(46, 36, 91, 0.12); border-radius: 14px; overflow: hidden; }
+/* --- Section Judul & Kartu (Rata Kiri) --- */
+.next-books-section {
+    width: 100%;
+    padding: 40px 0;
+    text-align: left;
 }
 
-.read-book-card {
-    background: var(--card-bg);
-    border: 1px solid rgba(46, 36, 91, 0.08);
-    box-shadow: var(--card-shadow);
+.next-books-section h3 {
+    text-align: left;
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+/* --- Grid Rata Kiri --- */
+.book-grid {
+    display: grid;
+    /* Membuat kartu berjejer dari kiri, bukan ke tengah */
+    grid-template-columns: repeat(auto-fill, 200px);
+    gap: 30px;
+    justify-content: flex-start; 
+}
+
+/* --- Kartu Buku (Proporsional) --- */
+/* 1. Atur tinggi kartu agar seragam */
+.next-book-card {
+    background: #fff;
     border-radius: 20px;
-}
-
-.pdf-toolbar {
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    transition: 0.3s;
+    height: 380px; /* Tinggi tetap agar semua kartu sama */
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 12px;
+    flex-direction: column;
 }
 
-.pdf-meta-chip {
+/* 1. Ubah tinggi kartu agar fleksibel (bukan fixed height) */
+.next-book-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    transition: 0.3s;
+    /* Ganti 'height: 380px' menjadi 'min-height' agar bisa melar */
+    min-height: 380px; 
+    height: auto; 
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. Ubah pengaturan judul agar muncul semua */
+.next-book-card h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    /* Hapus line-clamp agar teks tidak terpotong */
+    display: block; 
+    overflow: visible;
+    white-space: normal; /* Memungkinkan teks pindah baris ke bawah */
+}
+.card-actions {
+    margin-top: auto; /* Mendorong tombol ke dasar kartu */
+    display: flex;
+    gap: 8px;
+    padding-top: 15px;
+}
+.btn-review { border: 1px solid #d4af37; color: #d4af37; background: transparent; padding: 8px; border-radius: 8px; font-size: 0.75rem; flex: 1; transition: 0.3s; }
+.btn-review:hover { background: #d4af37; color: white; }
+.btn-read { background: #4a3590; color: white !important; padding: 8px; border-radius: 8px; font-size: 0.75rem; flex: 1; text-align: center; text-decoration: none; }
+
+.book-section-container {
+     max-width: 900px; /* Samakan dengan lebar grid Anda */
+    margin: 0 auto;   /* Ini kunci agar judul & kartu sejajar di tengah */
+    padding: 20px;
+}
+
+.book-section-container h3 {
+    text-align: left; /* Judul akan otomatis rata kiri dengan kartu */
+    padding-left: 5px; /* Sesuaikan sedikit agar sejajar dengan tepi kartu */
+    margin-top: 30px;      /* Memberi jarak dari konten di atasnya */
+    margin-bottom: 30px;   /* INI kuncinya: memperlebar jarak ke kartu */
+    margin-left: 20px;     /* Menyesuaikan posisi kiri agar sejajar kartu */
+    font-size: 1.5rem;
+}
+
+/* Styling tombol Buka Tab Baru */
+.btn-new-tab {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(224, 195, 252, 0.26);
-    color: var(--primary-color);
-    border-radius: 999px;
-    padding: 6px 12px;
-    font-size: 0.8rem;
-    font-weight: 700;
-}
-
-.pdf-viewer-wrap {
-    border: 1px solid rgba(46, 36, 91, 0.12);
-    border-radius: 14px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.85);
-}
-
-.pdf-viewer {
-    width: 100%;
-    min-height: 78vh;
-    border: none;
-}
-
-@media (max-width: 991px) {
-    .pdf-viewer {
-        min-height: 68vh;
-    }
-}
-
-/* Styling Sinkron dengan Tema Ungu */
-.reader-layout { 
-    display: flex; 
-    gap: 25px; 
-    padding: 25px; 
-    max-width: 1400px; 
-    margin: auto; 
-    height: 90vh; }
-
-.sidebar-left { 
-    width: 300px; flex-shrink: 0; position: sticky; top: 25px; height: fit-content; }
-.book-cover { 
-    width: 100%; border-radius: 15px; box-shadow: 0 10px 25px rgba(86, 64, 160, 0.2); }
-
-.main-viewer { 
-    flex-grow: 1; display: flex; flex-direction: column; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-
-/* Toolbar Ungu */
-.pdf-toolbar { 
-    padding: 20px; 
-    border-bottom: 1px solid #e0d8ff; display: flex; justify-content: space-between; 
-    align-items: center; background: white; z-index: 10; 
-}
-
-.btn-primary { 
-    background: linear-gradient(135deg, #5640a0, #7a63c9); 
-    border: none; 
-}
-
-.btn-primary:hover { 
-    background: #4a3590;
-}
-
-.pdf-frame { flex-grow: 1; overflow-y: auto; background: #f8f9fa; }
-iframe { width: 100%; height: 100%; border: none; }
-/* Container grid */
-.row.g-3 { margin-top: 20px; }
-
-/* Styling Card */
-.next-book-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 15px;
-    overflow: hidden;
-    background: white;
-}
-
-/* Efek Membesar saat kursor diarahkan (Hover) */
-.next-book-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(86, 64, 160, 0.3) !important; /* Efek Glow */
-}
-
-/* Tombol Gradasi Ungu */
-.btn-gradient-purple {
-    background: linear-gradient(135deg, #5640a0, #7a63c9);
-    color: white;
-    border: none;
-    transition: background 0.3s ease;
-}
-
-.btn-gradient-purple:hover {
-    background: linear-gradient(135deg, #7a63c9, #5640a0);
-    color: white;
-}
-
-/* Container Buku Selanjutnya - Memberi jarak agar tidak menempel */
-.next-books-section {
-    background: transparent;
-    padding-top: 20px;
-}
-
-/* Card dengan kontras tinggi */
-.next-book-card {
-    background: #ffffff !important; /* Putih bersih supaya kontras dengan bg ungu */
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 20px !important;
-    padding: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); /* Shadow halus */
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* Efek Glow & Membesar saat di-hover */
-.next-book-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 20px rgba(122, 99, 201, 0.5); /* Glow ungu */
-    border: 1px solid #7a63c9;
-}
-
-/* Tombol Gradasi Ungu yang menyatu */
-.btn-gradient-purple {
-    background: linear-gradient(135deg, #5640a0, #7a63c9);
-    color: white !important;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    transition: 0.3s;
-}
-
-.btn-gradient-purple:hover {
-    background: linear-gradient(135deg, #7a63c9, #5640a0);
-    box-shadow: 0 5px 15px rgba(86, 64, 160, 0.4);
-}
-
-.next-book-card {
-    border-radius: 12px;
-    border: 1px solid #e0e0e0;
-    overflow: hidden;
-    position: relative;
-    transition: transform 0.3s ease;
-}
-
-/* Container scroll agar bisa menampung banyak buku */
-.books-scroll-container {
-    display: flex;
-    overflow-x: auto;
-    gap: 20px;
-    padding: 20px 0;
-    scroll-behavior: smooth;
-    scrollbar-width: none; /* Sembunyikan scrollbar */
-}
-.books-scroll-container::-webkit-scrollbar { display: none; }
-
-/* Card dengan Glow Animasi */
-.next-book-card {
-    min-width: 150px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    position: relative;
-    overflow: hidden;
-    background: white;
-}
-
-@keyframes moveGlow {
-    0% { transform: translateX(-50%); }
-    100% { transform: translateX(50%); }
-}
-
-.next-book-card img { height: 180px; object-fit: cover; }
-
-/* Navigasi */
-.nav-arrow {
-    background: #f0f0f0;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 20px;
-}
-
-/* Container Utama */
-.next-books-section {
-    position: relative;
-    padding: 30px;
-    background: #f8f9fa; /* Warna latar agar terlihat ada kontras */
-    border-radius: 16px;
-    overflow: hidden;
-}
-
-/* Animasi Glow Background */
-.next-books-section::before {
-    content: "";
-    position: absolute;
-    top: 0; left: -100%;
-    width: 200%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
-    animation: moveGlow 4s infinite linear;
-    pointer-events: none;
-}
-
-/* Container Scroll agar seimbang */
-.books-scroll-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.books-scroll-container {
-    display: flex;
-    overflow-x: auto;
-    gap: 20px;
-    flex-grow: 1; /* Mengisi ruang kosong */
-    padding: 10px 0;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-}
-.books-scroll-container::-webkit-scrollbar { display: none; }
-
-/* Ukuran kartu yang konsisten (Seimbang) */
-.next-book-card {
-    min-width: 140px; /* Ukuran pas, tidak terlalu besar */
-    max-width: 140px;
-    flex: 0 0 auto;
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.next-book-card img {
-    height: 180px; 
-    object-fit: cover;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-}
-
-/* Tombol Navigasi */
-.nav-arrow {
-    background: white;
-    border: 1px solid #ddd;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    cursor: pointer;
-    z-index: 2;
-    transition: 0.3s;
-}
-.nav-arrow:hover { background: #e9ecef; }
-
-/* 2. Kartu Transparan (Glassmorphism) */
-.glass-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 24px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-    padding: 30px;
-    margin-bottom: 20px;
-}
-
-/* 3. Border khusus pada sub-header "Baca Nyaman" */
-.sub-header-border {
-    border-bottom: 2px solid #8b5cf6; /* Warna ungu aksen */
-    display: inline-block;
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-    color: #4c1d95;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.5); /* Semi transparan */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #4a3590;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 0.85rem;
     font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
 }
 
-.pdf-viewer-wrap {
-    border: 3px solid #ffffff; /* Border putih agar menonjol */
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+.btn-new-tab:hover {
+    background: #4a3590;
+    color: #fff;
+    border-color: #4a3590;
+} 
+
+/* Pembungkus agar punya latar belakang */
+.next-books-wrapper {
+    background: white;        /* Latar belakang putih */
+    border-radius: 24px;      /* Sudut melengkung */
+    padding: 40px;            /* Ruang di dalam card */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05); /* Efek bayangan lembut */
+    border: 1px solid rgba(46, 36, 91, 0.08);
+    max-width: 1140px;        /* Agar lebar sama dengan konten di atasnya */
+    margin: 40px auto;        /* Membuatnya center */
+}
+
+/* Judul di dalam wrapper */
+.section-title {
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+/* Pastikan grid di dalam wrapper tetap rata kiri */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 200px);
+    gap: 30px;
+    justify-content: flex-start; /* Rata kiri */
 }

@@ -16,12 +16,9 @@ function ambilKoleksiDinamis($conn, $search = '', $category = 'all', $page = 1, 
 
     // Filter Dropdown Kategori
     if (!empty($category) && $category !== 'all') {
-        // Menyesuaikan kolom kategori di database (bisa teks publisher / category_id)
-        $query .= " AND (LOWER(publisher) LIKE ? OR category_id = ?)";
-        $types .= "ss";
-        $categoryLower = "%" . strtolower($category) . "%";
-        $bindParams[] = $categoryLower;
-        $bindParams[] = $category;
+        $query .= " AND category_id = ?";
+        $types .= "i";
+        $bindParams[] = (int)$category;
     }
 
     // Hitung Total Data untuk Pagination

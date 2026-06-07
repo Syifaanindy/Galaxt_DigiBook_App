@@ -186,26 +186,26 @@ $sudahMemilikiBuku = userSudahMemilikiBuku($conn, $user_id, $id_buku);
                     <!-- TOMBOL AKSI DENGAN BUTTON BAYAR / BELI LANGSUNG -->
                    <div class="detail-action-buttons row g-3 mb-5 justify-content-end">
                         <?php if ($sudahMemilikiBuku): ?>
-                            <div class="col-sm-5">
+                            <div class="col-sm-6">
                                 <a href="baca_buku.php?id=<?= (int)$buku['id']; ?>"
                                 class="btn btn-primary-buy w-100 py-3 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
                                     <i class="fa-solid fa-book-open-reader"></i> Baca Buku
                                 </a>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <a href="buku_saya.php"
                                 class="btn btn-outline-cart w-100 py-3 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2">
                                     <i class="fa-solid fa-book-bookmark"></i> Buku Saya
                                 </a>
                             </div>
                         <?php else: ?>
-                            <div class="col-sm-5">
+                            <div class="col-sm-6">
                                 <a href="transaksi.php?id=<?= (int)$buku['id']; ?>"
                                 class="btn btn-primary-buy w-100 py-3 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
                                     <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
                                 </a>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <a href="keranjang.php?action=add&id=<?= (int)$buku['id']; ?>"
                                 class="btn btn-outline-cart w-100 py-3 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2">
                                     <i class="fa-solid fa-basket-shopping"></i> + Keranjang
@@ -243,24 +243,31 @@ $sudahMemilikiBuku = userSudahMemilikiBuku($conn, $user_id, $id_buku);
                                     <?php foreach ($semuaReview as $r) : ?>
                                         <div class="border rounded-3 p-3">
                                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <!-- Nama User hasil JOIN dari database -->
-                                                <strong><?= htmlspecialchars($r['username']) ?></strong>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="reviewer-avatar-small" style="width: 35px; height: 35px; overflow: hidden; border-radius: 50%;">
+                                                        <?php if (!empty($r['picture'])) : ?>
+                                                            <img src="../../assets/img/profile/<?= htmlspecialchars($r['picture']) ?>" 
+                                                                alt="User" 
+                                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                                        <?php else : ?>
+                                                            <div class="text-bg-primary d-flex align-items-center justify-content-center w-100 h-100" style="font-size: 0.8rem; font-weight: bold;">
+                                                                <?= strtoupper(substr($r['username'], 0, 1)) ?>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                    
+                                                    <strong class="m-0"><?= htmlspecialchars($r['username']) ?></strong>
+                                                </div>
                                                 
-                                                <!-- Loop Bintang Dinamis sesuai rating ulasan -->
                                                 <span class="text-warning">
                                                     <?php 
                                                     for ($i = 1; $i <= 5; $i++) {
-                                                        if ($i <= $r['rating']) {
-                                                            echo '<i class="fa-solid fa-star"></i>';
-                                                        } else {
-                                                            echo '<i class="fa-regular fa-star" style="color: #ccc;"></i>';
-                                                        }
+                                                        echo ($i <= $r['rating']) ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star" style="color: #ccc;"></i>';
                                                     }
                                                     ?>
                                                 </span>
                                             </div>
-                                            <!-- Isi Ulasan/Komentar -->
-                                            <p class="mb-0 text-secondary"><?= htmlspecialchars($r['comment']) ?></p>
+                                            <p class="mb-0 text-secondary" style="padding-left: 43px;"><?= htmlspecialchars($r['comment']) ?></p>
                                         </div>
                                     <?php endforeach; ?>
                                 <?php else : ?>

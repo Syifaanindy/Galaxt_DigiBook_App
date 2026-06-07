@@ -63,7 +63,6 @@ unset($_SESSION['error']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="../../assets/css/auth/reset-password.css">
     
@@ -73,6 +72,10 @@ unset($_SESSION['error']);
 
     <div class="wrapper-card">
         <?php if ($isValid): ?>
+            <div class="logo-container" style="margin-bottom: 15px; display: flex; justify-content: center;">
+                <img src="<?php echo base_url('assets/pic/logo.png'); ?>" alt="CosmiRead Logo" style="max-height: 65px; width: auto; object-fit: contain;">
+            </div>
+
             <form action="" method="POST" id="resetForm">
                 <h1>Set Password Baru</h1>
                 <p class="subtitle">Silakan buat kata sandi baru yang kuat untuk mengamankan akun DigiBook Anda.</p>
@@ -108,9 +111,12 @@ unset($_SESSION['error']);
             </form>
         <?php else: ?>
             <div class="error-state">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                <h2>Tautan Kadaluwarsa</h2>
-                <p class="subtitle" style="margin-top: 10px;">Maaf, token keamanan pengaturan ulang sandi Anda sudah tidak valid atau telah melewati batas kedaluwarsa 15 menit.</p>
+                <div class="logo-container" style="margin-bottom: 25px; display: flex; justify-content: center; opacity: 0.6;">
+                    <img src="<?php echo base_url('assets/pic/logo.png'); ?>" alt="CosmiRead Logo" style="max-height: 55px; width: auto; object-fit: contain; filter: grayscale(30%);">
+                </div>
+                <i class="fa-solid fa-circle-exclamation" style="font-size: 60px; color: #e74c3c; margin-bottom: 15px; display: block;"></i>
+                <h2 style="color: #433878; font-weight: 700; font-size: 22px;">Tautan Kadaluwarsa</h2>
+                <p class="subtitle" style="margin-top: 10px; margin-bottom: 25px;">Maaf, token keamanan pengaturan ulang sandi Anda sudah tidak valid atau telah melewati batas kedaluwarsa 15 menit.</p>
                 <a href="<?php echo base_url('views/auth/lupa-password.php'); ?>" class="btn-back">Minta Tautan Baru</a>
             </div>
         <?php endif; ?>
@@ -118,6 +124,7 @@ unset($_SESSION['error']);
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Fungsi Show/Hide Mata Password
         function togglePasswordVisibility(inputId, iconElement) {
             const input = document.getElementById(inputId);
             if (input.type === "password") {
@@ -159,6 +166,7 @@ unset($_SESSION['error']);
             passwordInput.addEventListener('input', validatePassword);
             confirmInput.addEventListener('input', validatePassword);
 
+            // Intersept validasi sebelum submit form dijalankan
             document.getElementById('resetForm').addEventListener('submit', function(e) {
                 const val = passwordInput.value;
                 const confVal = confirmInput.value;
@@ -170,7 +178,7 @@ unset($_SESSION['error']);
                         icon: 'error',
                         title: 'Keamanan Lemah',
                         text: 'Silakan penuhi semua parameter indikator hijau sebelum memperbarui sandi.',
-                        confirmButtonColor: '#512da8'
+                        confirmButtonColor: '#433878' /* Warna tombol disamakan dengan tema ungu */
                     });
                 }
             });
