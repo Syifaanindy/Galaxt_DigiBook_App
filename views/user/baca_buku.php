@@ -26,15 +26,6 @@ if (!$buku) {
     exit;
 }
 
-$query_ulasan = "SELECT r.*, u.username, u.picture 
-                 FROM book_reviews r
-                 JOIN users u ON r.user_id = u.id 
-                 WHERE r.book_id = ?";
-$stmt_ulasan = $conn->prepare($query_ulasan);
-$stmt_ulasan->bind_param("i", $id);
-$stmt_ulasan->execute();
-$hasil_ulasan = $stmt_ulasan->get_result();
-
 $query_next = "SELECT b.id, b.title, b.cover_image, b.author
                FROM books b
                INNER JOIN transaction_items ti ON b.id = ti.book_id
@@ -92,26 +83,6 @@ $buku_lainnya = $stmt_next->get_result();
                         <div class="rating mb-2">
                             <i class="fa-solid fa-star text-warning"></i> <?php echo $buku['rating'] ?? '5.0'; ?>/5.0
                         </div>
-                        <hr>
-                        <h5>Ulasan Pembaca</h5>
-                        <div class="ulasan-list">
-                            <?php if ($hasil_ulasan->num_rows > 0): ?>
-                                <?php while ($row_ulasan = $hasil_ulasan->fetch_assoc()): ?>
-                                    <div class="d-flex align-items-center mb-3 p-2 border-bottom">
-                                        <img src="../../assets/img/profile/<?php echo !empty($row_ulasan['picture']) ? htmlspecialchars($row_ulasan['picture']) : 'default-user.png'; ?>" 
-                                            class="rounded-circle me-3" width="40" height="40" style="object-fit:cover;">
-                                        
-                                        <div>
-                                            <div class="fw-bold"><?php echo htmlspecialchars($row_ulasan['username']); ?></div>
-                                            <small class="text-muted"><?php echo str_repeat('<i class="fa-solid fa-star text-warning" style="font-size:10px;"></i>', $row_ulasan['rating']); ?></small>
-                                            <p class="mb-0 small"><em>"<?php echo htmlspecialchars($row_ulasan['comment']); ?>"</em></p>
-                                        </div>
-                                    </div>
-                                <?php endwhile; ?>
-                            <?php else: ?>
-                                <p class="text-muted italic">Belum ada ulasan untuk buku ini.</p>
-                            <?php endif; ?>
-                        </div>
                     </div>
                 </div>
 
@@ -135,7 +106,12 @@ $buku_lainnya = $stmt_next->get_result();
                         
                         <div class="pdf-viewer-wrap">
                             <?php if (!empty($buku['file_path'])): ?>
-                                <iframe class="pdf-viewer" src="../../<?php echo htmlspecialchars($buku['file_path']); ?>" width="100%" height="600px"></iframe>
+                                <iframe
+                                    class="pdf-viewer"
+                                    src="../../<?php echo htmlspecialchars($buku['file_path']); ?>#toolbar=0&navpanes=0&scrollbar=0"
+                                    width="100%"
+                                    height="800px">
+                                </iframe>
                             <?php else: ?>
                                 <div class="alert alert-warning text-center">File PDF belum diunggah.</div>
                             <?php endif; ?>
@@ -156,7 +132,15 @@ $buku_lainnya = $stmt_next->get_result();
                         <h5><?php echo htmlspecialchars($row['title']); ?></h5>
                         <p><strong>Penulis:</strong> <?php echo htmlspecialchars($row['author'] ?? 'Tidak diketahui'); ?></p>
                         <div class="card-actions">
-                            <button class="btn-review"><i class="fa-solid fa-star"></i> Review</button>
+                            <button
+                                type="button"
+                                class="btn-review"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalReview"
+                                data-id-buku="<?= $row['id']; ?>"
+                                data-judul-buku="<?= htmlspecialchars($row['title']); ?>">
+                                <i class="fa-solid fa-star"></i> Review
+                            </button>
                             <a href="baca_buku.php?id=<?php echo $row['id']; ?>" class="btn-read">Baca Buku</a>
                         </div>
                     </div>
@@ -166,9 +150,113 @@ $buku_lainnya = $stmt_next->get_result();
         </section>
     </div>
 </main>
+    <div class="modal fade" id="modalReview" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="../../models/proses-review.php" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title">Beri Ulasan Buku</h5>
+                    <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+                </div>
 
+                <div class="modal-body">
+
+                    <p>
+                        Buku:
+                        <strong id="review-book-title"></strong>
+                    </p>
+
+                    <input
+                        type="hidden"
+                        name="id_buku"
+                        id="review-id-buku">
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Rating
+                        </label>
+
+                        <select
+                            class="form-select"
+                            name="rating"
+                            required>
+
+                            <option value="">Pilih Rating</option>
+                            <option value="5">⭐⭐⭐⭐⭐</option>
+                            <option value="4">⭐⭐⭐⭐</option>
+                            <option value="3">⭐⭐⭐</option>
+                            <option value="2">⭐⭐</option>
+                            <option value="1">⭐</option>
+
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Ulasan
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            name="ulasan"
+                            rows="4"
+                            required></textarea>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                        Batal
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-warning text-white">
+                        Kirim
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
     <div id="site-footer"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/script/user/shared-layout.js"></script>
+    <script>
+const modalReview =
+document.getElementById('modalReview');
+
+if(modalReview){
+
+    modalReview.addEventListener(
+        'show.bs.modal',
+        function(event){
+
+            const button =
+            event.relatedTarget;
+
+            document.getElementById(
+                'review-book-title'
+            ).textContent =
+            button.getAttribute(
+                'data-judul-buku'
+            );
+
+            document.getElementById(
+                'review-id-buku'
+            ).value =
+            button.getAttribute(
+                'data-id-buku'
+            );
+        }
+    );
+}
+</script>
 </body>
 </html>
