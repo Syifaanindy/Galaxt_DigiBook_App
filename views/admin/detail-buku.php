@@ -27,21 +27,32 @@ foreach ($list_kategori as $kat) {
         break;
     }
 }
+
+// DINAMIS: Ambil rata-rata rating dari tabel book_reviews
+$query_rating = mysqli_query($conn, "SELECT AVG(rating) as rata_rating FROM book_reviews WHERE book_id = $id_buku");
+$data_rating = mysqli_fetch_assoc($query_rating);
+$rating_angka = $data_rating['rata_rating'];
+
+// Format tampilan rating (jika belum ada review, set ke 0.0)
+$tampilan_rating = (!is_null($rating_angka)) ? number_format($rating_angka, 1, '.', '') . " / 5.0" : "Belum Ada Rating";
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Detail Buku</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../../assets/css/admin/panel.css">
-  <link rel="stylesheet" href="../../assets/css/admin/sidebar.css">
-  <link rel="stylesheet" href="../../assets/css/admin/detail.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Katalog Buku</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+    <link rel="stylesheet" href="../../assets/css/admin/panel.css">
+    <link rel="stylesheet" href="../../assets/css/admin/sidebar.css">
+        <link rel="stylesheet" href="../../assets/css/admin/detail.css">
 </head>
 <body>
   <div class="admin-layout">
@@ -112,7 +123,7 @@ foreach ($list_kategori as $kat) {
                     <div class="form-group-detail flex-1">
                         <label>Rating</label>
                         <div class="form-control-static rating-style">
-                            <i class="fa-solid fa-star me-2"></i>4.8 / 5.0
+                            <i class="fa-solid fa-star me-2" style="color: #f1c40f;"></i><?= $tampilan_rating; ?>
                         </div>
                     </div>
                 </div>
@@ -124,14 +135,10 @@ foreach ($list_kategori as $kat) {
                     </div>
                 </div>
 
-                <div class="action-buttons-wrapper">
-                    <a href="<?= base_url('views/admin/katalog-buku.php'); ?>" class="btn-custom btn-back">
-                        <i class="fa-solid fa-arrow-left me-2"></i>Kembali
+                <div class="action-buttons-wrapper" style="margin-top: 30px;">
+                    <a href="<?= base_url('views/admin/katalog-buku.php'); ?>" class="btn-custom btn-back" style="display: inline-flex; align-items: center; justify-content: center; padding: 12px 30px; background-color: #433878; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 12px rgba(67, 56, 120, 0.15); transition: all 0.3s ease;">
+                        <i class="fa-solid fa-arrow-left me-2"></i>Kembali Ke Katalog
                     </a>
-                    
-                    <button type="button" class="btn btn-primary px-4 py-2" id="btn-bayar-sekarang" data-book-id="<?= $buku['id']; ?>" data-price="<?= $buku['price']; ?>" style="border-radius: 8px; background-color: #3b3173; border: none;">
-                        <i class="fa-solid fa-credit-card me-2"></i>Bayar Sekarang
-                    </button>
                 </div>
             </div>
         </div>
@@ -141,41 +148,5 @@ foreach ($list_kategori as $kat) {
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../../assets/script/admin/shared-layout.js"></script>
-
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script>
-  $(document).ready(function() {
-      $('#btn-bayar-sekarang').click(function(e) {
-          e.preventDefault();
-
-          let idBuku = $(this).data('book-id');
-          let hargaBuku = $(this).data('price');
-
-          if (confirm("Apakah anda yakin ingin langsung membeli buku ini? (Simulasi Sukses)")) {
-              $.ajax({
-                  url: 'proses_bayar_langsung.php',
-                  type: 'POST',
-                  data: {
-                      book_id: idBuku,
-                      price: hargaBuku
-                  },
-                  dataType: 'json',
-                  success: function(response) {
-                      if (response.status === 'success') {
-                          alert('Pembayaran Berhasil! Buku telah masuk ke tabel user_book.');
-                          window.location.reload(); 
-                      } else {
-                          alert('Gagal: ' + response.message);
-                      }
-                  },
-                  error: function(xhr) {
-                      console.error(xhr.responseText);
-                      alert('Terjadi kesalahan sistem saat memproses transaksi.');
-                  }
-              });
-          }
-      });
-  });
-  </script>
 </body>
 </html>
