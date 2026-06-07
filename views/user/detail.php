@@ -82,17 +82,13 @@ $sudahMemilikiBuku = userSudahMemilikiBuku($conn, $user_id, $id_buku);
                     </div>
                 </div>
 
-                <!-- KOLOM KANAN: DETAIL, DETAIL HARGA, SPEKS, TOMBOL BELI & SINOPSIS -->
+                
                 <div class="col-lg-8">
-                    <div class="detail-info-header">
-                        <span class="badge badge-category mb-2">
+                    <div class="detail-specs-card  p-4 rounded-4 mb-4">
+                        <span class="badge badge-category mb-2 display-6 fw-bold text-gradient-price m-0">
                             <i class="fa-solid fa-circle-check text-success me-1"></i> Terverifikasi Original
                         </span>
-                        
-                        <!-- Cetak Judul Buku -->
                         <h1 class="detail-title fw-extrabold mb-1"><?= htmlspecialchars($buku['title']) ?></h1>
-                        
-                        <!-- Cetak Penulis Buku -->
                         <p class="detail-author fs-5 text-muted mb-3">Karya Penulis: 
                             <span class="fw-semibold text-primary-theme"><?= htmlspecialchars($buku['author']) ?></span>
                         </p>
@@ -100,32 +96,24 @@ $sudahMemilikiBuku = userSudahMemilikiBuku($conn, $user_id, $id_buku);
                         <div class="detail-rating-box d-flex align-items-center gap-2 mb-4">
                             <div class="stars text-warning">
                                 <?php 
-                                // Mengubah rating desimal ke angka bulat ke bawah (misal 4.5 jadi 4)
                                 $bintangBulat = floor($rataRataRating); 
                                 
                                 for ($i = 1; $i <= 5; $i++) {
                                     if ($i <= $bintangBulat) {
-                                        // Tampilkan Bintang Penuh
                                         echo '<i class="fa-solid fa-star"></i>';
                                     } elseif ($i == $bintangBulat + 1 && ($rataRataRating - $bintangBulat) >= 0.5) {
-                                        // Tampilkan Bintang Setengah (Jika ratingnya .5 ke atas seperti 4.5, 4.7)
                                         echo '<i class="fa-solid fa-star-half-stroke"></i>';
                                     } else {
-                                        // Tampilkan Bintang Kosong
                                         echo '<i class="fa-regular fa-star" style="color: #ccc;"></i>';
                                     }
                                 }
                                 ?>
                             </div>
                             
-                            <!-- Tampilkan Angka Rata-rata Rating -->
+                       
                             <span class="fw-bold fs-6 mt-1"><?= $rataRataRating > 0 ? $rataRataRating : '0.0' ?></span>
-                            
-                            <!-- Tampilkan Jumlah Total Ulasan dari Database -->
                             <span class="text-muted fs-7 mt-1">(<?= $totalUlasan ?> Ulasan Pembaca)</span>
                         </div>
-
-                        <!-- Cetak Harga Buku Berformat Rupiah -->
                         <div class="detail-price-box p-4 rounded-4 mb-4">
                             <small class="text-muted d-block text-uppercase letter-spacing-1">Harga Akses Digital</small>
                             <h2 class="display-6 fw-bold text-gradient-price m-0">
@@ -133,8 +121,6 @@ $sudahMemilikiBuku = userSudahMemilikiBuku($conn, $user_id, $id_buku);
                             </h2>
                         </div>
                     </div>
-
-                    <!-- Spesifikasi Box -->
                     <div class="detail-specs-card p-4 rounded-4 mb-4">
                         <h4 class="fs-6 fw-bold mb-3 text-uppercase letter-spacing-1">Spesifikasi Dokumen</h4>
                         <div class="row g-3 row-cols-2 row-cols-sm-3">
@@ -182,8 +168,6 @@ $sudahMemilikiBuku = userSudahMemilikiBuku($conn, $user_id, $id_buku);
                             </div>
                         </div>
                     </div>
-
-                    <!-- TOMBOL AKSI DENGAN BUTTON BAYAR / BELI LANGSUNG -->
                    <div class="detail-action-buttons row g-3 mb-5 justify-content-end">
                         <?php if ($sudahMemilikiBuku): ?>
                             <div class="col-sm-6">

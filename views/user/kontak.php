@@ -53,6 +53,7 @@ if (!empty($user_id)) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../assets/css/user/kontak.css">
     <link rel="stylesheet" href="../../assets/css/user/layout-shared.css">
+    <link rel="stylesheet" href="../../assets/css/user/footer.css">
 </head>
 
 <body data-page="kontak">

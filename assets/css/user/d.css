@@ -72,6 +72,10 @@ p {
     color: #c5bfeb;
 }
 
+span{
+    color: #221b46;
+
+}
 /* Reusable Component Headings */
 .section-subtitle {
     display: inline-block;
