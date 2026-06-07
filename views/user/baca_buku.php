@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../config/database.php';
+$cover_path = '../../assets/cover/';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/auth.php");
@@ -10,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Query Data Buku dengan validasi kepemilikan
+// Query Data Buku
 $query = "SELECT b.* FROM books b
           INNER JOIN transaction_items ti ON b.id = ti.book_id
           INNER JOIN transactions t ON ti.transaction_id = t.id
@@ -33,13 +34,13 @@ $stmt_ulasan = $conn->prepare($query_ulasan);
 $stmt_ulasan->bind_param("i", $id);
 $stmt_ulasan->execute();
 $hasil_ulasan = $stmt_ulasan->get_result();
-// Query Buku Selanjutnya (Rekomendasi)
+
 $query_next = "SELECT b.id, b.title, b.cover_image, b.author
                FROM books b
                INNER JOIN transaction_items ti ON b.id = ti.book_id
                INNER JOIN transactions t ON ti.transaction_id = t.id
                WHERE t.user_id = ? AND b.id != ? 
-               GROUP BY b.id"; // <--- LIMIT 4 sudah dihapus
+               GROUP BY b.id";
 
 $stmt_next = $conn->prepare($query_next);
 $stmt_next->bind_param("ii", $user_id, $id);
@@ -83,7 +84,9 @@ $buku_lainnya = $stmt_next->get_result();
             <div class="row">
                 <div class="col-lg-4">
                     <div class="card p-4 mb-4">
-                        <img src="../../assets/img/<?php echo htmlspecialchars($buku['cover_image']); ?>" class="img-fluid rounded mb-3" alt="Cover Buku">
+                        <img src="<?= $cover_path . basename($buku['cover_image'] ?? 'default.jpg'); ?>" 
+                            alt="Cover Buku" 
+                            onerror="this.src='../../assets/cover/default.jpg';">
                         <h4><?php echo htmlspecialchars($buku['title']); ?></h4>
                         <p class="text-muted">Karya: <?php echo htmlspecialchars($buku['author']); ?></p>
                         <div class="rating mb-2">
@@ -120,7 +123,7 @@ $buku_lainnya = $stmt_next->get_result();
                             <div class="d-flex gap-2">
                                 <?php if (!empty($buku['file_path'])): ?>
                                     <a href="../../<?php echo htmlspecialchars($buku['file_path']); ?>" download class="btn btn-glow-purple"><i class="fa-solid fa-download"></i> Unduh</a>
-                                    <a href="path-ke-pdf.pdf" target="_blank" class="btn-new-tab">
+                                    <a href="../../<?php echo htmlspecialchars($buku['file_path']); ?>" target="_blank" class="btn-new-tab">
                                         <i class="fa-solid fa-arrow-up-right-from-square" style="margin-right: 8px;"></i> 
                                         Buka
                                     </a>
@@ -147,7 +150,9 @@ $buku_lainnya = $stmt_next->get_result();
                 <div class="book-grid">
                     <?php while($row = $buku_lainnya->fetch_assoc()): ?>
                     <div class="next-book-card">
-                        <img src="../../assets/img/<?php echo !empty($row['cover_image']) ? htmlspecialchars($row['cover_image']) : 'default.jpg'; ?>" alt="Cover">
+                        <img src="<?= $cover_path . basename($row['cover_image'] ?? 'default.jpg'); ?>" 
+                                alt="Cover Buku" 
+                                onerror="this.src='../../assets/cover/default.jpg';">
                         <h5><?php echo htmlspecialchars($row['title']); ?></h5>
                         <p><strong>Penulis:</strong> <?php echo htmlspecialchars($row['author'] ?? 'Tidak diketahui'); ?></p>
                         <div class="card-actions">

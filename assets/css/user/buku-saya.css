@@ -413,3 +413,27 @@
     padding-top: 80px; 
     padding-right: 20px;
 }
+
+/* Membuat kotak gambar tetap rapi meski gambar tidak ada */
+.book-cover {
+    background-color: #eef2ff; /* Warna ungu muda lembut */
+    border: 1px solid #d1d5db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Jika gambar gagal dimuat, tampilkan ikon buku */
+.book-cover img:not([src*="/"]) {
+    display: none;
+}
+
+/* Menambahkan icon sebagai placeholder jika gambar kosong */
+.book-cover::before {
+    content: "\f02d"; /* Kode FontAwesome untuk icon buku */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: #c7d2fe;
+    font-size: 40px;
+}
