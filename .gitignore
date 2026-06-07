@@ -1,12 +1,1 @@
-<?php
-
-return [
-   
-    'server_key' => getenv('MIDTRANS_SERVER_KEY') ?: 'SB-Mid-server-H9M7kVhHyX-Shd3g6UhpNie_',
-    'client_key' => getenv('MIDTRANS_CLIENT_KEY') ?: 'SB-Mid-client-XJHuCCBxP7A-BjFw',
-    'is_production' => false,
-
-
-    'notification_url' => getenv('MIDTRANS_NOTIFICATION_URL') ?: '',
-];
-?>
+config/midtrans.php
