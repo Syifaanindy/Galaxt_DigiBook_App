@@ -9,4 +9,8 @@ $conn = new mysqli($host, $user, $pass, $db, 3306);
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
+
+$conn->query("SET time_zone = '+07:00'");
+
 ?>
+

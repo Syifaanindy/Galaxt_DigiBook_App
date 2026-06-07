@@ -89,20 +89,8 @@ $total_harga = $buku['price'] + $biaya_layanan;
                                 <input type="email" class="form-control checkout-form-control"
                                     placeholder="nama@email.com" value="<?= htmlspecialchars($_SESSION['email'] ?? ''); ?>" readonly>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">No. WhatsApp</label>
-                                <input type="text" id="phoneInput" class="form-control checkout-form-control"
-                                    placeholder="+62 8xx xxxx xxxx">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Catatan (Opsional)</label>
-                                <input type="text" class="form-control checkout-form-control"
-                                    placeholder="Contoh: butuh invoice">
-                            </div>
                         </div>
                     </section>
-
-                    
                 </div>
 
                 <div class="col-lg-4">

@@ -133,16 +133,6 @@ $book_ids_json = json_encode(array_map('intval', $selected_ids));
                                 <input type="email" class="form-control checkout-form-control"
                                     value="<?= htmlspecialchars($_SESSION['email'] ?? ''); ?>" readonly>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">No. WhatsApp</label>
-                                <input type="text" id="phoneInput" class="form-control checkout-form-control"
-                                    placeholder="+62 8xx xxxx xxxx">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Catatan (Opsional)</label>
-                                <input type="text" class="form-control checkout-form-control"
-                                    placeholder="Contoh: butuh invoice">
-                            </div>
                         </div>
                     </section>
 

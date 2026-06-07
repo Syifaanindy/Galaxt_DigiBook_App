@@ -15,7 +15,10 @@ $profilModel = new ProfilModel($conn);
 
 // Cari data user lama untuk mempertahankan gambar lama jika user tidak upload gambar baru
 $userLama = $profilModel->getProfilByEmail($email_lama);
-$picture  = $userLama['picture'] ?? null;
+
+// KUNCI NAMA FILE LAMA DI SINI (Ambil hanya nama filenya saja, bukan path lengkap)
+$picture_lama = $userLama['picture'] ?? null; 
+$picture      = $picture_lama;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username   = trim($_POST['username']);
@@ -45,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $dest_path = $uploadFileDir . $newFileName;
 
             if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                // Hapus berkas gambar lama dari server jika ada berkasnya
-                if (!empty($picture) && file_exists($uploadFileDir . $picture)) {
-                    @unlink($uploadFileDir . $picture);
+                // HAPUS BERKAS GAMBAR LAMA MENGGUNAKAN VARIABEL YANG SUDAH DIKUNCI DI AWAL
+                if (!empty($picture_lama) && file_exists($uploadFileDir . $picture_lama)) {
+                    @unlink($uploadFileDir . $picture_lama);
                 }
                 // Ubah variabel gambar ke nama file yang baru
                 $picture = $newFileName;
