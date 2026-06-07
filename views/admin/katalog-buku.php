@@ -196,26 +196,15 @@ $list_buku = ambilSemuaBuku($conn);
     document.addEventListener('DOMContentLoaded', function() {
 
         $('#tabelBuku').DataTable({
-            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"] ],
-            "language": {
-                "lengthMenu": "Tampilkan _MENU_ data per halaman",
-                "zeroRecords": "Data tidak ditemukan - maaf",
-                "info": "Menampilkan halaman _PAGE_ dari _PAGES_",
-                "infoEmpty": "Tidak ada data tersedia",
-                "infoFiltered": "(difilter dari _MAX_ total data)",
-                "search": "Cari:",
-                "paginate": {
-                    "first": "Pertama",
-                    "last": "Terakhir",
-                    "next": "Kanan",
-                    "previous": "Kiri"
+            pageLength: 5,
+            pagingType: "simple_numbers",
+            language: {
+                paginate: {
+                    previous: "Previous",
+                    next: "Next"
                 }
-            },
-            "columnDefs": [
-                { "orderable": false, "targets": 5 } 
-            ]
+            }
         });
-
         <?php if ($flashSuccess): ?>
             Swal.fire({
                 toast: true,
@@ -336,5 +325,24 @@ $list_buku = ambilSemuaBuku($conn);
 
     });
   </script>
+  <style>
+.dataTables_wrapper .page-item.active .page-link {
+    background-color: #4b3b8f !important;
+    border-color: #4b3b8f !important;
+    color: #fff !important;
+}
+
+.dataTables_wrapper .page-link:hover {
+    color: #4b3b8f !important;
+}
+
+.dataTables_wrapper .page-link {
+    color: #333 !important;
+}
+
+.dataTables_wrapper .page-link:focus {
+    box-shadow: none !important;
+}
+  </style>
 </body>
 </html>

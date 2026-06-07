@@ -7,25 +7,27 @@ if (isset($_GET['type'])) {
 
     $type = $_GET['type'];
 
-   if ($type === 'summary') {
-      $result = $conn->query("
-          SELECT 
-              COALESCE(SUM(total_price),0) AS total_sales,
-              COUNT(id) AS total_order,
-              COALESCE(ROUND(AVG(total_price),0),0) AS avg_order
-          FROM `transaction`
-      ");
+    // ================= SUMMARY =================
+    if ($type === 'summary') {
+        $result = $conn->query("
+            SELECT 
+                COALESCE(SUM(total_price),0) AS total_sales,
+                COUNT(id) AS total_order,
+                COALESCE(ROUND(AVG(total_price),0),0) AS avg_order
+            FROM `transactions`
+        ");
 
-      echo json_encode($result->fetch_assoc());
-      exit;
+        echo json_encode($result->fetch_assoc());
+        exit;
     }
 
+    // ================= MONTHLY =================
     if ($type === 'monthly') {
         $result = $conn->query("
             SELECT 
                 DATE_FORMAT(transaction_date,'%b') AS label,
                 SUM(total_price) AS total
-            FROM `transaction`
+            FROM `transactions`
             GROUP BY MONTH(transaction_date)
             ORDER BY MONTH(transaction_date)
         ");
@@ -42,13 +44,15 @@ if (isset($_GET['type'])) {
         exit;
     }
 
+    // ================= CATEGORY =================
     if ($type === 'category') {
         $result = $conn->query("
             SELECT 
                 c.category_name AS label,
-                SUM(t.total_price) AS total
-            FROM `transaction` t
-            JOIN books b ON t.book_id = b.id
+                SUM(ti.price) AS total
+            FROM `transactions` t
+            JOIN transaction_items ti ON t.id = ti.transaction_id
+            JOIN books b ON ti.book_id = b.id
             JOIN category c ON b.category_id = c.id
             GROUP BY c.id
             ORDER BY total DESC
@@ -66,15 +70,17 @@ if (isset($_GET['type'])) {
         exit;
     }
 
+    // ================= CATEGORY DETAIL =================
     if ($type === 'category_detail') {
         $category = $_GET['category'];
 
         $stmt = $conn->prepare("
             SELECT 
                 DATE_FORMAT(t.transaction_date,'%b') AS label,
-                SUM(t.total_price) AS total
-            FROM `transaction` t
-            JOIN books b ON t.book_id = b.id
+                SUM(ti.price) AS total
+            FROM `transactions` t
+            JOIN transaction_items ti ON t.id = ti.transaction_id
+            JOIN books b ON ti.book_id = b.id
             JOIN category c ON b.category_id = c.id
             WHERE c.category_name = ?
             GROUP BY MONTH(t.transaction_date)
@@ -99,6 +105,7 @@ if (isset($_GET['type'])) {
         ]);
         exit;
     }
+
     exit;
 }
 ?>
