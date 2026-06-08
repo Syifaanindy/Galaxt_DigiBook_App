@@ -7,11 +7,10 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/url-helper.php';
 require_once __DIR__ . '/../models/user-model.php';
 
-// Import PHPMailer classes into the global namespace
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Load PHPMailer library (Sesuaikan path jika letak foldernya berbeda)
 require_once __DIR__ . '/../PHPMailer/src/Exception.php';
 require_once __DIR__ . '/../PHPMailer/src/PHPMailer.php';
 require_once __DIR__ . '/../PHPMailer/src/SMTP.php';
@@ -97,8 +96,13 @@ function prosesRegister() {
         exit;
     }
 
-    if (strlen($password) < 6) {
-        $_SESSION['error'] = "Password minimal 6 karakter.";
+    if (strlen($password) < 8 || 
+        !preg_match('/[A-Z]/', $password) || 
+        !preg_match('/[a-z]/', $password) || 
+        !preg_match('/[0-9]/', $password) || 
+        !preg_match('/[^A-Za-z0-9]/', $password)) {
+        
+        $_SESSION['error'] = "Password minimal 8 digit dan harus mengandung kombinasi huruf besar, huruf kecil, angka, serta karakter spesial.";
         $_SESSION['auth_mode'] = 'register';
         redirectAuth();
         exit;
